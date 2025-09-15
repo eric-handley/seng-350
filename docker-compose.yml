@@ -1,0 +1,58 @@
+services:
+  # Frontend (TypeScript, e.g., Vite/React)
+  frontend:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"  # Vite default
+    environment:
+      - NODE_ENV=development
+    # For dev hot-reload; ensure package.json has a dev script
+    command: ["sh", "-lc", "npm ci && npm run dev -- --host"]
+    # profiles: [dev]
+
+  # Backend (TypeScript Node server)
+  backend:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - PGHOST=db
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    # Ensure your package.json has a dev script (e.g., ts-node-dev)
+    command: ["sh", "-lc", "npm ci && npm run dev"]
+
+  # Postgres database
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+# volumes used by services
+volumes:
+  db-data:
+    # driver: local
