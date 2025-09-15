@@ -5,12 +5,13 @@ services:
     working_dir: /app
     volumes:
       - ./client:/app
+      - client-node-modules:/app/node_modules
     ports:
       - "5173:5173"  # Vite default
     environment:
       - NODE_ENV=development
     # For dev hot-reload; ensure package.json has a dev script
-    command: ["sh", "-lc", "npm ci && npm run dev"]
+    command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
     # profiles: [dev]
 
   # server (TypeScript Node server)
@@ -19,6 +20,7 @@ services:
     working_dir: /app
     volumes:
       - ./server:/app
+      - server-node-modules:/app/node_modules
     ports:
       - "3000:3000"
     environment:
@@ -33,7 +35,7 @@ services:
       db:
         condition: service_healthy
     # Ensure your package.json has a dev script (e.g., ts-node-dev)
-    command: ["sh", "-lc", "npm ci && npm run dev"]
+    command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
 
   # Postgres database
   db:
@@ -56,3 +58,5 @@ services:
 volumes:
   db-data:
     # driver: local
+  client-node-modules:
+  server-node-modules:
