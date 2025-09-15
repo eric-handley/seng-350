@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=development
     # For dev hot-reload; ensure package.json has a dev script
-    command: ["sh", "-lc", "npm ci && npm run dev -- --host"]
+    command: ["sh", "-lc", "npm ci && npm run dev"]
     # profiles: [dev]
 
   # Backend (TypeScript Node server)

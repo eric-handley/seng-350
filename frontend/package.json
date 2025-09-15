@@ -3,14 +3,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --host"
+    "dev": "node esbuild.dev.mjs",
+    "build": "node esbuild.build.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.0"
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "esbuild": "^0.23.1",
+    "typescript": "^5.6.2"
   },
   "version": "1.0.0",
   "description": "",

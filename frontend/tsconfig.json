@@ -6,9 +6,9 @@
     "strict": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
-    "types": ["node"]
+    "types": ["node"],
+    "jsx": "react-jsx"
   },
-  "include": ["src", "vite.config.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "public"]
 }
