@@ -1,21 +1,31 @@
 .DEFAULT_GOAL := run
 
 COMPOSE ?= docker compose
+PROJECT ?= seng-350
+V_CLIENT := $(PROJECT)_client-node-modules
+V_SERVER := $(PROJECT)_server-node-modules
+PULL ?= 0
 
 build: 
-	$(COMPOSE) build
-
-clean:
-	$(COMPOSE) build --no-cache
+	@$(COMPOSE) build
 
 run: build 
-	$(COMPOSE) up -d
+	@$(COMPOSE) up -d
 
 down:
-	$(COMPOSE) down
+	@$(COMPOSE) down
 
-# If you have tmux installed, you can run client and server in separate panes
+# Rebuild client/server from scratch
+rebuild:
+	@$(COMPOSE) down -v --remove-orphans
+	@docker volume rm $(V_CLIENT) $(V_SERVER) 2>/dev/null || true
+	@docker image rm -f node:22-bookworm-slim 2>/dev/null || true
+	@$(COMPOSE) pull
+	@$(COMPOSE) build --no-cache
+	@$(COMPOSE) up -d --force-recreate
+
+# If you have tmux installed, you can run & show client and server logs in separate panes
 tmux: run
-	tmux new-session -d -s dev "$(COMPOSE) logs -f client"
-	tmux split-window -v -t dev:0 "$(COMPOSE) logs -f server"
-	tmux attach-session -t dev
+	@tmux new-session -d -s dev "$(COMPOSE) logs -f client"
+	@tmux split-window -v -t dev:0 "$(COMPOSE) logs -f server"
+	@tmux attach-session -t dev
