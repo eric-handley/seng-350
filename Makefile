@@ -14,8 +14,8 @@ run: build
 down:
 	$(COMPOSE) down
 
-# If you have tmux installed, you can run frontend and backend in separate panes
+# If you have tmux installed, you can run client and server in separate panes
 tmux: run
-	tmux new-session -d -s dev "$(COMPOSE) logs -f frontend"
-	tmux split-window -v -t dev:0 "$(COMPOSE) logs -f backend"
+	tmux new-session -d -s dev "$(COMPOSE) logs -f client"
+	tmux split-window -v -t dev:0 "$(COMPOSE) logs -f server"
 	tmux attach-session -t dev

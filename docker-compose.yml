@@ -1,10 +1,10 @@
 services:
-  # Frontend (TypeScript, e.g., Vite/React)
-  frontend:
+  # client (TypeScript, e.g., Vite/React)
+  client:
     image: node:22-bookworm-slim
     working_dir: /app
     volumes:
-      - ./frontend:/app
+      - ./client:/app
     ports:
       - "5173:5173"  # Vite default
     environment:
@@ -13,12 +13,12 @@ services:
     command: ["sh", "-lc", "npm ci && npm run dev"]
     # profiles: [dev]
 
-  # Backend (TypeScript Node server)
-  backend:
+  # server (TypeScript Node server)
+  server:
     image: node:22-bookworm-slim
     working_dir: /app
     volumes:
-      - ./backend:/app
+      - ./server:/app
     ports:
       - "3000:3000"
     environment:
