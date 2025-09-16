@@ -1,0 +1,30 @@
+###############
+# Merge Request Pipeline
+#
+# On every merge request, builds & runs tests
+###############
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+default:
+  tags:
+    - test
+
+stages:
+  - build
+  - test
+
+compose-build:
+  stage: build
+  script:
+    - echo "[placeholder] Building services with Docker Compose..."
+    - echo "Running build placeholder..."
+  allow_failure: false
+
+test:
+  stage: test
+  script:
+    - echo "[placeholder] Run your test suite"
+    - echo "Running test suite placeholder..."
