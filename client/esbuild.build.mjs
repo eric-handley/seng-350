@@ -11,7 +11,10 @@ await build({
   bundle: true,
   sourcemap: false,
   outdir: resolve(__dirname, 'dist/assets'),
+  platform: 'browser',
   loader: { '.tsx': 'tsx' },
+  resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
+  jsx: 'automatic',
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   minify: true,
 })

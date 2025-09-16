@@ -12,7 +12,10 @@ const ctx = await context({
   bundle: true,
   sourcemap: true,
   outfile: resolve(__dirname, 'public/assets/app.js'),
+  platform: 'browser',
   loader: { '.tsx': 'tsx' },
+  resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
+  jsx: 'automatic',
   define: { 'process.env.NODE_ENV': JSON.stringify('development') },
 })
 

@@ -18,9 +18,7 @@ down:
 # Rebuild client/server from scratch
 rebuild:
 	@$(COMPOSE) down -v --remove-orphans
-	@docker volume rm $(V_CLIENT) $(V_SERVER) 2>/dev/null || true
-	@docker image rm -f node:22-bookworm-slim 2>/dev/null || true
-	@$(COMPOSE) pull
+	@docker volume rm $(V_CLIENT) $(V_SERVER) || true
 	@$(COMPOSE) build --no-cache
 	@$(COMPOSE) up -d --force-recreate
 

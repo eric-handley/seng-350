@@ -1,22 +1,18 @@
 services:
-  # client (TypeScript, e.g., Vite/React)
   client:
-    image: node:22-bookworm-slim
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./client:/app
       - client-node-modules:/app/node_modules
     ports:
-      - "5173:5173"  # Vite default
+      - "5173:5173"
     environment:
       - NODE_ENV=development
-    # For dev hot-reload; ensure package.json has a dev script
     command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
-    # profiles: [dev]
 
-  # server (TypeScript Node server)
   server:
-    image: node:22-bookworm-slim
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./server:/app
@@ -34,10 +30,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Ensure your package.json has a dev script (e.g., ts-node-dev)
     command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
 
-  # Postgres database
   db:
     image: postgres:16
     ports:
@@ -54,9 +48,7 @@ services:
       timeout: 5s
       retries: 10
 
-# volumes used by services
 volumes:
   db-data:
-    # driver: local
   client-node-modules:
   server-node-modules:
