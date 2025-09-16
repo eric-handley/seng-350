@@ -28,4 +28,5 @@ rebuild:
 tmux: run
 	@tmux new-session -d -s dev "$(COMPOSE) logs -f client"
 	@tmux split-window -v -t dev:0 "$(COMPOSE) logs -f server"
+	@tmux split-window -h -t dev:0 "$(COMPOSE) logs -f db"
 	@tmux attach-session -t dev
