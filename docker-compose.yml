@@ -9,7 +9,10 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
 
   server:
     image: node:22-alpine
@@ -27,10 +30,13 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - PGDATABASE=postgres
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     depends_on:
       db:
         condition: service_healthy
-    command: ["sh", "-lc", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci; fi; npm run dev"]
+    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
 
   db:
     image: postgres:16
