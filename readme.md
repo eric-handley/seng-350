@@ -1,7 +1,9 @@
-This file is empty right now, but you will need to update it to explain who is in the project team, how to run, and test, your project.
-
 # Team Members
 
-| V#   | Name     |
-| ---- | -------- |
-| TODO | Fill out |
+| Name             | V#        |
+| ---------------- | --------- |
+| Keagan Potash    | 01003228  |
+| Jennifer Vlaar   | 01001396  |
+| Eric Handley     | 01002886  |
+| Arda Berktin     | V01009910 |
+| Jasper Halvorson | V01000790 |
