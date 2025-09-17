@@ -3,8 +3,8 @@ services:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./client:/app
-      - client-node-modules:/app/node_modules
+      - ./src/client:/app
+      - ./src/client/node_modules:/app/node_modules
     ports:
       - "5173:5173"
     environment:
@@ -18,8 +18,8 @@ services:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./server:/app
-      - server-node-modules:/app/node_modules
+      - ./src/server:/app
+      - ./src/server/node_modules:/app/node_modules
     ports:
       - "3000:3000"
     environment:
@@ -56,5 +56,3 @@ services:
 
 volumes:
   db-data:
-  client-node-modules:
-  server-node-modules:

@@ -2,8 +2,6 @@
 
 COMPOSE ?= docker compose
 PROJECT ?= seng-350
-V_CLIENT := $(PROJECT)_client-node-modules
-V_SERVER := $(PROJECT)_server-node-modules
 PULL ?= 0
 
 build: 
@@ -18,7 +16,6 @@ down:
 # Rebuild client/server from scratch
 rebuild:
 	@$(COMPOSE) down -v --remove-orphans
-	@docker volume rm $(V_CLIENT) $(V_SERVER) || true
 	@$(COMPOSE) build --no-cache
 	@$(COMPOSE) up -d --force-recreate
 
