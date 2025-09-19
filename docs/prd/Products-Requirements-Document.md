@@ -1,10 +1,14 @@
-# Product Requirements Document
+Product Requirements Document
+=====
+
+[TOC]
+
 ## Overview
 This product is a room scheduling system and is being built for the University of Victoria to replace the tedious task of manually booking on-campus rooms. It will function as a web app that enables staff to view, book, and cancel their bookings of rooms. Admin users will be able to view audit records and health. Along with general staff and admin, the registrar will be able to manage and maintain the scheduling and user accounts. This application will streamline the booking process.
 
-## Objectives & Goals – why it matters.
+## Objectives & Goals
 
-## User Stories – who benefits.
+## User Stories
 
 ## Functional Requirements
 1. Staff can book rooms in 1 click - see gitlab issue 1
@@ -18,7 +22,7 @@ This product is a room scheduling system and is being built for the University o
 9. The system must allow users to book rooms for up to 1 week in the future - see gitlab issue 9
 10. The system must allow for the length of bookings to be changed - see gitlab issue 10
 
-## Quality Attribute Requirements – performance, security, etc.
+## Quality Attribute Requirements
 
 ## Milestones & Deliverables
 The development group plans to manage time spent on the project by estimating the time to implement each issue. Then it will be assigned based on the skills needed and who has availability to work on each one. Once the work has been assigned accordingly, the group plans to attend lab sessions to update other group members on progress and/or blockers as well as meet outside of classtime when needed to futher coordinate work and discuss implementation (about once a week).\
