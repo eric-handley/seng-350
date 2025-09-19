@@ -1,5 +1,10 @@
 ### `2025-09-19`
 
+- Reviewed and added PRD sections to `design-1` branch
+- Completed ADR-1, with plans to complete ADR-2/3 by tomorrow (20th)
+- Started work on test plan, with intention to finish by tomorrow
+  - Discussed plans for git workflow for rest of project (ADR-3)
+
 ---
 
 ### `2025-09-17`
