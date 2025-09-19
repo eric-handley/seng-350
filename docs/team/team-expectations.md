@@ -33,5 +33,4 @@ completing it.
 * Jennifer Vlaar
 * Keagan Potash
 * Arda Berktin
-* *team member 2*
-* ...
+* Jasper Halvorson
