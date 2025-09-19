@@ -6,4 +6,16 @@ test tools: Jest, pipeline through gitlab
 
 test types: unit testing through Jest for fast bug detection, E2E tests for user journey correctness, integration testing for real system wiring validation, property testing and system testing.
 
-key risks the tests will examine: Our tests will be examining the key risks of integration failiure via integration testing
+Key risks the tests will examine: Our tests will be examining the key risks of integration failiure via integration testing. We will be eliminating bugs within our code through unit testing.
+
+Scenarios to test for: 
+Load interface in < 10 seconds 
+Search classrooms in < 5 seconds
+Single-winner concurrent booking
+Recover after DB restart < 30s
+Blocks unauthorized access
+Authorize based on role
+Booking in =< 3 clicks
+All services healthy after deployment < 5 min
+Alert on booking conflict in < 5 seconds
+
