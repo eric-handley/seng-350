@@ -13,25 +13,32 @@ The university currently schedules classrooms manually, which slows reservations
 This project will shift classroom bookings to a web-based self-service product. The system will process booking requests instantly without the need for manual review. When conflicts occur for the same room and time, one booking succeeds and the other gets immediate notification of failure, preventing double bookings. Staff need the ability to cancel reservations when plans change so rooms become available for others to book. The system will display availability based on classroom and time-slot data that the Registrar maintains, ensuring that what users see reflects actual space availability. These features will make classroom booking faster and reduce administrative overhead.
 
 ## User Stories
-1.  (Issue #11)  As a member of staff at the University of Victoria,\
+1.  (Issue #11)\
+    As a member of staff at the University of Victoria,\
     I want to view the available classrooms at a given time,\
     So that I can choose a classroom that doesn't interfere with other classes. 
-2.  (Issue #12) As a member of staff at the University of Victoria,\
+2.  (Issue #12)\
+    As a member of staff at the University of Victoria,\
     I want to book a classroom at a given time and have it show up for all other staff members,\
     So that no one else takes the classroom/time that I want for my class.
-3.  (Issue #13) As a member of staff at the University of Victoria,\
+3.  (Issue #13)\
+    As a member of staff at the University of Victoria,\
     I want to review and cancel my booking,\
     So that I can reschedule it for another time that works better.
-4.  (Issue #14) As a member of staff at the University of Victoria,\
+4.  (Issue #14)\
+    As a member of staff at the University of Victoria,\
     I want to be able to book a recurring weekly schedule for my class for a given term,\
     So that I avoid the manual task of booking each week separately.
-5.  (Issue #15) As a Registrar employee at the University of Victoria,\
+5.  (Issue #15)\
+    As a Registrar employee at the University of Victoria,\
     I want the system to only allow one success (and give the other a failure message) when two people try to book a room's time slot at the same time\
     So that I don't have to manually resolve double bookings
-6.  (Issue #16) As a Registrar employee of the University of Victoria,\
+6.  (Issue #16)\
+    As a Registrar employee of the University of Victoria,\
     I want to be able to have control over the bookings as a whole and overwrite any bookings if needed,\
     So that I can resolve scheduling issues if they arise.
-7.  (Issue #17) As an administrator at the University of Victoria,\
+7.  (Issue #17)\
+    As an administrator at the University of Victoria,\
     I want to view configuration constraints, audit records and health of the system,\
     So that I can ensure everything is functioning as expected, and notify the IT team if there are any issues.
 
