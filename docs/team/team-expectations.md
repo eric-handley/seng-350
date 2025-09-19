@@ -31,5 +31,6 @@ completing it.
 # Acknowledged
 
 * Jennifer Vlaar
+* Keagan Potash
 * *team member 2*
 * ...
