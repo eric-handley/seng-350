@@ -5,3 +5,5 @@
 
 2. "what is a good way to do integration testing for the following tech stack? We will use Typescript with React for frontend, NestJS for the entry layer, NestJS for the backend, PostgreSQL for server-side data store, Redis for cache and minimal messaging, Auth.js for authentication and authorization." 
     - [Conversation Link](https://chatgpt.com/c/68cdc58f-94a8-8330-93b6-320b7cdaebac)
+3. "give an example of a comprehensive test plan for a rooms booking webapp"
+    - [Conversation Link](https://chatgpt.com/c/68cdcbfc-251c-8331-8be5-f4a2b9f3a482)
