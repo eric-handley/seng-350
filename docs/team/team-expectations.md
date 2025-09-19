@@ -34,3 +34,4 @@ completing it.
 * Keagan Potash
 * Arda Berktin
 * Jasper Halvorson
+* Eric Handley
