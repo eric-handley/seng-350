@@ -1,1 +1,0 @@
-This folder serves as a storage for all architectural decisions you will make during the course. The course notes will explain the format you should use to record these decisions. 
