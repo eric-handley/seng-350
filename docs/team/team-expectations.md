@@ -15,13 +15,21 @@ Note, however, that if you make the list fairly thorough without being unrealist
 ----
 source: R. M. Felder & R. Brent, Effective Teaching, North Carolina State University, 2000.
 
-# Team Expectations for Team ______________
+# Team Expectations for Group 1
 
-1. *your expectations go here*
-2.
+1. Designate a coordinator, recorder, monitor, and checker for each assignment. 
+2. Agree on a common meeting time and what each member should have done before the meeting
+3. Do the required individual preparation.
+4. Coordinator checks with other team members before the meeting to remind them of when and where they
+will meet and what they are supposed to do.
+5. Meet and work.
+6. Checker turns in the assignment (merge to main), with the names on it of every team member who participated actively in
+completing it.
+7. Review returned assignments.
+8. Consult with your instructor if a conflict arises that can’t be worked through by the team.
 
 # Acknowledged
 
-* *team member 1*
+* Jennifer Vlaar
 * *team member 2*
 * ...
