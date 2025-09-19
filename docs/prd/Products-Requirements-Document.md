@@ -74,6 +74,7 @@ graph LR;
   OBS --> OBS1[Alert on booking conflict in < 5 seconds #24];
 ```
 
+Linked Issues: QA1: #18, QA2: #25, QA3: #19, QA4: #20, QA5: #21, QA6: #22, QA7: #23, QA8: #24.
 
 ## Milestones & Deliverables
 The development group plans to manage time spent on the project by estimating the time to implement each issue. Then it will be assigned based on the skills needed and who has availability to work on each one. Once the work has been assigned accordingly, the group plans to attend lab sessions to update other group members on progress and/or blockers as well as meet outside of classtime when needed to futher coordinate work and discuss implementation (about once a week).\
