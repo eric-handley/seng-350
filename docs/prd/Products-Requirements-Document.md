@@ -57,14 +57,14 @@ graph LR;
   U --> DEP[Deployability & Portability];
   U --> OBS[Observability];
 
-  P --> P1[Load interface in < 10 seconds];
-  P --> P2[Search classrooms in < 5 seconds];
-  CC --> CC1[Single-winner concurrent booking];
-  AV --> AV1[Recover after DB restart < 30s];
-  SEC --> SEC1[Blocks unauthorized access];
-  SEC --> SEC2[Authorize based on role];
-  DEP --> DEP1[All services healthy after deployment < 5 min];
-  OBS --> OBS1[Alert on booking conflict in < 5 seconds];
+  P --> P1[Load interface in < 10 seconds #18];
+  P --> P2[Search classrooms in < 5 seconds #25];
+  CC --> CC1[Single-winner concurrent booking #19];
+  AV --> AV1[Recover after DB restart < 30s #20];
+  SEC --> SEC1[Blocks unauthorized access #21];
+  SEC --> SEC2[Authorize based on role #22];
+  DEP --> DEP1[All services healthy after deployment < 5 min #23];
+  OBS --> OBS1[Alert on booking conflict in < 5 seconds #24];
 ```
 
 
