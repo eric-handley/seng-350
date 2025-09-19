@@ -8,6 +8,10 @@ This product is a room scheduling system and is being built for the University o
 
 ## Objectives & Goals
 
+The university currently schedules classrooms manually, which slows reservations and creates uncertainty when multiple people request the same space. This system requires staff to wait for approval even for routine bookings, leading to delays and inefficient use of limited classroom space. An updated system could eliminate this bottleneck by giving staff direct access to real-time availability and immediate booking confirmation.
+
+This project will shift classroom bookings to a web-based self-service product. The system will process booking requests instantly without the need for manual review. When conflicts occur for the same room and time, one booking succeeds and the other gets immediate notification of failure, preventing double bookings. Staff need the ability to cancel reservations when plans change so rooms become available for others to book. The system will display availability based on classroom and time-slot data that the Registrar maintains, ensuring that what users see reflects actual space availability. These features will make classroom booking faster and reduce administrative overhead.
+
 ## User Stories
 
 ## Functional Requirements
