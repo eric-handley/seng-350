@@ -13,21 +13,21 @@ Our test plan is based of skills learned in SENG 321 (Requirements Engineering) 
 5. Key risks the tests will examine
  Our tests will be examining the key risks of integration failiure via integration testing. We will be eliminating bugs within our code through unit testing.
 
-6. Scenarios to test for 
-Load interface in < 10 seconds 
-Search classrooms in < 5 seconds
-Single-winner concurrent booking
-Recover after DB restart < 30s
-Blocks unauthorized access
-Authorize based on role
-Booking in =< 3 clicks
-All services healthy after deployment < 5 min
+6. Scenarios to test for\
+Load interface in < 10 seconds\
+Search classrooms in < 5 seconds\
+Single-winner concurrent booking\
+Recover after DB restart < 30s\
+Blocks unauthorized access\
+Authorize based on role\
+Booking in =< 3 clicks\
+All services healthy after deployment < 5 min\
 Alert on booking conflict in < 5 seconds
 
 7. Scope
-In-Scope
-Unit testing: Testing of all features before they are added to main.
-System testing: Testing of nonfunctional system requirements. 
+In-Scope:\
+- Unit testing: Testing of all features before they are added to main.\
+- System testing: Testing of nonfunctional system requirements. 
 
 
 
