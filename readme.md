@@ -6,8 +6,9 @@
     - [Prompts](docs/prd/prompts.md)
     - [Test Plan](docs/prd/test-plan.md)
     - Architecture Design Requirements
-        1. [Tech Stack Choices](docs/adr-1-tech-stack-choices)
-        2. [Performance Priorities](docs/adr-1-tech-stack-choices)
+        1. [Tech Stack Choices](docs/adr/adr-1-tech-stack-choices.md)
+        2. [Performance Priorities](docs/adr/adr-2-performance-priorities.md)
+        2. [Development Workflow](docs/adr/adr-3-development-workflow.md)
 - Implementation-1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/implement-1))
 
 **Team Docs**
