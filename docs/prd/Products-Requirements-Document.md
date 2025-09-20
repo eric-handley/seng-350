@@ -41,7 +41,7 @@ This project will shift classroom bookings to a web-based self-service product. 
     As an administrator at the University of Victoria,\
     I want to view configuration constraints, audit records and health of the system,\
     So that I can ensure everything is functioning as expected, and notify the IT team if there are any issues.
-8.  (Issue #26)
+8.  (Issue #26)\
     As a member of staff of the University of Victoria with the role of Staff, Admin, or Registrar,\
     I want to be able to sign into my account through a simple sign-in page,\
     so that I can complete actions within the website.
