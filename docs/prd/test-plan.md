@@ -25,7 +25,7 @@ Our test plan is based of skills learned in SENG 321 (Requirements Engineering) 
 - Alert on booking conflict in < 5 seconds
 
 7. Scope\
-In-Scope:
+**In-Scope**
 - Unit testing: Testing of all features before they are added to main.\
 - System testing: Testing of nonfunctional system requirements. 
 
