@@ -14,7 +14,7 @@ Accepted
 - Better autocompletion, refactoring suggestions, and code navigation due to type information being available.
 - Team has more experience using Typescript.
 
-**React over next.js:**
+**React over Next.js:**
 - More flexible.
 - Requires more setup and external libraries.
 - Component-based architecture.
@@ -59,6 +59,7 @@ Accepted
 - Less customizable.
 - Browser-centric.
 - Handles various providers and session management complexities.
+- May cause extra setup steps when being used with React
 
 ## Testing and Demo Tools
 **Jest over Vitest**
