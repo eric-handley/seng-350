@@ -2,9 +2,8 @@
 
 **Cycle 1**
 - Design 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle/1-design))
-    - [Product Requirements Document](docs/prd/product-requirements-document.md)
-    - [Prompts](docs/prd/prompts.md)
-    - [Test Plan](docs/prd/test-plan.md)
+    - [Product Requirements Document](docs/product-requirements-document.md)
+    - [Test Plan](docs/test-plan.md)
     - Architecture Design Requirements
         1. [Tech Stack Choices](docs/adr/adr-1-tech-stack-choices.md)
         2. [Performance Priorities](docs/adr/adr-2-performance-priorities.md)
@@ -13,6 +12,9 @@
 
 **Team Docs**
 - [Team Expectations](docs/team/team-expectations.md)
+
+**Other**
+- [AI Prompt History](docs/prompts.md) 
 
 # Team Members
 
