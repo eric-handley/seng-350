@@ -1,0 +1,12 @@
+{
+  "name": "seng-350",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prestart": "docker compose build",
+    "start": "docker compose up -d",
+    "stop": "docker compose down",
+    "restart": "docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate",
+    "tmux": "npm start && tmux new-session -d -s dev 'docker compose logs -f client' && tmux split-window -v -t dev:0 'docker compose logs -f db' && tmux split-window -h -t dev:0.0 'docker compose logs -f server' && tmux attach-session -t dev"
+  }
+}
