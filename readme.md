@@ -2,7 +2,7 @@
 
 **Cycle 1**
 - Design 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle/1-design))
-    - [Product Requirements Document](docs/prd/Products-Requirements-Document.md)
+    - [Product Requirements Document](docs/prd/product-requirements-document.md)
     - [Prompts](docs/prd/prompts.md)
     - [Test Plan](docs/prd/test-plan.md)
     - Architecture Design Requirements
