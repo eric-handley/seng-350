@@ -7,7 +7,7 @@ import createKeyv from '@keyv/redis';
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => {
-        const redisUrl = `redis://${process.env.REDIS_HOST || 'redis'}:${process.env.REDIS_PORT || '6379'}`;
+        const redisUrl = `redis://${process.env.REDIS_HOST ?? 'redis'}:${process.env.REDIS_PORT ?? '6379'}`;
         return {
           stores: [new createKeyv(redisUrl)],
           ttl: 300000, // 5 minutes in milliseconds (cache-manager v7+ uses milliseconds)

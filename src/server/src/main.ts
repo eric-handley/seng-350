@@ -10,9 +10,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const port = Number(process.env.PORT || 3000);
+  const port = Number(process.env.PORT ?? 3000);
   await app.listen(port);
-  console.log(`NestJS server running on http://localhost:${port}`);
+  console.warn(`NestJS server running on http://localhost:${port}`);
 }
 
 bootstrap();

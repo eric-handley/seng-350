@@ -24497,6 +24497,9 @@
     ] });
   }
   var root = document.getElementById("root");
+  if (!root) {
+    throw new Error("Root element not found");
+  }
   (0, import_client.createRoot)(root).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}));
 })();
 /*! Bundled license information:

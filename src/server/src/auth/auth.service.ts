@@ -10,7 +10,7 @@ export class AuthService {
       providers: [
         // TODO: Add providers (Google, GitHub, etc.) when needed
       ],
-      secret: process.env.NEXTAUTH_SECRET || 'dev-secret-key',
+      secret: process.env.NEXTAUTH_SECRET ?? 'dev-secret-key',
       trustHost: true,
     });
   }
@@ -19,8 +19,8 @@ export class AuthService {
     return this.authHandler;
   }
 
-  async getSession(req: any) {
+  async getSession(req: { auth?: unknown }) {
     // Extract session from request if available
-    return req.auth || null;
+    return req.auth ?? null;
   }
 }

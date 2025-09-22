@@ -14,11 +14,11 @@ export class AppService {
   async getHealthCheck() {
     try {
       const client = new Client({
-        host: process.env.PGHOST || 'db',
-        port: Number(process.env.PGPORT || 5432),
-        user: process.env.PGUSER || 'postgres',
-        password: process.env.PGPASSWORD || 'postgres',
-        database: process.env.PGDATABASE || 'postgres',
+        host: process.env.PGHOST ?? 'db',
+        port: Number(process.env.PGPORT ?? 5432),
+        user: process.env.PGUSER ?? 'postgres',
+        password: process.env.PGPASSWORD ?? 'postgres',
+        database: process.env.PGDATABASE ?? 'postgres',
       });
       
       await client.connect();
@@ -30,10 +30,10 @@ export class AppService {
         now: result.rows[0].now,
         message: 'Database connection successful'
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { 
         ok: false, 
-        error: err?.message || String(err),
+        error: err instanceof Error ? err.message : String(err),
         message: 'Database connection failed'
       };
     }
@@ -42,7 +42,7 @@ export class AppService {
   // *******************************************************************************
   // NOTE: This is just a Redis test endpoint. Don't worry about using Redis caching 
   // until we have our API endpoints set up. Leaving here for future reference
-  async getCachedData(key: string): Promise<any> {
+  async getCachedData(key: string): Promise<{ cached: boolean; data: unknown }> {
     const cached = await this.cacheManager.get(key);
     if (cached) {
       return { cached: true, data: cached };
