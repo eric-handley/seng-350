@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node esbuild.dev.mjs",
-    "build": "node esbuild.build.mjs"
+    "build": "node esbuild.build.mjs",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -15,7 +16,12 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "esbuild": "^0.23.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0"
   },
   "version": "1.0.0",
   "description": "",
