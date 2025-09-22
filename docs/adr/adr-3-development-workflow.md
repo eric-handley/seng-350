@@ -14,8 +14,8 @@ Accepted
 **Branch Strategy:**
 - Protected `main` branch with maintainer-only access
 - Cycle branches (`cycle-1/design`, `cycle-2/implement`, etc.) serve as development bases for each project phase. These branches will require merge requests after Design 1 is complete
-- Feature branches (`#-feature/name`) used when multiple people work together on related issues or work spans several interconnected issues. Placing a number at the beginning of the branch name automatically links it to the related GitLab issue
-- Issue branches (`#-issue/description`) created directly off current cycle or feature branches for individual work based on GitLab issues
+- Feature branches (`feature/name` or `feature-#/name`) used when multiple people work together on related issues or work spans several interconnected issues.
+- Issue branches (`issue-#/description`) created directly off current cycle or feature branches for individual work based on GitLab issues
 - Branch names are enforced through GitLab
 
 **Review & Merge Process:**
