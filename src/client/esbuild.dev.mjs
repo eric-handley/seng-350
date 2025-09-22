@@ -26,4 +26,4 @@ const { host, port: boundPort } = await ctx.serve({
   port,
 })
 
-console.log(`esbuild dev server on http://${host}:${boundPort}`)
+console.log(`esbuild dev server on http://localhost:${boundPort}`)
