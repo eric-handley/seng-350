@@ -2,6 +2,7 @@
   "name": "seng-350",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "prestart": "docker compose build",
     "start": "docker compose up -d",
@@ -10,6 +11,12 @@
     "tmux": "npm start && tmux new-session -d -s dev 'docker compose logs -f client' && tmux split-window -v -t dev:0 'docker compose logs -f db' && tmux split-window -h -t dev:0.0 'docker compose logs -f server' && tmux attach-session -t dev",
     "lint": "npm run lint:client && npm run lint:server",
     "lint:client": "cd src/client && npm run lint",
-    "lint:server": "cd src/server && npm run lint"
+    "lint:server": "cd src/server && npm run lint",
+    "test": "npm run test:client && npm run test:server",
+    "test:client": "cd src/client && npm run test",
+    "test:server": "cd src/server && npm run test",
+    "test:coverage": "npm run test:coverage:client && npm run test:coverage:server",
+    "test:coverage:client": "cd src/client && npm run test:coverage",
+    "test:coverage:server": "cd src/server && npm run test:coverage"
   }
 }
