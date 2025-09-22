@@ -43,6 +43,7 @@ Accepted
 - PostgreSQL better for multiple users.
 - More scalable.
 - Requires more management.
+- Captured in issues #12 #13 #14 and #15
 
 ## Cache and Minimal Messaging
 **Redis**
@@ -60,6 +61,7 @@ Accepted
 - Browser-centric.
 - Handles various providers and session management complexities.
 - May cause extra setup steps when being used with React
+- Captured in issue #26
 
 ## Testing and Demo Tools
 **Jest over Vitest**

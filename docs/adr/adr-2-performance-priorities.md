@@ -17,6 +17,7 @@ Accepted
 - Decreased speed.
 - Application is functioning whenever a staff member needs to book a room.
 - Application is robust.
+- Captured in issues #17 and #16
 
 **Maintainability:**
 - Decreased speed.
@@ -24,10 +25,11 @@ Accepted
 - Application is easy to fix in the case of a bug.
 - Increased reliability.
 
-**Secuity:** 
+**Security:** 
 - Decreased speed.
 - Users' information is safe.
 - Application in resistant to attacks.
+- Captured in issue #26
 
 **Cost:**
 - Low cost may negatively affect all other priorities (a balance has to be found).
