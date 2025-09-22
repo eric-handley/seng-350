@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RedisCacheModule } from './cache/cache.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RedisCacheModule } from './cache/cache.module';
       synchronize: process.env.NODE_ENV !== 'production',
     }),
     RedisCacheModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

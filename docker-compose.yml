@@ -32,6 +32,7 @@ services:
       - PGDATABASE=postgres
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - NEXTAUTH_SECRET=dev-secret-key-change-in-production
     dns:
       - 1.1.1.1
       - 8.8.8.8
