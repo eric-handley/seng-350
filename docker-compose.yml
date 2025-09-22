@@ -12,7 +12,7 @@ services:
     dns:
       - 1.1.1.1
       - 8.8.8.8
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ ! \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing client dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install; fi && echo 'Starting client dev server...' && npm run dev"]
+    command: ["sh", "-c", "echo 'Installing/updating client dependencies...' && npm install && echo 'Starting client dev server...' && npm run dev"]
 
   server:
     image: node:22-alpine
@@ -40,7 +40,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ ! \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing server dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install; fi && echo 'Starting NestJS dev server...' && npm run dev"]
+    command: ["sh", "-c", "echo 'Installing/updating server dependencies...' && npm install && echo 'Starting NestJS dev server...' && npm run dev"]
 
   db:
     image: postgres:16
