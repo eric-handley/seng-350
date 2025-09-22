@@ -4,7 +4,7 @@ import { AppService } from '../src/app.service';
 
 describe('AppService', () => {
   let service: AppService;
-  let mockCacheManager: jest.Mocked<any>;
+  let mockCacheManager: jest.Mocked<object>;
 
   beforeEach(async () => {
     mockCacheManager = {

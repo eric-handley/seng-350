@@ -5,12 +5,11 @@ import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['src/client/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: 'tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
+        project: './src/client/tsconfig.json',
         sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
@@ -53,6 +52,53 @@ export default [
     },
   },
   {
-    ignores: ['public/**/*', 'dist/**/*'],
+    files: ['src/server/**/*.ts'],
+    ignores: ['**/*.d.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './src/server/tsconfig.json',
+        sourceType: 'module',
+      },
+      globals: {
+        node: true,
+        jest: true,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsEslint,
+    },
+    rules: {
+      ...tsEslint.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'eqeqeq': 'error',
+      'curly': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
+      'no-alert': 'error',
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        jest: true,
+      },
+    },
+  },
+  {
+    ignores: [
+      'src/client/public/**/*', 
+      'src/client/dist/**/*',
+      'src/server/dist/**/*',
+      'node_modules/**/*',
+      'src/*/node_modules/**/*'
+    ],
   },
 ];

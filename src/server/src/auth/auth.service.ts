@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ExpressAuth } from '@auth/express';
 
+export interface Session {
+  user?: {
+    id?: string;
+    email?: string;
+    name?: string;
+  };
+}
+
 @Injectable()
 export class AuthService {
   private authHandler;
@@ -19,7 +27,7 @@ export class AuthService {
     return this.authHandler;
   }
 
-  async getSession(req: { auth?: unknown }) {
+  async getSession(req: { auth?: Session }) {
     // Extract session from request if available
     return req.auth ?? null;
   }

@@ -1,25 +1,35 @@
 services:
+  deps:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    command: [
+      "sh", "-lc",
+      "echo 'Installing dependencies...' && npm install --loglevel verbose"
+    ]
+
   client:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./src/client:/app
-      - ./src/client/node_modules:/app/node_modules
+      - .:/app
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    command: ["sh", "-c", "echo 'Installing/updating client dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install && echo 'Starting client dev server...' && npm run dev"]
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+    command: ["sh", "-c", "npm run dev:client"]
 
   server:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./src/server:/app
-      - ./src/server/node_modules:/app/node_modules
+      - .:/app
     ports:
       - "3000:3000"
     environment:
@@ -33,15 +43,14 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - NEXTAUTH_SECRET=dev-secret-key-change-in-production
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
     depends_on:
+      deps:
+        condition: service_completed_successfully
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "echo 'Installing/updating server dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install && echo 'Starting NestJS dev server...' && npm run dev"]
+    command: ["sh", "-c", "npm run dev:server"]
 
   db:
     image: postgres:16
