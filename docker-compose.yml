@@ -12,7 +12,7 @@ services:
     dns:
       - 1.1.1.1
       - 8.8.8.8
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
+    command: ["sh", "-c", "if [ ! -d node_modules ] || [ ! \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing client dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install; fi && echo 'Starting client dev server...' && npm run dev"]
 
   server:
     image: node:22-alpine
@@ -36,7 +36,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
+    command: ["sh", "-c", "if [ ! -d node_modules ] || [ ! \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing server dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install; fi && echo 'Starting NestJS dev server...' && npm run dev"]
 
   db:
     image: postgres:16
