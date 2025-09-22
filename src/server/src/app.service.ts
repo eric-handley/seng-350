@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { Client } from 'pg';
 
 @Injectable()
 export class AppService {
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+
   getHello(): string {
     return 'NestJS API is running!';
   }
@@ -33,5 +37,19 @@ export class AppService {
         message: 'Database connection failed'
       };
     }
+  }
+
+  // *******************************************************************************
+  // NOTE: This is just a Redis test endpoint. Don't worry about using Redis caching 
+  // until we have our API endpoints set up. Leaving here for future reference
+  async getCachedData(key: string): Promise<any> {
+    const cached = await this.cacheManager.get(key);
+    if (cached) {
+      return { cached: true, data: cached };
+    }
+
+    const data = { timestamp: new Date(), random: Math.random() };
+    await this.cacheManager.set(key, data, 60000); // 60 seconds
+    return { cached: false, data };
   }
 }

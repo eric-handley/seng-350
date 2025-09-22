@@ -30,11 +30,15 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - PGDATABASE=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     dns:
       - 1.1.1.1
       - 8.8.8.8
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     command: ["sh", "-c", "if [ ! -d node_modules ] || [ ! \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing server dependencies...' && NPM_CONFIG_LOGLEVEL=info npm install; fi && echo 'Starting NestJS dev server...' && npm run dev"]
 
@@ -54,5 +58,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   db-data:
+  redis-data:
