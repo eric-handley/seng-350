@@ -1,3 +1,33 @@
+**Implementation-I**
+
+1. Branch: `issue-5/dev-setup`
+    - `claude-code` prompts
+        - **[new instance]:** create docker-compose for a typescript react client (esbuild) and a typescript server with postgres, set server env to connect to db
+        - scaffold the client in ./client: react + typescript using esbuild, add package.json dev/build scripts, tsconfig etc.
+        - scaffold the server in ./server: typescript http server using pg, add package.json etc.
+        - add placeholder package-lock.json files in ./client and ./server so npm install works
+        - add an npm run tmux script that starts client/server/db and opens a tmux session with panes for each of their logs
+        - **[new instance]:** scan the entire src/ dir and the files in base dir to understand this project. ignore /docs/
+        - set up the remaining missing tech stack elements (nestjs, redis, auth.js), one at a time
+        - add nestjs cli to container properly (not globally) and fix server startup issues
+        - set up hot reload correctly for both client and server
+        - fix typescript compilation issues
+        - set up redis properly with cache manager
+        - add note to caching example about not using redis until api is properly set up
+        - set up auth.js
+        - set up testing/linting according to @docs/adr/adr-3-development-workflow.md
+        - set up eslint with reasonable rules for both client and server
+        - set up jest for testing on both server and client with minimal framework (don't write tests yet)
+        - fix depreciated eslint version and other dependency warnings
+        - fix linter errors
+        - convert this project into a single node install for client and server so that only one jest config, eslint, etc would be necessary (but could hopefully still have some separate options)
+        - make root level npm lint script run both client and server lint checks
+        - there should be no need for a node_modules volume
+        - change the docker-compose file so the output from dependency install is shown
+        - fix docker dependency installation - why are deps being installed every time i run npm run tmux (should check and update, not get ALL deps from scratch)
+        - put tests inside the already created test folders in both client and server
+        - stop jest from generating coverage folder on runs
+
 **Design-I**
 
 1. "how can i link a gitlab milestone in a mrkdown file in the same project?" 
@@ -5,6 +35,7 @@
 
 2. "what is a good way to do integration testing for the following tech stack? We will use Typescript with React for frontend, NestJS for the entry layer, NestJS for the backend, PostgreSQL for server-side data store, Redis for cache and minimal messaging, Auth.js for authentication and authorization." 
     - [Conversation Link](https://chatgpt.com/c/68cdc58f-94a8-8330-93b6-320b7cdaebac)
+    
 3. "give an example of a comprehensive test plan for a rooms booking webapp"
     - [Conversation Link](https://chatgpt.com/c/68cdcbfc-251c-8331-8be5-f4a2b9f3a482)
 
@@ -13,4 +44,3 @@
 
 4. "What is a reasonable line coverage for testing a web application? Please highlight different scenarios where this would change, and provide resources for your answers."
     - [Conversation Link](https://chatgpt.com/share/68cf0022-738c-8009-b330-63ceaf29bb04)
-

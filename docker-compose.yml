@@ -1,25 +1,35 @@
 services:
+  deps:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    command: [
+      "sh", "-lc",
+      "echo 'Installing dependencies...' && npm install --loglevel verbose"
+    ]
+
   client:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./src/client:/app
-      - ./src/client/node_modules:/app/node_modules
+      - .:/app
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+    command: ["sh", "-c", "npm run dev:client"]
 
   server:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./src/server:/app
-      - ./src/server/node_modules:/app/node_modules
+      - .:/app
     ports:
       - "3000:3000"
     environment:
@@ -30,13 +40,17 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - PGDATABASE=postgres
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NEXTAUTH_SECRET=dev-secret-key-change-in-production
     depends_on:
+      deps:
+        condition: service_completed_successfully
       db:
         condition: service_healthy
-    command: ["sh", "-c", "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm ci; fi && echo 'Starting dev server...' && npm run dev"]
+      redis:
+        condition: service_healthy
+    command: ["sh", "-c", "npm run dev:server"]
 
   db:
     image: postgres:16
@@ -54,5 +68,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   db-data:
+  redis-data:

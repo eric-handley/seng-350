@@ -2,11 +2,45 @@
   "name": "seng-350",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "src/client",
+    "src/server"
+  ],
   "scripts": {
     "prestart": "docker compose build",
     "start": "docker compose up -d",
     "stop": "docker compose down",
     "restart": "docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate",
-    "tmux": "npm start && tmux new-session -d -s dev 'docker compose logs -f client' && tmux split-window -v -t dev:0 'docker compose logs -f db' && tmux split-window -h -t dev:0.0 'docker compose logs -f server' && tmux attach-session -t dev"
+    "tmux": "bash .vscode/tmux.sh && npm stop",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build:client": "npm run build -w client",
+    "build:server": "npm run build -w server",
+    "lint": "eslint . --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@types/express": "^4.17.0",
+    "@types/jest": "^29.5.0",
+    "@types/pg": "^8.11.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "typescript": "^5.6.2",
+    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2"
   }
 }
