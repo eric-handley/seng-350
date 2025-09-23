@@ -1,4 +1,6 @@
-# Links
+# SENG-350 Group 1
+
+## Links
 
 **Cycle 1**
 - Design 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/design))
@@ -17,7 +19,7 @@
 **Other**
 - [AI Prompt History](docs/prompts.md) 
 
-# Team Members
+## Team Members
 
 | Name             | V#        |
 | ---------------- | --------- |
@@ -26,3 +28,24 @@
 | Eric Handley     | 01002886  |
 | Arda Berktin     | V01009910 |
 | Jasper Halvorson | V01000790 |
+
+## Project Structure
+
+```
+.
+├── docs/                  - Project documentation
+│   ├── adr/               - Architecture Decision Records
+│   └── team/              - Team policies and expectations
+├── src/
+│   ├── client/
+│   │   ├── public/        - Static assets and HTML entry point
+│   │   │   └── assets/    - Compiled JS bundles and source maps
+│   │   ├── src/           - React source code
+│   │   └── tests/         - Frontend unit tests
+│   └── server/
+│       ├── src/           - Nest.js backend code
+│       │   ├── auth/      - Auth.js authentication modules
+│       │   └── cache/     - Redis caching modules
+│       └── tests/         - Backend unit tests
+└── .vscode/               - Shared VS Code workspace settings
+```
