@@ -14,17 +14,38 @@ default:
 
 stages:
   - build
+  - lint
   - test
 
-compose-build:
+variables:
+  npm_config_cache: ".npm"
+  GIT_CLEAN_FLAGS: none
+
+cache:
+  paths:
+    - node_modules/
+    - .npm/
+
+build:
   stage: build
   script:
-    - echo "[placeholder] Building services with Docker Compose..."
-    - echo "Running build placeholder..."
+    - echo "Pulling Docker images..."
+    - docker compose pull
+    - echo "Running dependency installation..."
+    - docker compose run --rm deps 
+  allow_failure: false
+
+lint:
+  stage: lint
+  script:
+    - echo "Running ESlint checks..."
+    - npm run lint
   allow_failure: false
 
 test:
   stage: test
   script:
-    - echo "[placeholder] Run your test suite"
-    - echo "Running test suite placeholder..."
+    - echo "Running test suites..."
+    - npm run test
+    # - npm run test:coverage - Will reenable later
+  allow_failure: false
