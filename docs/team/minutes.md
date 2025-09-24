@@ -1,3 +1,28 @@
+### `2025-09-24
+
+- Discussed existing docker/tech stack set up
+- Discussed design for frontend/UI
+- Assigned work for UI + DB
+  - Set up database - Eric
+  - Set up initial API routes - Eric
+  - Pages  
+    - Sign in page - Keagan  
+    - Staff: - Jasper (make basic functionality),   
+      - See schedule  
+      - Book open rooms  
+      - Cancel bookings  
+      - View their room history   
+    - Admin: - Arda  
+      - Audit records viewing  
+      - System health viewing  
+    - Registrar: - Jenny  
+      - View user page where they can edit privileges  
+      - Edit booking schedule
+- Agreed to meet Monday (29th)
+
+
+---
+
 ### `2025-09-19`
 
 - Reviewed and added PRD sections to `design-1` branch

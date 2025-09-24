@@ -11,7 +11,7 @@
 - Implementation 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/implement))
 
 **Team Docs**
-- [Meeting Minutes](docs/minutes.md)
+- [Meeting Notes](docs/team/minutes.md)
 - [Team Expectations](docs/team/team-expectations.md)
 
 **Other**
