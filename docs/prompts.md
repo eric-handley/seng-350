@@ -28,6 +28,11 @@
         - put tests inside the already created test folders in both client and server
         - stop jest from generating coverage folder on runs
 
+2. Branch `issue-31/db-setup`
+    - `claude-code` prompts:
+        - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
+        - update @readme.md with the new backend folder structure
+
 **Design-I**
 
 1. "how can i link a gitlab milestone in a mrkdown file in the same project?" 
