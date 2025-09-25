@@ -24,10 +24,10 @@
 
 ## Development
 
-Prereqs:
+Requirements:
 - Docker installed
 - Docker daemon running (or Docker Desktop)
-- `npm` installed (optional but recommended)
+- Node.js + npm installed
 
 
 Start the full dev environment with all services:
