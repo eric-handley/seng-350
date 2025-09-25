@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Unique } from 'typeorm';
 import { Building } from './building.entity';
 import { Booking } from './booking.entity';
 import { BookingSeries } from './booking-series.entity';
@@ -8,15 +8,18 @@ export enum RoomType {
   CLASSROOM = 'Classroom',
   LECTURE_THEATRE = 'Lecture theatre',
   MULTI_ACCESS_CLASSROOM = 'Multi-access classroom',
-  FLURY_HALL = 'Flury Hall'
+  FLURY_HALL = 'Flury Hall',
+  UNKNOWN = 'Unknown',
+  DAVID_LAM_AUDITORIUM = 'David Lam Auditorium'
 }
 
 @Entity('rooms')
+@Unique(['room', 'building_id'])
 export class Room {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ unique: true })
+  @Column()
   room!: string;
 
   @Column()

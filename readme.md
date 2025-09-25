@@ -52,6 +52,7 @@
 │       │   ├── database/       - TypeORM entities and migrations
 │       │   │   ├── entities/   - Database entity definitions
 │       │   │   └── migrations/ - Database schema migrations
+│       │   │   └── seeds/      - Scripts for importing preset data
 │       │   ├── shared/         - Shared utilities and guards
 │       │   │   ├── cache/      - Redis caching modules
 │       │   │   └── guards/     - Auth guards and middleware
