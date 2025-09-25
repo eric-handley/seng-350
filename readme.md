@@ -33,19 +33,29 @@
 
 ```
 .
-├── docs/                  - Project documentation
-│   ├── adr/               - Architecture Decision Records
-│   └── team/              - Team policies and expectations
-├── src/
-│   ├── client/
-│   │   ├── public/        - Static assets and HTML entry point
-│   │   │   └── assets/    - Compiled JS bundles and source maps
-│   │   ├── src/           - React source code
-│   │   └── tests/         - Frontend unit tests
-│   └── server/
-│       ├── src/           - Nest.js backend code
-│       │   ├── auth/      - Auth.js authentication modules
-│       │   └── cache/     - Redis caching modules
-│       └── tests/         - Backend unit tests
-└── .vscode/               - Shared VS Code workspace settings
+├── docs/                       - Project documentation
+│   ├── adr/                    - Architecture Decision Records
+│   └── team/                   - Team policies and expectations
+├── src/                        
+│   ├── client/                 
+│   │   ├── public/             - Static assets and HTML entry point
+│   │   │   └── assets/         - Compiled JS bundles and source maps
+│   │   ├── src/                - React source code
+│   │   └── tests/              - Frontend unit tests
+│   └── server/                 
+│       ├── src/                - NestJS backend code
+│       │   ├── app/            - Main application module
+│       │   ├── auth/           - Authentication modules (Auth.js)
+│       │   ├── api/            - REST controllers (users, rooms, bookings, etc.)
+│       │   ├── services/       - Business logic services  
+│       │   ├── dto/            - Data Transfer Objects for API validation
+│       │   ├── database/       - TypeORM entities and migrations
+│       │   │   ├── entities/   - Database entity definitions
+│       │   │   └── migrations/ - Database schema migrations
+│       │   ├── shared/         - Shared utilities and guards
+│       │   │   ├── cache/      - Redis caching modules
+│       │   │   └── guards/     - Auth guards and middleware
+│       │   └── config/         - Configuration files
+│       └── tests/              - Backend unit tests
+└── .vscode/                    - Shared VS Code workspace settings
 ```
