@@ -19,7 +19,7 @@ erDiagram
 
     Rooms {
         uuid id PK
-        string room UK
+        string room UK "room + building_id unique"
         uuid building_id FK
         integer capacity
         enum room_type
@@ -47,8 +47,8 @@ erDiagram
         uuid id PK
         uuid user_id FK
         uuid room_id FK
-        datetime start_time "UTC"
-        datetime end_time "UTC"
+        timestamptz start_time "stored as UTC"
+        timestamptz end_time "stored as UTC"
         enum status
         uuid booking_series_id FK "nullable"
         timestamp created_at
@@ -59,8 +59,8 @@ erDiagram
         uuid id PK
         uuid user_id FK
         uuid room_id FK
-        datetime start_time "UTC"
-        datetime end_time "UTC"
+        timestamptz start_time "stored as UTC"
+        timestamptz end_time "stored as UTC"
         date series_end_date
         timestamp created_at
         timestamp updated_at
@@ -71,7 +71,7 @@ erDiagram
         uuid user_id FK
         string action
         enum entity_type
-        uuid entity_id
+        string entity_id
         timestamp created_at
         timestamp updated_at
     }
@@ -94,5 +94,5 @@ erDiagram
 **Enum Values**
 - `role`: Staff, Registrar, Admin
 - `status`: Active, Cancelled  
-- `room_type`: Classroom, Lecture theatre, Multi-access classroom, Flury Hall
+- `room_type`: Classroom, Lecture theatre, Multi-access classroom, Flury Hall, Unknown, David Lam Auditorium
 - `entity_type`: User, Building, Room, Equipment, RoomEquipment, Booking, BookingSeries

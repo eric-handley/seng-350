@@ -6,7 +6,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create enum types
         await queryRunner.query(`CREATE TYPE "public"."user_role_enum" AS ENUM('Staff', 'Registrar', 'Admin')`);
-        await queryRunner.query(`CREATE TYPE "public"."room_type_enum" AS ENUM('Classroom', 'Lecture theatre', 'Multi-access classroom', 'Flury Hall')`);
+        await queryRunner.query(`CREATE TYPE "public"."room_type_enum" AS ENUM('Classroom', 'Lecture theatre', 'Multi-access classroom', 'Flury Hall', 'Unknown', 'David Lam Auditorium')`);
         await queryRunner.query(`CREATE TYPE "public"."booking_status_enum" AS ENUM('Active', 'Cancelled')`);
         await queryRunner.query(`CREATE TYPE "public"."entity_type_enum" AS ENUM('User', 'Building', 'Room', 'Equipment', 'RoomEquipment', 'Booking', 'BookingSeries')`);
 
@@ -49,7 +49,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
                 "url" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                CONSTRAINT "UQ_rooms_room" UNIQUE ("room"),
+                CONSTRAINT "UQ_rooms_room_building" UNIQUE ("room", "building_id"),
                 CONSTRAINT "PK_rooms_id" PRIMARY KEY ("id")
             )
         `);
