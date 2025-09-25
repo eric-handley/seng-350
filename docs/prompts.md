@@ -32,6 +32,7 @@
     - `claude-code` prompts:
         - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
         - update @readme.md with the new backend folder structure
+        - implement the schema defined in @docs/db/schema.md in the postgres instance - see @docker-compose.yml
 
 **Design-I**
 
