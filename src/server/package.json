@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "npx nest start --watch",
     "start": "node dist/main.js",
-    "build": "npx nest build"
+    "build": "npx nest build",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
