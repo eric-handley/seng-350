@@ -1,6 +1,74 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Building } from '../database/entities/building.entity';
+import { BuildingResponseDto } from '../dto/building.dto';
 
 @Injectable()
 export class BuildingsService {
-  // TODO: Implement buildings business logic
+  constructor(
+    @InjectRepository(Building)
+    private readonly buildingRepository: Repository<Building>,
+  ) {}
+
+  async findAll(includeRooms = false): Promise<BuildingResponseDto[]> {
+    const relations = includeRooms ? ['rooms', 'rooms.room_equipment', 'rooms.room_equipment.equipment'] : [];
+    
+    const buildings = await this.buildingRepository.find({
+      relations,
+      order: { name: 'ASC' },
+    });
+
+    return buildings.map(building => this.toResponseDto(building, includeRooms));
+  }
+
+  async findOne(id: string, includeRooms = false): Promise<BuildingResponseDto> {
+    const relations = includeRooms ? ['rooms', 'rooms.room_equipment', 'rooms.room_equipment.equipment'] : [];
+    
+    const building = await this.buildingRepository.findOne({
+      where: { id },
+      relations,
+    });
+
+    if (!building) {
+      throw new NotFoundException('Building not found');
+    }
+
+    return this.toResponseDto(building, includeRooms);
+  }
+
+
+  private toResponseDto(building: Building, includeRooms = false): BuildingResponseDto {
+    const response: BuildingResponseDto = {
+      id: building.id,
+      name: building.name,
+      short_name: building.short_name,
+      created_at: building.created_at,
+      updated_at: building.updated_at,
+    };
+
+    if (includeRooms && building.rooms) {
+      response.rooms = building.rooms
+        .sort((a, b) => a.room.localeCompare(b.room))
+        .map(room => ({
+          id: room.id,
+          room: room.room,
+          building_id: room.building_id,
+          capacity: room.capacity,
+          room_type: room.room_type,
+          url: room.url,
+          created_at: room.created_at,
+          updated_at: room.updated_at,
+          room_equipment: room.room_equipment?.map(re => ({
+            equipment: {
+              id: re.equipment.id,
+              name: re.equipment.name,
+            },
+            quantity: re.quantity,
+          })),
+        }));
+    }
+
+    return response;
+  }
 }
