@@ -11,22 +11,22 @@
     "@nestjs/testing": "^11.0.0"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.6",
-    "@nestjs/core": "^11.1.6", 
-    "@nestjs/platform-express": "^11.1.6",
-    "@nestjs/typeorm": "^11.0.0",
-    "@nestjs/swagger": "^11.2.0",
-    "@nestjs/cache-manager": "^3.0.1",
-    "cache-manager": "^7.2.2",
-    "@keyv/redis": "^3.0.0",
-    "keyv": "^5.1.0",
     "@auth/core": "^0.37.2",
-    "@auth/express": "^0.6.1",
+    "@auth/express": "^0.11.0",
+    "@keyv/redis": "^3.0.0",
+    "@nestjs/cache-manager": "^3.0.1",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "cache-manager": "^7.2.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "keyv": "^5.1.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.27",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1"
+    "typeorm": "^0.3.27"
   }
 }
