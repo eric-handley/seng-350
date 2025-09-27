@@ -11,6 +11,9 @@
         2. [Performance Priorities](docs/adr/adr-2-performance-priorities.md)
         2. [Development Workflow](docs/adr/adr-3-development-workflow.md)
 - Implementation 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/implement))
+    - [Database Schema](docs/db/schema.md)
+    - [Swagger/API Usage](docs/api/api.md)
+
 
 **Team Docs**
 - [Meeting Minutes](docs/minutes.md)
@@ -18,6 +21,59 @@
 
 **Other**
 - [AI Prompt History](docs/prompts.md) 
+
+## Development
+
+Requirements:
+- Docker installed
+- Docker daemon running (or Docker Desktop)
+- Node.js + npm installed
+
+
+Start the full dev environment with all services:
+```bash
+npm start
+```
+
+Or use Docker Compose directly:
+```bash
+docker compose up -d
+```
+
+This will:
+- Install/update dependencies
+- Build and start the client (React app) on `localhost:5173`
+- Build and start the server (NestJS API) on `localhost:3000  `
+    - Show Swagger API docs on `localhost:3000/api-docs`
+    - Start PostgreSQL database on `localhost:5432`
+    - Start Redis cache on `localhost:6379`
+
+To stop all services:
+```bash
+npm stop
+# or
+docker compose down
+```
+
+To restart with fresh build:
+```bash
+npm restart
+# or
+docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate
+```
+
+### Other `npm` Scripts
+
+Run linter (checks formatting/style):
+```bash
+npm run lint
+```
+
+Run tests:
+```bash
+npm test
+npm run test:coverage # With coverage
+```
 
 ## Team Members
 
