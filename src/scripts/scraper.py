@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 BASE_URL = "https://www.uvic.ca/search/rooms/"
-OUTPUT_FILE = "../../data/uvic_rooms.json"
+OUTPUT_FILE = "../server/data/uvic_rooms.json"
 
 class UVicRoomScraper:
     def __init__(self, max_workers=10):
