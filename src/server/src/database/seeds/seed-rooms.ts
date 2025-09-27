@@ -70,6 +70,13 @@ async function main() {
     console.log(`Found ${roomsData.length} rooms to seed`);
 
     const buildingRepository = AppDataSource.getRepository(Building);
+    
+    // Check if data already exists to avoid unnecessary processing
+    const existingBuildingsCount = await buildingRepository.count();
+    if (existingBuildingsCount > 0) {
+      console.log(`Database already contains ${existingBuildingsCount} buildings. Skipping seed.`);
+      return;
+    }
     const roomRepository = AppDataSource.getRepository(Room);
     const equipmentRepository = AppDataSource.getRepository(Equipment);
     const roomEquipmentRepository = AppDataSource.getRepository(RoomEquipment);

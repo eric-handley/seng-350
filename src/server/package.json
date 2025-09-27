@@ -8,7 +8,8 @@
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
-    "seed:rooms": "npx ts-node src/database/seeds/seed-rooms.ts"
+    "seed:rooms": "npx ts-node src/database/seeds/seed-rooms.ts",
+    "db:setup": "npm run migration:run && npm run seed:rooms"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

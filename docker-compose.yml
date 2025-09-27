@@ -50,7 +50,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "npm run dev:server"]
+    command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
 
   db:
     image: postgres:16
