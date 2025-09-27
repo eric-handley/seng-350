@@ -41,6 +41,7 @@ Branch: `feature-35/better-web-scraper`
         - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
         - update @readme.md with the new backend folder structure
         - implement the schema defined in @docs/db/schema.md in the postgres instance - see @docker-compose.yml
+        - create a seed script in @src/server/src/database/seeds that populates the postgres instance defined in @docker-compose.yml with the data from @src/server/data/uvic_rooms.json . you must respect and follow @docs/db/schema.md and the db setup defined by @src/server/src/database/migrations/1732573200000-InitialSchema.ts
 
 **Design-I**
 
