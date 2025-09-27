@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Room, RoomType } from '../database/entities/room.entity';
+import { Room } from '../database/entities/room.entity';
 import { Equipment } from '../database/entities/equipment.entity';
 import { RoomQueryDto, RoomResponseDto } from '../dto/room.dto';
 

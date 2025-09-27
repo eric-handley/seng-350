@@ -38,6 +38,8 @@ build:
 lint:
   stage: lint
   script:
+    - echo "Starting Docker services..."
+    - npm run start
     - echo "Running ESlint checks..."
     - npm run lint
   allow_failure: false

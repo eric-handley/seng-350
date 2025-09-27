@@ -84,7 +84,7 @@ export class BookingsService {
   }
 
   async update(id: string, updateBookingDto: UpdateBookingDto, userId?: string): Promise<BookingResponseDto> {
-    const booking = await this.bookingRepository.findOne({ where: { id } });
+    const booking = await this.bookingRepository.findOne({ where: { id }, relations: ['user', 'room'] });
 
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -101,9 +101,9 @@ export class BookingsService {
     }
 
     if (updateBookingDto.room_id || updateBookingDto.start_time || updateBookingDto.end_time) {
-      const roomId = updateBookingDto.room_id || booking.room_id;
-      const startTime = updateBookingDto.start_time || booking.start_time;
-      const endTime = updateBookingDto.end_time || booking.end_time;
+      const roomId = updateBookingDto.room_id ?? booking.room_id;
+      const startTime = updateBookingDto.start_time ?? booking.start_time;
+      const endTime = updateBookingDto.end_time ?? booking.end_time;
 
       await this.checkForConflicts(roomId, startTime, endTime, id);
     }

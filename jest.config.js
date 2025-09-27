@@ -3,14 +3,20 @@ export default {
   projects: [
     {
       displayName: 'client',
-      preset: 'ts-jest/presets/default-esm',
+      preset: 'ts-jest/presets/js-with-ts-esm',
       testEnvironment: 'jsdom',
       extensionsToTreatAsEsm: ['.ts', '.tsx'],
       moduleNameMapper: {
+        // Keep ESM paths without .js extension working
         '^(\\.{1,2}/.*)\\.js$': '$1',
+        // Ensure a single React instance is used across the workspace
+        '^react$': '<rootDir>/node_modules/react',
+        '^react-dom$': '<rootDir>/node_modules/react-dom',
+        '^react/jsx-runtime$': '<rootDir>/node_modules/react/jsx-runtime.js',
+        '^react-dom/client$': '<rootDir>/node_modules/react-dom/client',
       },
       transform: {
-        '^.+\\.(ts|tsx)$': ['ts-jest', {
+        '^.+\\.(ts|tsx|js|jsx)$': ['ts-jest', {
           useESM: true,
           tsconfig: './src/client/tsconfig.json',
         }],

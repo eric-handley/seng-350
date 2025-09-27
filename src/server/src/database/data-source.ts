@@ -10,11 +10,11 @@ import { AuditLog } from './entities/audit-log.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.PGHOST || 'localhost',
-  port: parseInt(process.env.PGPORT || '5432'),
-  username: process.env.PGUSER || 'postgres',
-  password: process.env.PGPASSWORD || 'postgres',
-  database: process.env.PGDATABASE || 'postgres',
+  host: process.env.PGHOST ?? 'localhost',
+  port: parseInt(process.env.PGPORT ?? '5432'),
+  username: process.env.PGUSER ?? 'postgres',
+  password: process.env.PGPASSWORD ?? 'postgres',
+  database: process.env.PGDATABASE ?? 'postgres',
   synchronize: false,
   logging: true,
   entities: [

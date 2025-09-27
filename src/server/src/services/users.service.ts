@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../database/entities/user.entity';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -69,8 +69,8 @@ export class UsersService {
     }
 
     if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-      user.password_hash = updateUserDto.password;
+      const hashed = await bcrypt.hash(updateUserDto.password, 10);
+      user.password_hash = hashed;
       delete updateUserDto.password;
     }
 
@@ -90,6 +90,7 @@ export class UsersService {
   }
 
   private toResponseDto(user: User): UserResponseDto {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password_hash, ...userResponse } = user;
     return userResponse;
   }

@@ -43,6 +43,7 @@ Branch `issue-31/db-setup`
     - implement the schema defined in @docs/db/schema.md in the postgres instance - see @docker-compose.yml
     - create a seed script in @src/server/src/database/seeds that populates the postgres instance defined in @docker-compose.yml with the data from @src/server/data/uvic_rooms.json . you must respect and follow @docs/db/schema.md and the db setup defined by @src/server/src/database/migrations/1732573200000-InitialSchema.ts
     - set up basic CRUD endpoints for the server as defined by the project structure in @readme.md . use the schema reference in @docs/db/schema.md . only add endpoints that make sense, eg. buildings and equipment do not need to be updated or created via api. read the docs to get a better understanding of the app and which endpoints are needed
+    - run `npm run lint` and fix linter errors
 
 **Design-I**
 

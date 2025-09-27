@@ -28,11 +28,11 @@ interface RoomData {
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.PGHOST || 'localhost',
-  port: parseInt(process.env.PGPORT || '5432'),
-  username: process.env.PGUSER || 'postgres',
-  password: process.env.PGPASSWORD || 'postgres',
-  database: process.env.PGDATABASE || 'postgres',
+  host: process.env.PGHOST ?? 'localhost',
+  port: parseInt(process.env.PGPORT ?? '5432'),
+  username: process.env.PGUSER ?? 'postgres',
+  password: process.env.PGPASSWORD ?? 'postgres',
+  database: process.env.PGDATABASE ?? 'postgres',
   synchronize: false,
   logging: true,
   entities: [User, Building, Room, Equipment, RoomEquipment, Booking, BookingSeries, AuditLog],
@@ -59,22 +59,18 @@ function mapRoomType(roomType: string): RoomType {
 
 async function main() {
   try {
-    console.log('Initializing database connection...');
     await AppDataSource.initialize();
-    console.log('Database connection established');
 
     const dataPath = path.join(__dirname, '../../../data/uvic_rooms.json');
     const rawData = fs.readFileSync(dataPath, 'utf8');
     const roomsData: RoomData[] = JSON.parse(rawData);
 
-    console.log(`Found ${roomsData.length} rooms to seed`);
 
     const buildingRepository = AppDataSource.getRepository(Building);
     
     // Check if data already exists to avoid unnecessary processing
     const existingBuildingsCount = await buildingRepository.count();
     if (existingBuildingsCount > 0) {
-      console.log(`Database already contains ${existingBuildingsCount} buildings. Skipping seed.`);
       return;
     }
     const roomRepository = AppDataSource.getRepository(Room);
@@ -90,7 +86,7 @@ async function main() {
         if (!building) {
           building = await buildingRepository.findOne({
             where: { short_name: roomData.building.short_name }
-          }) || undefined;
+          }) ?? undefined;
           
           if (!building) {
             building = buildingRepository.create({
@@ -98,7 +94,6 @@ async function main() {
               short_name: roomData.building.short_name
             });
             building = await buildingRepository.save(building);
-            console.log(`Created building: ${building.name} (${building.short_name})`);
           }
           
           buildingMap.set(building.short_name, building);
@@ -114,7 +109,6 @@ async function main() {
         });
 
         if (existingRoom) {
-          console.log(`Room ${roomData.room_number} in ${building.short_name} already exists, skipping...`);
           continue;
         }
 
@@ -127,21 +121,19 @@ async function main() {
         });
 
         const savedRoom = await roomRepository.save(room);
-        console.log(`Created room: ${savedRoom.room} in ${building.short_name}`);
 
         for (const equipmentData of roomData.room_equipment) {
           let equipment = equipmentMap.get(equipmentData.name);
           if (!equipment) {
             equipment = await equipmentRepository.findOne({
               where: { name: equipmentData.name }
-            }) || undefined;
+            }) ?? undefined;
             
             if (!equipment) {
               equipment = equipmentRepository.create({
                 name: equipmentData.name
               });
               equipment = await equipmentRepository.save(equipment);
-              console.log(`Created equipment: ${equipment.name}`);
             }
             
             equipmentMap.set(equipment.name, equipment);
@@ -161,13 +153,11 @@ async function main() {
       }
     }
 
-    console.log('Room data seeding completed!');
   } catch (error) {
     console.error('Error during seeding:', error);
     process.exit(1);
   } finally {
     await AppDataSource.destroy();
-    console.log('Database connection closed');
   }
 }
 
