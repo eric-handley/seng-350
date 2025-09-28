@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { BookingStatus } from '../database/entities/booking.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -10,13 +10,13 @@ export class CreateBookingDto {
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)' })
-  @IsDateString()
   @Type(() => Date)
+  @IsDate()
   start_time!: Date;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Booking end time (ISO 8601)' })
-  @IsDateString()
   @Type(() => Date)
+  @IsDate()
   end_time!: Date;
 
   @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
@@ -33,14 +33,14 @@ export class UpdateBookingDto extends PartialType(CreateBookingDto) {
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)', required: false })
   @IsOptional()
-  @IsDateString()
   @Type(() => Date)
+  @IsDate()
   start_time?: Date;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Booking end time (ISO 8601)', required: false })
   @IsOptional()
-  @IsDateString()
   @Type(() => Date)
+  @IsDate()
   end_time?: Date;
 
   @ApiProperty({ enum: BookingStatus, example: BookingStatus.CANCELLED, description: 'Booking status', required: false })

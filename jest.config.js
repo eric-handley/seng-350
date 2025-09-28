@@ -42,6 +42,7 @@ export default {
       displayName: 'server',
       preset: 'ts-jest',
       testEnvironment: 'node',
+      globalTeardown: '<rootDir>/src/server/tests/global-teardown.ts',
       transform: {
         '^.+\\.ts$': ['ts-jest', {
           tsconfig: './src/server/tsconfig.json',

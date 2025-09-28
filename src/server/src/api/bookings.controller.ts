@@ -50,7 +50,7 @@ export class BookingsController {
     description: 'Invalid booking data (e.g., start time after end time)',
   })
   async create(
-    @Body(ValidationPipe) createBookingDto: CreateBookingDto,
+    @Body() createBookingDto: CreateBookingDto,
     @Query('userId', ParseUUIDPipe) userId: string,
   ): Promise<BookingResponseDto> {
     return this.bookingsService.create(createBookingDto, userId);
@@ -117,7 +117,7 @@ export class BookingsController {
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(ValidationPipe) updateBookingDto: UpdateBookingDto,
+    @Body() updateBookingDto: UpdateBookingDto,
     @Query('userId') userId?: string,
   ): Promise<BookingResponseDto> {
     return this.bookingsService.update(id, updateBookingDto, userId);

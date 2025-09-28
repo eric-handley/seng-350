@@ -1,4 +1,5 @@
 import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -10,6 +11,7 @@ export class RoomQueryDto {
 
   @ApiProperty({ example: 50, description: 'Minimum room capacity', required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   min_capacity?: number;

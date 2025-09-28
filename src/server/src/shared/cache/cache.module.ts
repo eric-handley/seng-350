@@ -7,6 +7,13 @@ import createKeyv from '@keyv/redis';
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => {
+        // Use in-memory cache during tests to avoid open Redis handles
+        if (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID) {
+          return {
+            ttl: 300000,
+          };
+        }
+
         const redisUrl = `redis://${process.env.REDIS_HOST ?? 'redis'}:${process.env.REDIS_PORT ?? '6379'}`;
         return {
           stores: [new createKeyv(redisUrl)],
