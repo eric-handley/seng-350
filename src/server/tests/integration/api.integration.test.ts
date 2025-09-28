@@ -1,25 +1,25 @@
 // Mock ESM-only module to avoid Jest transform errors
 // Must be declared before imports that transitively load it
 jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: any, _res: any, next: any) => next(),
+  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
 }));
 
 // Ensure AppModule connects to the dedicated test services
 (() => {
-  process.env.PGHOST = process.env.PGHOST_TEST || 'localhost';
-  process.env.PGPORT = process.env.PGPORT_TEST || '5433';
-  process.env.PGUSER = process.env.PGUSER_TEST || 'test';
-  process.env.PGPASSWORD = process.env.PGPASSWORD_TEST || 'test';
-  process.env.PGDATABASE = process.env.PGDATABASE_TEST || 'test_db';
-  process.env.REDIS_HOST = process.env.REDIS_HOST || 'localhost';
-  process.env.REDIS_PORT = process.env.REDIS_PORT || '6379';
+  process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
+  process.env.PGPORT = process.env.PGPORT_TEST ?? '5433';
+  process.env.PGUSER = process.env.PGUSER_TEST ?? 'test';
+  process.env.PGPASSWORD = process.env.PGPASSWORD_TEST ?? 'test';
+  process.env.PGDATABASE = process.env.PGDATABASE_TEST ?? 'test_db';
+  process.env.REDIS_HOST = process.env.REDIS_HOST ?? 'localhost';
+  process.env.REDIS_PORT = process.env.REDIS_PORT ?? '6379';
 })();
 
 // Increase timeout for DB container startup/sync
 jest.setTimeout(30000);
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request, { Response } from 'supertest';
 import { Repository } from 'typeorm';
@@ -30,6 +30,7 @@ import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { BookingSeries } from '../../src/database/entities/booking-series.entity';
 import { AuditLog } from '../../src/database/entities/audit-log.entity';
+import { ValidationExceptionFilter } from '../../src/filters/validation-exception.filter';
 
 // Shared setup function
 async function setupTestApp() {
@@ -45,7 +46,24 @@ async function setupTestApp() {
     transform: true,
     whitelist: true,
     forbidNonWhitelisted: true,
+    exceptionFactory: (errors) => {
+      const formattedErrors = errors.map(error => {
+        const constraints = error.constraints;
+        if (constraints) {
+          return `${error.property}: ${Object.values(constraints).join(', ')}`;
+        }
+        return `${error.property}: validation failed`;
+      });
+      return new BadRequestException({
+        message: formattedErrors,
+        error: 'Validation Failed',
+        statusCode: 400,
+      });
+    },
   }));
+
+  // Apply global exception filter for better error reporting
+  app.useGlobalFilters(new ValidationExceptionFilter());
   
   await app.init();
 
@@ -140,27 +158,25 @@ describe('/users (e2e)', () => {
       role: UserRole.STAFF,
     });
     const savedUser = await userRepository.save(testUser);
-    const updateData = { full_name: 'Updated Test User' };
+    const updateData = { role: UserRole.REGISTRAR };
 
     return request(app.getHttpServer())
       .patch(`/users/${savedUser.id}`)
       .send(updateData)
       .expect(200)
       .expect((res) => {
-        expect(res.body.full_name).toBe(updateData.full_name);
+        expect(res.body.role).toBe(updateData.role);
       });
   });
 });
 
 describe('/buildings (e2e)', () => {
   let app: INestApplication;
-  let buildingRepository: Repository<Building>;
   let testBuilding: Building;
 
   beforeAll(async () => {
     const setup = await setupTestApp();
     app = setup.app;
-    buildingRepository = setup.buildingRepository;
     
     const testData = await getTestData(setup.buildingRepository, setup.roomRepository);
     testBuilding = testData.testBuilding;

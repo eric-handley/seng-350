@@ -17,7 +17,7 @@ describe('BookingsService', () => {
   const mockBooking = {
     id: mockUUID,
     user_id: mockUUID,
-    user: TestDataFactory.createUser({ id: mockUUID }) as any,
+    user: TestDataFactory.createUser({ id: mockUUID }),
     room: TestDataFactory.createRoom(undefined, { id: mockUUID }),
     start_time: generateMockDate(9),
     end_time: generateMockDate(10),

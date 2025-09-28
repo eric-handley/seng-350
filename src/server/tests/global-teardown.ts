@@ -11,11 +11,11 @@ import { RoomEquipment } from '../src/database/entities/room-equipment.entity';
 export default async function globalTeardown() {
   // Prefer explicit TEST env; fall back to standard env vars
   // Match integration test defaults: localhost:5433, test/test, test_db
-  const host = process.env.PGHOST_TEST || process.env.PGHOST || 'localhost';
-  const port = Number(process.env.PGPORT_TEST || process.env.PGPORT || 5433);
-  const username = process.env.PGUSER_TEST || process.env.PGUSER || 'test';
-  const password = process.env.PGPASSWORD_TEST || process.env.PGPASSWORD || 'test';
-  const database = process.env.PGDATABASE_TEST || process.env.PGDATABASE || 'test_db';
+  const host = process.env.PGHOST_TEST ?? process.env.PGHOST ?? 'localhost';
+  const port = Number(process.env.PGPORT_TEST ?? process.env.PGPORT ?? 5433);
+  const username = process.env.PGUSER_TEST ?? process.env.PGUSER ?? 'test';
+  const password = process.env.PGPASSWORD_TEST ?? process.env.PGPASSWORD ?? 'test';
+  const database = process.env.PGDATABASE_TEST ?? process.env.PGDATABASE ?? 'test_db';
 
   const ds = new DataSource({
     type: 'postgres',
@@ -42,7 +42,7 @@ export default async function globalTeardown() {
     await ds.query('TRUNCATE TABLE "bookings", "booking_series", "audit_logs" RESTART IDENTITY CASCADE');
     await ds.query('TRUNCATE TABLE "users" RESTART IDENTITY CASCADE');
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.error('Global teardown cleanup failed:', err);
   } finally {
     await ds.destroy();

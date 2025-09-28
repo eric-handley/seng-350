@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
