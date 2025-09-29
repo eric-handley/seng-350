@@ -46,3 +46,5 @@
     - [Conversation Link](https://chatgpt.com/share/68cf0022-738c-8009-b330-63ceaf29bb04)
 5. "Hi chat, can you help me build a typescript login-page using react, the page should follow the style designs of the added images, keep the page simple to begin with."
  - [Conversation Link](https://chatgpt.com/c/68d83f87-bd80-8326-9e95-5cd02279058e)
+ 6. "how would i connect a .css page to a .tsx page?"
+  - [Conversation Link](https://chatgpt.com/c/68dac82b-a650-8333-9ea7-a0c8c5f6e88c)

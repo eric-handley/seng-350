@@ -19601,7 +19601,7 @@
       console.log("Logging in with:", { email, password });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "login-container", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "login-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: "Staff Login" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: "UVic Classroom Booking Login" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { className: "login-form", onSubmit: handleLogin, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "Email" }),

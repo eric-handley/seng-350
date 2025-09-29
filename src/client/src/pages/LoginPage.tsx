@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./LoginPage.css";
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +12,7 @@ export default function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1>Staff Login</h1>
+        <h1>UVic Classroom Booking Login</h1>
         <form className="login-form" onSubmit={handleLogin}>
           <div>
             <label>Email</label>
