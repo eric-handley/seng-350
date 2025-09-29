@@ -18,6 +18,7 @@
   --line: #1f3550;
   --shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
 }
+
 * {
   box-sizing: border-box;
 }
@@ -37,6 +38,8 @@ main.theme {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  color: var(--text);
+  background: var(--bg);
 }
 /* Topbar */
 .topbar {
@@ -269,8 +272,8 @@ main.theme {
   border-color: rgba(227, 24, 55, 0.35);
 }
 .badge--info {
-  background: rgba(0, 85, 183, 0.16);
-  color: #00356c;
+  background: rgba(1, 41, 87, 0.333);
+  color: #057eff;
   border-color: rgba(0, 85, 183, 0.35);
 }
 /* Inputs */
