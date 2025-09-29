@@ -1,4 +1,7 @@
 /* src/pages/LoginPage.css */
+.login-container {
+  background: pink !important;
+}
 body {
   font-family: Arial, sans-serif;
   background-color: #f9fafb;
