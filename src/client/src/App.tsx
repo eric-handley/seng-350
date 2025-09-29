@@ -35,12 +35,6 @@ const ROOMS: Room[] = [
   { id: 'r-401', name: 'L-2A',  building: 'Library', capacity: 4 },
 ]
 
-const [users, setUsers] = useState<User[]>([
-  { id: '1', name: 'Alice Johnson', role: 'admin', email: 'alicejohnson@uvic.ca'},
-  { id: '2', name: 'Bob Smith', role: 'staff', email: 'bobsmith@uvic.ca'},
-  { id: '3', name: 'Charlie Doe', role: 'registrar', email: 'charliedoe@uvic.ca'},
-])
-
 const seedToday = () => {
   const d = new Date()
   d.setSeconds(0, 0)
@@ -87,6 +81,11 @@ type TabKey = 'schedule' | 'book' | 'history' | 'users'
 
 export default function App() {
   const [tab, setTab] = useState<TabKey>('book')
+  const [users, setUsers] = useState<User[]>([
+    { id: '1', name: 'Alice Johnson', role: 'admin', email: 'alicejohnson@uvic.ca'},
+    { id: '2', name: 'Bob Smith', role: 'staff', email: 'bobsmith@uvic.ca'},
+    { id: '3', name: 'Charlie Doe', role: 'registrar', email: 'charliedoe@uvic.ca'},
+  ])
 
   // Filters
   const [building, setBuilding] = useState<string>('')
