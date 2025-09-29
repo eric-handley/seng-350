@@ -50,7 +50,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "npm run dev:server"]
+    command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
 
   db:
     image: postgres:16
@@ -62,6 +62,8 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - db-data:/var/lib/postgresql/data
+      # Initialize additional users/databases on first run
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -80,6 +82,42 @@ services:
       timeout: 3s
       retries: 5
 
+  test-db:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test_db
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  test-db-setup:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=test
+      - PGHOST=test-db
+      - PGPORT=5432
+      - PGUSER=test
+      - PGPASSWORD=test
+      - PGDATABASE=test_db
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      test-db:
+        condition: service_healthy
+    command: ["sh", "-c", "cd src/server && npm run db:setup"]
+
 volumes:
   db-data:
   redis-data:
+  test-db-data:

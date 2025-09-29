@@ -45,6 +45,9 @@ lint:
 test:
   stage: test
   script:
+    - echo "Starting Docker services..."
+    - docker compose down -v
+    - npm run start
     - echo "Running test suites..."
     - npm run test
     # - npm run test:coverage - Will reenable later

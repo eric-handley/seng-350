@@ -60,12 +60,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a217-classroom.php"
   },
   {
-    "room_number": "A221",
+    "room_number": "A208",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 22,
+    "capacity": 43,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -105,7 +105,127 @@
         "quantity": 1
       },
       {
-        "name": "Video and audio laptop connectors (HDMI and USB)",
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a208-classroom.php"
+  },
+  {
+    "room_number": "A118",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 24,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a118-classroom.php"
+  },
+  {
+    "room_number": "B150",
+    "building": {
+      "name": "Bob Wright Centre",
+      "short_name": "BWC"
+    },
+    "capacity": 358,
+    "room_type": "Flury Hall",
+    "room_equipment": [
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 3
+      },
+      {
+        "name": "Document camera",
+        "quantity": 2
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
         "quantity": 1
       },
       {
@@ -117,7 +237,67 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a221-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/bwc-b150-flury-hall.php"
+  },
+  {
+    "room_number": "A216",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 32,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a216-classroom.php"
   },
   {
     "room_number": "A207",
@@ -180,12 +360,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a207-classroom.php"
   },
   {
-    "room_number": "A208",
+    "room_number": "A224",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 43,
+    "capacity": 86,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -237,19 +417,19 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a208-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a224-classroom.php"
   },
   {
-    "room_number": "A216",
+    "room_number": "A221",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 32,
+    "capacity": 22,
     "room_type": "Classroom",
     "room_equipment": [
       {
-        "name": "Chalkboard",
+        "name": "Black chalkboard",
         "quantity": 1
       },
       {
@@ -285,11 +465,11 @@
         "quantity": 1
       },
       {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "name": "Video and audio laptop connectors (HDMI and USB)",
         "quantity": 1
       },
       {
-        "name": "Button controls for AV system",
+        "name": "Touch panel controls for AV system",
         "quantity": 1
       },
       {
@@ -297,7 +477,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a216-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a221-classroom.php"
   },
   {
     "room_number": "A127",
@@ -364,66 +544,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a127-multi-access-classroom.php"
   },
   {
-    "room_number": "A224",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 86,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a224-classroom.php"
-  },
-  {
     "room_number": "A104",
     "building": {
       "name": "Bob Wright Centre",
@@ -482,126 +602,6 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/bwc-a104-lecture-theatre.php"
-  },
-  {
-    "room_number": "B150",
-    "building": {
-      "name": "Bob Wright Centre",
-      "short_name": "BWC"
-    },
-    "capacity": 358,
-    "room_type": "Flury Hall",
-    "room_equipment": [
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 3
-      },
-      {
-        "name": "Document camera",
-        "quantity": 2
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/bwc-b150-flury-hall.php"
-  },
-  {
-    "room_number": "A118",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 24,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a118-classroom.php"
   },
   {
     "room_number": "A225",
@@ -724,12 +724,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a325-classroom.php"
   },
   {
-    "room_number": "A329",
+    "room_number": "A317",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 30,
+    "capacity": 47,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -781,179 +781,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a329-classroom.php"
-  },
-  {
-    "room_number": "A330",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 22,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI and USB)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a330-classroom.php"
-  },
-  {
-    "room_number": "A320",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 45,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a320-classroom.php"
-  },
-  {
-    "room_number": "A308",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 12,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a308-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a317-classroom.php"
   },
   {
     "room_number": "A313",
@@ -1016,6 +844,66 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a313-classroom.php"
   },
   {
+    "room_number": "A326",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 23,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI and USB)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a326-classroom.php"
+  },
+  {
     "room_number": "A312",
     "building": {
       "name": "Clearihue Building",
@@ -1076,12 +964,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-a312-classroom.php"
   },
   {
-    "room_number": "A317",
+    "room_number": "A320",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 47,
+    "capacity": 45,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -1133,23 +1021,19 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a317-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a320-classroom.php"
   },
   {
-    "room_number": "A326",
+    "room_number": "A330",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 23,
+    "capacity": 22,
     "room_type": "Classroom",
     "room_equipment": [
       {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
+        "name": "Green chalkboard",
         "quantity": 1
       },
       {
@@ -1193,7 +1077,123 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-a326-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a330-classroom.php"
+  },
+  {
+    "room_number": "A308",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 12,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a308-classroom.php"
+  },
+  {
+    "room_number": "A329",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 30,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-a329-classroom.php"
   },
   {
     "room_number": "B415",
@@ -1312,6 +1312,62 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-b215-classroom.php"
   },
   {
+    "room_number": "B315",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 20,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-b315-classroom.php"
+  },
+  {
     "room_number": "C109",
     "building": {
       "name": "Clearihue Building",
@@ -1372,34 +1428,14 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-c109-classroom.php"
   },
   {
-    "room_number": "B315",
+    "room_number": "C110",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 20,
+    "capacity": 42,
     "room_type": "Classroom",
     "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
       {
         "name": "Digital video projector",
         "quantity": 1
@@ -1425,7 +1461,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-b315-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c110-classroom.php"
   },
   {
     "room_number": "C108",
@@ -1484,42 +1520,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-c108-classroom.php"
   },
   {
-    "room_number": "C110",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 42,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c110-classroom.php"
-  },
-  {
     "room_number": "C112",
     "building": {
       "name": "Clearihue Building",
@@ -1576,7 +1576,7 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-c112-classroom.php"
   },
   {
-    "room_number": "C113",
+    "room_number": "C111",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
@@ -1586,6 +1586,106 @@
     "room_equipment": [
       {
         "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c111-classroom.php"
+  },
+  {
+    "room_number": "C116",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 12,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c116-classroom.php"
+  },
+  {
+    "room_number": "C115",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 30,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
         "quantity": 1
       },
       {
@@ -1629,7 +1729,197 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c113-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c115-classroom.php"
+  },
+  {
+    "room_number": "C118",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 12,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c118-classroom.php"
+  },
+  {
+    "room_number": "D126",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 16,
+    "room_type": "Classroom",
+    "room_equipment": [],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-d126-classroom.php"
+  },
+  {
+    "room_number": "C214",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 22,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c214-classroom.php"
+  },
+  {
+    "room_number": "C316",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 20,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c316-classroom.php"
+  },
+  {
+    "room_number": "D125",
+    "building": {
+      "name": "Clearihue Building",
+      "short_name": "CLE"
+    },
+    "capacity": 16,
+    "room_type": "Classroom",
+    "room_equipment": [],
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-d125-classroom.php"
   },
   {
     "room_number": "D131",
@@ -1696,23 +1986,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-d131-classroom.php"
   },
   {
-    "room_number": "D125",
+    "room_number": "D130",
     "building": {
       "name": "Clearihue Building",
       "short_name": "CLE"
     },
-    "capacity": 16,
-    "room_type": "Classroom",
-    "room_equipment": [],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-d125-classroom.php"
-  },
-  {
-    "room_number": "C115",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 30,
+    "capacity": 21,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -1720,7 +1999,7 @@
         "quantity": 1
       },
       {
-        "name": "Podium",
+        "name": "Whiteboard",
         "quantity": 1
       },
       {
@@ -1764,78 +2043,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c115-classroom.php"
-  },
-  {
-    "room_number": "D126",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 16,
-    "room_type": "Classroom",
-    "room_equipment": [],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-d126-classroom.php"
-  },
-  {
-    "room_number": "C111",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 28,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c111-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-d130-classroom.php"
   },
   {
     "room_number": "D132",
@@ -1909,122 +2117,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cle-d134-classroom.php"
   },
   {
-    "room_number": "A120",
-    "building": {
-      "name": "Cornett Building",
-      "short_name": "COR"
-    },
-    "capacity": 81,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-a120-classroom.php"
-  },
-  {
-    "room_number": "C214",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 22,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c214-classroom.php"
-  },
-  {
     "room_number": "D285",
     "building": {
       "name": "Clearihue Building",
@@ -2059,42 +2151,6 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/cle-d285-classroom.php"
-  },
-  {
-    "room_number": "C116",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 12,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c116-classroom.php"
   },
   {
     "room_number": "A121",
@@ -2217,6 +2273,122 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-a125-classroom.php"
   },
   {
+    "room_number": "A120",
+    "building": {
+      "name": "Cornett Building",
+      "short_name": "COR"
+    },
+    "capacity": 81,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-a120-classroom.php"
+  },
+  {
+    "room_number": "A128",
+    "building": {
+      "name": "Cornett Building",
+      "short_name": "COR"
+    },
+    "capacity": 32,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-a128-classroom.php"
+  },
+  {
     "room_number": "A129",
     "building": {
       "name": "Cornett Building",
@@ -2275,6 +2447,58 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/cor-a129-classroom.php"
+  },
+  {
+    "room_number": "A132",
+    "building": {
+      "name": "Cornett Building",
+      "short_name": "COR"
+    },
+    "capacity": 14,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-a132-classroom.php"
   },
   {
     "room_number": "A221",
@@ -2337,58 +2561,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-a221-classroom.php"
   },
   {
-    "room_number": "A132",
-    "building": {
-      "name": "Cornett Building",
-      "short_name": "COR"
-    },
-    "capacity": 14,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-a132-classroom.php"
-  },
-  {
     "room_number": "A225",
     "building": {
       "name": "Cornett Building",
@@ -2449,20 +2621,16 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-a225-classroom.php"
   },
   {
-    "room_number": "A229",
+    "room_number": "C113",
     "building": {
-      "name": "Cornett Building",
-      "short_name": "COR"
+      "name": "Clearihue Building",
+      "short_name": "CLE"
     },
-    "capacity": 62,
+    "capacity": 28,
     "room_type": "Classroom",
     "room_equipment": [
       {
         "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
         "quantity": 1
       },
       {
@@ -2506,63 +2674,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-a229-classroom.php"
-  },
-  {
-    "room_number": "A128",
-    "building": {
-      "name": "Cornett Building",
-      "short_name": "COR"
-    },
-    "capacity": 32,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-a128-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cle-c113-classroom.php"
   },
   {
     "room_number": "B107",
@@ -2625,12 +2737,72 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-b107-classroom.php"
   },
   {
-    "room_number": "B108",
+    "room_number": "A229",
     "building": {
       "name": "Cornett Building",
       "short_name": "COR"
     },
-    "capacity": 71,
+    "capacity": 62,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-a229-classroom.php"
+  },
+  {
+    "room_number": "B111",
+    "building": {
+      "name": "Cornett Building",
+      "short_name": "COR"
+    },
+    "capacity": 50,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -2682,7 +2854,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-b108-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-b111-classroom.php"
   },
   {
     "room_number": "B129",
@@ -2805,12 +2977,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-b112-classroom.php"
   },
   {
-    "room_number": "B111",
+    "room_number": "B108",
     "building": {
       "name": "Cornett Building",
       "short_name": "COR"
     },
-    "capacity": 50,
+    "capacity": 71,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -2862,7 +3034,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-b111-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-b108-classroom.php"
   },
   {
     "room_number": "B135",
@@ -2981,62 +3153,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cor-b143-classroom.php"
   },
   {
-    "room_number": "B145",
-    "building": {
-      "name": "Cornett Building",
-      "short_name": "COR"
-    },
-    "capacity": 36,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cor-b145-classroom.php"
-  },
-  {
     "room_number": "146",
     "building": {
       "name": "Cunningham Building",
@@ -3101,13 +3217,13 @@
     "url": "https://www.uvic.ca/search/rooms/pages/cun-146-classroom.php"
   },
   {
-    "room_number": "C103",
+    "room_number": "B145",
     "building": {
-      "name": "David Strong Building",
-      "short_name": "DSB"
+      "name": "Cornett Building",
+      "short_name": "COR"
     },
-    "capacity": 186,
-    "room_type": "Lecture Theatre",
+    "capacity": 36,
+    "room_type": "Classroom",
     "room_equipment": [
       {
         "name": "Green chalkboard",
@@ -3115,10 +3231,6 @@
       },
       {
         "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
         "quantity": 1
       },
       {
@@ -3130,16 +3242,16 @@
         "quantity": 1
       },
       {
-        "name": "Projector present against wall",
+        "name": "Pull-down presentation screen",
         "quantity": 1
       },
       {
         "name": "Digital video projector",
-        "quantity": 3
+        "quantity": 1
       },
       {
         "name": "Document camera",
-        "quantity": 2
+        "quantity": 1
       },
       {
         "name": "Built-in classroom computer with webcam",
@@ -3150,7 +3262,7 @@
         "quantity": 1
       },
       {
-        "name": "Touch panel controls for AV system",
+        "name": "Button controls for AV system",
         "quantity": 1
       },
       {
@@ -3158,7 +3270,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c103-lecture-theatre.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/cor-b145-classroom.php"
   },
   {
     "room_number": "C108",
@@ -3221,13 +3333,13 @@
     "url": "https://www.uvic.ca/search/rooms/pages/dsb-c108-classroom.php"
   },
   {
-    "room_number": "C114",
+    "room_number": "C103",
     "building": {
       "name": "David Strong Building",
       "short_name": "DSB"
     },
-    "capacity": 20,
-    "room_type": "Classroom",
+    "capacity": 186,
+    "room_type": "Lecture Theatre",
     "room_equipment": [
       {
         "name": "Green chalkboard",
@@ -3235,6 +3347,10 @@
       },
       {
         "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
         "quantity": 1
       },
       {
@@ -3251,11 +3367,11 @@
       },
       {
         "name": "Digital video projector",
-        "quantity": 1
+        "quantity": 3
       },
       {
         "name": "Document camera",
-        "quantity": 1
+        "quantity": 2
       },
       {
         "name": "Built-in classroom computer with webcam",
@@ -3266,7 +3382,7 @@
         "quantity": 1
       },
       {
-        "name": "Button controls for AV system",
+        "name": "Touch panel controls for AV system",
         "quantity": 1
       },
       {
@@ -3274,7 +3390,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c114-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c103-lecture-theatre.php"
   },
   {
     "room_number": "C116",
@@ -3337,12 +3453,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/dsb-c116-classroom.php"
   },
   {
-    "room_number": "C118",
+    "room_number": "C114",
     "building": {
       "name": "David Strong Building",
       "short_name": "DSB"
     },
-    "capacity": 74,
+    "capacity": 20,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -3351,10 +3467,6 @@
       },
       {
         "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
         "quantity": 1
       },
       {
@@ -3378,7 +3490,7 @@
         "quantity": 1
       },
       {
-        "name": "Built-in classroom computer",
+        "name": "Built-in classroom computer with webcam",
         "quantity": 1
       },
       {
@@ -3394,7 +3506,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c118-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c114-classroom.php"
   },
   {
     "room_number": "C124",
@@ -3457,12 +3569,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/dsb-c124-classroom.php"
   },
   {
-    "room_number": "C122",
+    "room_number": "C118",
     "building": {
       "name": "David Strong Building",
       "short_name": "DSB"
     },
-    "capacity": 64,
+    "capacity": 74,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -3498,7 +3610,7 @@
         "quantity": 1
       },
       {
-        "name": "Built-in classroom computer with webcam",
+        "name": "Built-in classroom computer",
         "quantity": 1
       },
       {
@@ -3514,215 +3626,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c122-classroom.php"
-  },
-  {
-    "room_number": "C126",
-    "building": {
-      "name": "David Strong Building",
-      "short_name": "DSB"
-    },
-    "capacity": 35,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c126-classroom.php"
-  },
-  {
-    "room_number": "A102",
-    "building": {
-      "name": "David Turpin Building",
-      "short_name": "DTB"
-    },
-    "capacity": 110,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Adjustable height desk (manual)",
-        "quantity": 1
-      },
-      {
-        "name": "Unpadded chair (no arms)",
-        "quantity": 1
-      },
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a102-classroom.php"
-  },
-  {
-    "room_number": "C128",
-    "building": {
-      "name": "David Strong Building",
-      "short_name": "DSB"
-    },
-    "capacity": 35,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c128-classroom.php"
-  },
-  {
-    "room_number": "C118",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 12,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c118-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c118-classroom.php"
   },
   {
     "room_number": "C130",
@@ -3785,7 +3689,375 @@
     "url": "https://www.uvic.ca/search/rooms/pages/dsb-c130-classroom.php"
   },
   {
-    "room_number": "060",
+    "room_number": "C126",
+    "building": {
+      "name": "David Strong Building",
+      "short_name": "DSB"
+    },
+    "capacity": 35,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c126-classroom.php"
+  },
+  {
+    "room_number": "C128",
+    "building": {
+      "name": "David Strong Building",
+      "short_name": "DSB"
+    },
+    "capacity": 35,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c128-classroom.php"
+  },
+  {
+    "room_number": "C122",
+    "building": {
+      "name": "David Strong Building",
+      "short_name": "DSB"
+    },
+    "capacity": 64,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dsb-c122-classroom.php"
+  },
+  {
+    "room_number": "A102",
+    "building": {
+      "name": "David Turpin Building",
+      "short_name": "DTB"
+    },
+    "capacity": 110,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Adjustable height desk (manual)",
+        "quantity": 1
+      },
+      {
+        "name": "Unpadded chair (no arms)",
+        "quantity": 1
+      },
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a102-classroom.php"
+  },
+  {
+    "room_number": "A104",
+    "building": {
+      "name": "David Turpin Building",
+      "short_name": "DTB"
+    },
+    "capacity": 110,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Adjustable height desk (manual)",
+        "quantity": 1
+      },
+      {
+        "name": "Unpadded chair (no arms)",
+        "quantity": 1
+      },
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a104-classroom.php"
+  },
+  {
+    "room_number": "A120",
+    "building": {
+      "name": "David Turpin Building",
+      "short_name": "DTB"
+    },
+    "capacity": 250,
+    "room_type": "Lecture Theatre",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 3
+      },
+      {
+        "name": "Document camera",
+        "quantity": 2
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a120-lecture-theatre.php"
+  },
+  {
+    "room_number": "062",
+    "building": {
+      "name": "Elliot Building",
+      "short_name": "ELL"
+    },
+    "capacity": 80,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Sink with water and gas taps",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ell-062-classroom.php"
+  },
+  {
+    "room_number": "061",
     "building": {
       "name": "Elliot Building",
       "short_name": "ELL"
@@ -3846,7 +4118,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ell-060-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/ell-061-classroom.php"
   },
   {
     "room_number": "A110",
@@ -3903,66 +4175,6 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/dtb-a110-lecture-theatre.php"
-  },
-  {
-    "room_number": "160",
-    "building": {
-      "name": "Elliot Building",
-      "short_name": "ELL"
-    },
-    "capacity": 48,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Sink with water and gas taps",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ell-160-classroom.php"
   },
   {
     "room_number": "161",
@@ -4029,7 +4241,7 @@
     "url": "https://www.uvic.ca/search/rooms/pages/ell-161-classroom.php"
   },
   {
-    "room_number": "061",
+    "room_number": "060",
     "building": {
       "name": "Elliot Building",
       "short_name": "ELL"
@@ -4090,7 +4302,67 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ell-061-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/ell-060-classroom.php"
+  },
+  {
+    "room_number": "160",
+    "building": {
+      "name": "Elliot Building",
+      "short_name": "ELL"
+    },
+    "capacity": 48,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Sink with water and gas taps",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ell-160-classroom.php"
   },
   {
     "room_number": "162",
@@ -4217,6 +4489,62 @@
     "url": "https://www.uvic.ca/search/rooms/pages/ell-167-lecture-theatre.php"
   },
   {
+    "room_number": "104",
+    "building": {
+      "name": "Engineering and Computer Science Building",
+      "short_name": "ECS"
+    },
+    "capacity": 60,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Motorized presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 2
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ecs-104-classroom.php"
+  },
+  {
     "room_number": "168",
     "building": {
       "name": "Elliot Building",
@@ -4277,330 +4605,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/ell-168-lecture-theatre.php"
   },
   {
-    "room_number": "104",
-    "building": {
-      "name": "Engineering and Computer Science Building",
-      "short_name": "ECS"
-    },
-    "capacity": 60,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Motorized presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 2
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ecs-104-classroom.php"
-  },
-  {
-    "room_number": "A104",
-    "building": {
-      "name": "David Turpin Building",
-      "short_name": "DTB"
-    },
-    "capacity": 110,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Adjustable height desk (manual)",
-        "quantity": 1
-      },
-      {
-        "name": "Unpadded chair (no arms)",
-        "quantity": 1
-      },
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a104-classroom.php"
-  },
-  {
-    "room_number": "123",
-    "building": {
-      "name": "Engineering and Computer Science Building",
-      "short_name": "ECS"
-    },
-    "capacity": 299,
-    "room_type": "Lecture Theatre",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Motorized presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 3
-      },
-      {
-        "name": "Document camera",
-        "quantity": 2
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ecs-123-lecture-theatre.php"
-  },
-  {
-    "room_number": "130",
-    "building": {
-      "name": "Engineering and Computer Science Building",
-      "short_name": "ECS"
-    },
-    "capacity": 34,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Motorized presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 2
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ecs-130-classroom.php"
-  },
-  {
-    "room_number": "C316",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 20,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-c316-classroom.php"
-  },
-  {
-    "room_number": "D130",
-    "building": {
-      "name": "Clearihue Building",
-      "short_name": "CLE"
-    },
-    "capacity": 21,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/cle-d130-classroom.php"
-  },
-  {
     "room_number": "124",
     "building": {
       "name": "Engineering and Computer Science Building",
@@ -4655,242 +4659,6 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/ecs-124-classroom.php"
-  },
-  {
-    "room_number": "103",
-    "building": {
-      "name": "Fine Arts Building",
-      "short_name": "FIA"
-    },
-    "capacity": 50,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "DVD player",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/fia-103-classroom.php"
-  },
-  {
-    "room_number": "160",
-    "building": {
-      "name": "First Peoples House",
-      "short_name": "FPH"
-    },
-    "capacity": 30,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/fph-160-classroom.php"
-  },
-  {
-    "room_number": "104",
-    "building": {
-      "name": "Fine Arts Building",
-      "short_name": "FIA"
-    },
-    "capacity": 28,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/fia-104-classroom.php"
-  },
-  {
-    "room_number": "105",
-    "building": {
-      "name": "Harry Hickman Building",
-      "short_name": "HHB"
-    },
-    "capacity": 215,
-    "room_type": "Lecture Theatre",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 3
-      },
-      {
-        "name": "Document camera",
-        "quantity": 2
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/hhb-105-lecture-theatre.php"
-  },
-  {
-    "room_number": "162",
-    "building": {
-      "name": "First Peoples House",
-      "short_name": "FPH"
-    },
-    "capacity": 12,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/fph-162-classroom.php"
   },
   {
     "room_number": "116",
@@ -5005,6 +4773,426 @@
     "url": "https://www.uvic.ca/search/rooms/pages/ecs-108-classroom.php"
   },
   {
+    "room_number": "103",
+    "building": {
+      "name": "Fine Arts Building",
+      "short_name": "FIA"
+    },
+    "capacity": 50,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "DVD player",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/fia-103-classroom.php"
+  },
+  {
+    "room_number": "128",
+    "building": {
+      "name": "Engineering and Computer Science Building",
+      "short_name": "ECS"
+    },
+    "capacity": 18,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Motorized presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 2
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ecs-128-classroom.php"
+  },
+  {
+    "room_number": "130",
+    "building": {
+      "name": "Engineering and Computer Science Building",
+      "short_name": "ECS"
+    },
+    "capacity": 34,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Motorized presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 2
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ecs-130-classroom.php"
+  },
+  {
+    "room_number": "123",
+    "building": {
+      "name": "Engineering and Computer Science Building",
+      "short_name": "ECS"
+    },
+    "capacity": 299,
+    "room_type": "Lecture Theatre",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Motorized presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 3
+      },
+      {
+        "name": "Document camera",
+        "quantity": 2
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ecs-123-lecture-theatre.php"
+  },
+  {
+    "room_number": "160",
+    "building": {
+      "name": "First Peoples House",
+      "short_name": "FPH"
+    },
+    "capacity": 30,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Projector present against wall",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/fph-160-classroom.php"
+  },
+  {
+    "room_number": "104",
+    "building": {
+      "name": "Fine Arts Building",
+      "short_name": "FIA"
+    },
+    "capacity": 28,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/fia-104-classroom.php"
+  },
+  {
+    "room_number": "125",
+    "building": {
+      "name": "Engineering and Computer Science Building",
+      "short_name": "ECS"
+    },
+    "capacity": 151,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Motorized presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 2
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI x 2, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/ecs-125-classroom.php"
+  },
+  {
+    "room_number": "162",
+    "building": {
+      "name": "First Peoples House",
+      "short_name": "FPH"
+    },
+    "capacity": 12,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/fph-162-classroom.php"
+  },
+  {
     "room_number": "A240",
     "building": {
       "name": "Human and Social Development building",
@@ -5063,6 +5251,98 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/hsd-a240-lecture-theatre.php"
+  },
+  {
+    "room_number": "A250",
+    "building": {
+      "name": "Human and Social Development building",
+      "short_name": "HSD"
+    },
+    "capacity": 24,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a250-classroom.php"
+  },
+  {
+    "room_number": "105",
+    "building": {
+      "name": "Harry Hickman Building",
+      "short_name": "HHB"
+    },
+    "capacity": 215,
+    "room_type": "Lecture Theatre",
+    "room_equipment": [
+      {
+        "name": "Digital video projector",
+        "quantity": 3
+      },
+      {
+        "name": "Document camera",
+        "quantity": 2
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/hhb-105-lecture-theatre.php"
   },
   {
     "room_number": "110",
@@ -5127,6 +5407,58 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/hhb-110-multi-access-classroom.php"
+  },
+  {
+    "room_number": "A326",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 16,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-a326-classroom.php"
   },
   {
     "room_number": "116",
@@ -5245,12 +5577,68 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-a144-david-lam-auditorium.php"
   },
   {
-    "room_number": "A326",
+    "room_number": "A270",
     "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
+      "name": "Human and Social Development building",
+      "short_name": "HSD"
     },
-    "capacity": 16,
+    "capacity": 30,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a270-classroom.php"
+  },
+  {
+    "room_number": "A264",
+    "building": {
+      "name": "Human and Social Development building",
+      "short_name": "HSD"
+    },
+    "capacity": 30,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -5294,371 +5682,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-a326-classroom.php"
-  },
-  {
-    "room_number": "D010",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 45,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d010-classroom.php"
-  },
-  {
-    "room_number": "125",
-    "building": {
-      "name": "Engineering and Computer Science Building",
-      "short_name": "ECS"
-    },
-    "capacity": 151,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Motorized presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 2
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI x 2, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ecs-125-classroom.php"
-  },
-  {
-    "room_number": "D016",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 40,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d016-classroom.php"
-  },
-  {
-    "room_number": "A120",
-    "building": {
-      "name": "David Turpin Building",
-      "short_name": "DTB"
-    },
-    "capacity": 250,
-    "room_type": "Lecture Theatre",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Projector present against wall",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 3
-      },
-      {
-        "name": "Document camera",
-        "quantity": 2
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/dtb-a120-lecture-theatre.php"
-  },
-  {
-    "room_number": "D101",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 36,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d101-classroom.php"
-  },
-  {
-    "room_number": "D107",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 15,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d107-classroom.php"
-  },
-  {
-    "room_number": "D103",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 36,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Wheeled table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d103-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a264-classroom.php"
   },
   {
     "room_number": "D105",
@@ -5721,12 +5745,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d105-classroom.php"
   },
   {
-    "room_number": "A270",
+    "room_number": "D101",
     "building": {
-      "name": "Human and Social Development building",
-      "short_name": "HSD"
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
     },
-    "capacity": 30,
+    "capacity": 36,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -5735,6 +5759,10 @@
       },
       {
         "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
         "quantity": 1
       },
       {
@@ -5774,7 +5802,103 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a270-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d101-classroom.php"
+  },
+  {
+    "room_number": "D016",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 40,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d016-classroom.php"
+  },
+  {
+    "room_number": "D107",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 15,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Wheeled table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d107-classroom.php"
   },
   {
     "room_number": "D109",
@@ -5841,12 +5965,12 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d109-classroom.php"
   },
   {
-    "room_number": "D110",
+    "room_number": "D103",
     "building": {
       "name": "MacLaurin Building",
       "short_name": "MAC"
     },
-    "capacity": 47,
+    "capacity": 36,
     "room_type": "Classroom",
     "room_equipment": [
       {
@@ -5854,15 +5978,11 @@
         "quantity": 1
       },
       {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
         "name": "Podium",
         "quantity": 1
       },
       {
-        "name": "Table with chair",
+        "name": "Wheeled table with chair",
         "quantity": 1
       },
       {
@@ -5902,7 +6022,43 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d110-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d103-classroom.php"
+  },
+  {
+    "room_number": "D010",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 45,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d010-classroom.php"
   },
   {
     "room_number": "D111",
@@ -5965,66 +6121,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d111-classroom.php"
   },
   {
-    "room_number": "062",
-    "building": {
-      "name": "Elliot Building",
-      "short_name": "ELL"
-    },
-    "capacity": 80,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Sink with water and gas taps",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ell-062-classroom.php"
-  },
-  {
     "room_number": "D114",
     "building": {
       "name": "MacLaurin Building",
@@ -6083,6 +6179,70 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d114-classroom.php"
+  },
+  {
+    "room_number": "D110",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 47,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d110-classroom.php"
   },
   {
     "room_number": "D115",
@@ -6193,6 +6353,190 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d116-classroom.php"
   },
   {
+    "room_number": "D203",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 34,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Table with chair",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d203-classroom.php"
+  },
+  {
+    "room_number": "D283",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 55,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Black chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Button controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d283-classroom.php"
+  },
+  {
+    "room_number": "D287",
+    "building": {
+      "name": "MacLaurin Building",
+      "short_name": "MAC"
+    },
+    "capacity": 40,
+    "room_type": "Classroom",
+    "room_equipment": [
+      {
+        "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
+        "quantity": 1
+      },
+      {
+        "name": "Podium",
+        "quantity": 1
+      },
+      {
+        "name": "Lecture capture capability",
+        "quantity": 1
+      },
+      {
+        "name": "Room speakers",
+        "quantity": 1
+      },
+      {
+        "name": "Pull-down presentation screen",
+        "quantity": 1
+      },
+      {
+        "name": "Digital video projector",
+        "quantity": 1
+      },
+      {
+        "name": "Document camera",
+        "quantity": 1
+      },
+      {
+        "name": "Built-in classroom computer with webcam",
+        "quantity": 1
+      },
+      {
+        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
+        "quantity": 1
+      },
+      {
+        "name": "Touch panel controls for AV system",
+        "quantity": 1
+      },
+      {
+        "name": "Wireless mic",
+        "quantity": 1
+      }
+    ],
+    "url": "https://www.uvic.ca/search/rooms/pages/mac-d287-classroom.php"
+  },
+  {
     "room_number": "D288",
     "building": {
       "name": "MacLaurin Building",
@@ -6253,16 +6597,20 @@
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d288-classroom.php"
   },
   {
-    "room_number": "A250",
+    "room_number": "155",
     "building": {
-      "name": "Human and Social Development building",
-      "short_name": "HSD"
+      "name": "McKinnon Building",
+      "short_name": "MCK"
     },
-    "capacity": 24,
+    "capacity": 38,
     "room_type": "Classroom",
     "room_equipment": [
       {
         "name": "Green chalkboard",
+        "quantity": 1
+      },
+      {
+        "name": "Whiteboard",
         "quantity": 1
       },
       {
@@ -6306,7 +6654,7 @@
         "quantity": 1
       }
     ],
-    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a250-classroom.php"
+    "url": "https://www.uvic.ca/search/rooms/pages/mck-155-classroom.php"
   },
   {
     "room_number": "150",
@@ -6425,66 +6773,6 @@
     "url": "https://www.uvic.ca/search/rooms/pages/rsn-131-lecture-theatre.php"
   },
   {
-    "room_number": "D283",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 55,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d283-classroom.php"
-  },
-  {
     "room_number": "133",
     "building": {
       "name": "Sŋéqə ʔéʔləŋ (Sngequ House)",
@@ -6543,242 +6831,6 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/rsn-133-lecture-theatre.php"
-  },
-  {
-    "room_number": "A264",
-    "building": {
-      "name": "Human and Social Development building",
-      "short_name": "HSD"
-    },
-    "capacity": 30,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/hsd-a264-classroom.php"
-  },
-  {
-    "room_number": "155",
-    "building": {
-      "name": "McKinnon Building",
-      "short_name": "MCK"
-    },
-    "capacity": 38,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mck-155-classroom.php"
-  },
-  {
-    "room_number": "D287",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 40,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d287-classroom.php"
-  },
-  {
-    "room_number": "D203",
-    "building": {
-      "name": "MacLaurin Building",
-      "short_name": "MAC"
-    },
-    "capacity": 34,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Black chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Whiteboard",
-        "quantity": 1
-      },
-      {
-        "name": "Podium",
-        "quantity": 1
-      },
-      {
-        "name": "Table with chair",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Pull-down presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 1
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Button controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/mac-d203-classroom.php"
   },
   {
     "room_number": "D207",
@@ -6843,57 +6895,5 @@
       }
     ],
     "url": "https://www.uvic.ca/search/rooms/pages/mac-d207-classroom.php"
-  },
-  {
-    "room_number": "128",
-    "building": {
-      "name": "Engineering and Computer Science Building",
-      "short_name": "ECS"
-    },
-    "capacity": 18,
-    "room_type": "Classroom",
-    "room_equipment": [
-      {
-        "name": "Green chalkboard",
-        "quantity": 1
-      },
-      {
-        "name": "Lecture capture capability",
-        "quantity": 1
-      },
-      {
-        "name": "Room speakers",
-        "quantity": 1
-      },
-      {
-        "name": "Motorized presentation screen",
-        "quantity": 1
-      },
-      {
-        "name": "Digital video projector",
-        "quantity": 2
-      },
-      {
-        "name": "Document camera",
-        "quantity": 1
-      },
-      {
-        "name": "Built-in classroom computer with webcam",
-        "quantity": 1
-      },
-      {
-        "name": "Video and audio laptop connectors (HDMI, VGA, 3.5mm audio)",
-        "quantity": 1
-      },
-      {
-        "name": "Touch panel controls for AV system",
-        "quantity": 1
-      },
-      {
-        "name": "Wireless mic",
-        "quantity": 1
-      }
-    ],
-    "url": "https://www.uvic.ca/search/rooms/pages/ecs-128-classroom.php"
   }
 ]

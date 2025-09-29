@@ -2,12 +2,12 @@
 
 Branch: `issue-5/dev-setup`
 - `claude-code` prompts
-    - **[new instance]:** create docker-compose for a typescript react client (esbuild) and a typescript server with postgres, set server env to connect to db
+    - create docker-compose for a typescript react client (esbuild) and a typescript server with postgres, set server env to connect to db
     - scaffold the client in ./client: react + typescript using esbuild, add package.json dev/build scripts, tsconfig etc.
     - scaffold the server in ./server: typescript http server using pg, add package.json etc.
     - add placeholder package-lock.json files in ./client and ./server so npm install works
     - add an npm run tmux script that starts client/server/db and opens a tmux session with panes for each of their logs
-    - **[new instance]:** scan the entire src/ dir and the files in base dir to understand this project. ignore /docs/
+    - scan the entire src/ dir and the files in base dir to understand this project. ignore /docs/
     - set up the remaining missing tech stack elements (nestjs, redis, auth.js), one at a time
     - add nestjs cli to container properly (not globally) and fix server startup issues
     - set up hot reload correctly for both client and server
@@ -35,6 +35,15 @@ Branch: `feature-35/better-web-scraper`
     - your normalization rules are overly simplistic and lose important data for some rooms. take a sample of a couple different ones and see what i mean
     - look at the json output to determine if any rooms are missing attributes, then if so, analyze these specific rooms to fix
     - that normalize_equipment_name function is crazy, there MUST be a less messy way of writing that
+
+Branch `issue-31/db-setup`
+- `claude-code` prompts:
+    - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
+    - update @readme.md with the new backend folder structure
+    - implement the schema defined in @docs/db/schema.md in the postgres instance - see @docker-compose.yml
+    - create a seed script in @src/server/src/database/seeds that populates the postgres instance defined in @docker-compose.yml with the data from @src/server/data/uvic_rooms.json . you must respect and follow @docs/db/schema.md and the db setup defined by @src/server/src/database/migrations/1732573200000-InitialSchema.ts
+    - set up basic CRUD endpoints for the server as defined by the project structure in @readme.md . use the schema reference in @docs/db/schema.md . only add endpoints that make sense, eg. buildings and equipment do not need to be updated or created via api. read the docs to get a better understanding of the app and which endpoints are needed
+    - run `npm run lint` and fix linter errors
 
 **Design-I**
 
