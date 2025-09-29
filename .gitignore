@@ -3,4 +3,4 @@
 **/dist
 **/.venv
 **/app.js
-**/app.js.map
+**/*.map

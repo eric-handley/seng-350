@@ -1,9 +1,8 @@
-/* src/uvic-admin.css */
 :root {
-  --uvic-navy: #002145;
-  --uvic-gold: #ffcd00;
-  --uvic-red: #e31837;
-  --uvic-blue: #0055b7;
+  --uvic-navy: #002145; /* brand primary */
+  --uvic-gold: #ffcd00; /* brand gold */
+  --uvic-red: #e31837; /* alert */
+  --uvic-blue: #0055b7; /* accent */
   --bg: #f5f7fa;
   --panel: #ffffff;
   --text: #000000;
@@ -19,6 +18,7 @@
   --line: #1f3550;
   --shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
 }
+
 * {
   box-sizing: border-box;
 }
@@ -29,16 +29,8 @@ body,
 }
 body {
   margin: 0;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Apple Color Emoji",
-    "Segoe UI Emoji";
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--text);
 }
@@ -49,6 +41,7 @@ main.theme {
   color: var(--text);
   background: var(--bg);
 }
+/* Topbar */
 .topbar {
   position: sticky;
   top: 0;
@@ -57,11 +50,7 @@ main.theme {
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  background:
-    linear-gradient(
-      90deg,
-      var(--uvic-navy),
-      #0a3a7e);
+  background: linear-gradient(90deg, var(--uvic-navy), #0a3a7e);
   color: #fff;
   box-shadow: var(--shadow);
 }
@@ -74,14 +63,14 @@ main.theme {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  background:
-    conic-gradient(
-      from 225deg,
-      var(--uvic-gold),
-      var(--uvic-gold) 25%,
-      var(--uvic-blue) 0 50%,
-      #ffffff 0 75%,
-      var(--uvic-navy) 0);
+  background: conic-gradient(
+    from 225deg,
+    var(--uvic-gold),
+    var(--uvic-gold) 25%,
+    var(--uvic-blue) 0 50%,
+    #ffffff 0 75%,
+    var(--uvic-navy) 0
+  );
   box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
 }
 .brand-text {
@@ -123,6 +112,7 @@ main.theme {
   color: var(--uvic-navy);
   box-shadow: var(--shadow);
 }
+/* Layout */
 .content {
   flex: 1;
   padding: 20px;
@@ -140,6 +130,7 @@ main.theme {
   border-top: 1px solid var(--line);
   color: var(--muted);
 }
+/* Panels & Cards */
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -153,11 +144,7 @@ main.theme {
   justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 205, 0, 0.08),
-      transparent);
+  background: linear-gradient(180deg, rgba(255, 205, 0, 0.08), transparent);
 }
 .panel-title {
   font-weight: 800;
@@ -170,11 +157,7 @@ main.theme {
   padding: 16px;
 }
 .card.stat {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0, 85, 183, 0.06),
-      transparent);
+  background: linear-gradient(180deg, rgba(0, 85, 183, 0.06), transparent);
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 14px;
@@ -203,22 +186,18 @@ main.theme {
 .bar {
   position: relative;
   height: 26px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 33, 69, 0.08),
-      rgba(0, 33, 69, 0.12));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 33, 69, 0.08),
+    rgba(0, 33, 69, 0.12)
+  );
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid var(--line);
 }
 .bar-fill {
   height: 100%;
-  background:
-    linear-gradient(
-      90deg,
-      var(--uvic-gold),
-      #ffd83a);
+  background: linear-gradient(90deg, var(--uvic-gold), #ffd83a);
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
 }
 .bar-text {
@@ -230,6 +209,7 @@ main.theme {
   font-weight: 700;
   color: #13253d;
 }
+/* Table */
 .table-wrap {
   width: 100%;
   overflow: auto;
@@ -254,21 +234,15 @@ main.theme {
   background: rgba(0, 85, 183, 0.06);
 }
 .mono {
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    "Liberation Mono",
-    "Courier New",
-    monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 .empty {
   text-align: center;
   color: var(--muted);
   padding: 20px;
 }
+/* Badges */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -302,6 +276,7 @@ main.theme {
   color: #057eff;
   border-color: rgba(0, 85, 183, 0.35);
 }
+/* Inputs */
 .filters {
   display: flex;
   gap: 10px;
@@ -346,6 +321,7 @@ main.theme {
   color: var(--text);
   border: 1px solid var(--line);
 }
+/* Pager */
 .pager {
   display: flex;
   align-items: center;
@@ -356,6 +332,7 @@ main.theme {
 .pager-text {
   color: var(--muted);
 }
+/* Grid */
 .grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -367,6 +344,7 @@ main.theme {
   flex-direction: column;
   gap: 20px;
 }
+/* Responsive */
 @media (max-width: 980px) {
   .grid {
     grid-template-columns: 1fr;
@@ -378,4 +356,3 @@ main.theme {
     grid-template-columns: 1fr;
   }
 }
-/*# sourceMappingURL=app.css.map */
