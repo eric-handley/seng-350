@@ -17,6 +17,13 @@ type Booking = {
   cancelled?: boolean
 }
 
+type User = {
+    id: string
+    name: string
+    role: 'staff' | 'admin' | 'registrar'
+    email: string
+}
+
 const BUILDINGS = ['Engineering', 'Science', 'Business', 'Library'] as const
 
 const ROOMS: Room[] = [
@@ -27,6 +34,12 @@ const ROOMS: Room[] = [
   { id: 'r-301', name: 'B-12',  building: 'Business', capacity: 16 },
   { id: 'r-401', name: 'L-2A',  building: 'Library', capacity: 4 },
 ]
+
+const [users, setUsers] = useState<User[]>([
+  { id: '1', name: 'Alice Johnson', role: 'admin', email: 'alicejohnson@uvic.ca'},
+  { id: '2', name: 'Bob Smith', role: 'staff', email: 'bobsmith@uvic.ca'},
+  { id: '3', name: 'Charlie Doe', role: 'registrar', email: 'charliedoe@uvic.ca'},
+])
 
 const seedToday = () => {
   const d = new Date()
@@ -70,7 +83,7 @@ const initialBookings: Booking[] = [
   },
 ]
 
-type TabKey = 'schedule' | 'book' | 'history'
+type TabKey = 'schedule' | 'book' | 'history' | 'users'
 
 export default function App() {
   const [tab, setTab] = useState<TabKey>('book')
@@ -137,6 +150,14 @@ export default function App() {
       .sort((a, b) => +new Date(a.start) - +new Date(b.start))
   }, [bookings, date])
 
+  // Hardcoded current user as registrar (remove when sign-in is implemented)
+    const [currentUser] = useState<User>({
+        id: '3',
+        name: 'Charlie Doe',
+        role: 'registrar',
+        email: 'charliedoe@uvic.ca',
+    })
+
   const handleBook = (room: Room) => {
     if (requestedEnd <= requestedStart) {
       alert('End time must be after start time.')
@@ -162,6 +183,11 @@ export default function App() {
     )
   }
 
+    const handleEditUser = (user: User) => {
+        alert(`Edit user: ${user.name} (${user.role})`)
+    }
+    
+
   return (
     <div className="app-shell">
       <div className="header">
@@ -173,6 +199,10 @@ export default function App() {
         <button className="tab" role="tab" aria-selected={tab==='schedule'} onClick={()=>setTab('schedule')}>Schedule</button>
         <button className="tab" role="tab" aria-selected={tab==='book'} onClick={()=>setTab('book')}>Book Rooms</button>
         <button className="tab" role="tab" aria-selected={tab==='history'} onClick={()=>setTab('history')}>My Bookings & History</button>
+        {currentUser.role === 'admin' && (
+            <button className="tab" role="tab" aria-selected={tab==='users'} onClick={()=>setTab('users')}>User List</button>
+        )}
+        
       </div>
 
       {tab === 'book' && (
@@ -331,6 +361,41 @@ export default function App() {
           )}
         </section>
       )}
+    {tab === 'users' && currentUser.role === 'registrar' &&(
+        <section className="panel" aria-labelledby="users-label">
+            <h2 id="users-label" style={{marginTop:0}}>All Users</h2>
+
+            {users.length === 0 ? (
+                <div className="empty">No users found.</div>
+            ) : (
+                <table className="table" aria-label="Users">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map(u => (
+                            <tr key={u.id}>
+                                <td>{u.name}</td>
+                                <td>{u.role}</td>
+                                <td>
+                                    <button 
+                                        className="btn primary" 
+                                        onClick={() => handleEditUser(u)}
+                                    >
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </section>
+    )}
     </div>
   )
 }
