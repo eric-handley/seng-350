@@ -11,7 +11,7 @@ const ctx = await context({
   entryPoints: [resolve(__dirname, 'src/main.tsx')],
   bundle: true,
   sourcemap: true,
-  outfile: resolve(__dirname, 'public/assets/app.js'),
+  outfile: resolve(__dirname, 'public/build/app.js'),
   platform: 'browser',
   loader: { '.tsx': 'tsx' },
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],

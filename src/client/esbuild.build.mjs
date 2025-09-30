@@ -10,7 +10,7 @@ await build({
   entryPoints: [resolve(__dirname, 'src/main.tsx')],
   bundle: true,
   sourcemap: false,
-  outdir: resolve(__dirname, 'dist/assets'),
+  outdir: resolve(__dirname, 'dist/build'),
   platform: 'browser',
   loader: { '.tsx': 'tsx' },
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],

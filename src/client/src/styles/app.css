@@ -32,10 +32,16 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 }
 .tab{
   background:var(--card);border:1px solid var(--brand-grey);padding:10px 14px;border-radius:12px;cursor:pointer;
-  font-weight:600;color:var(--muted);transition:all .15s ease;
+  font-weight:600;color:var(--text);transition:all .15s ease;
+}
+.tab:hover{
+  background:var(--brand-sky);color:var(--brand-blue);border-color:var(--brand-blue);
 }
 .tab[aria-selected="true"]{
   background:var(--brand-blue);color:white;border-color:var(--brand-blue);box-shadow:0 6px 16px rgba(0,84,147,.25);
+}
+.tab[aria-selected="false"]{
+  background:var(--card);color:var(--text);border-color:var(--brand-grey);
 }
 
 .panel{
