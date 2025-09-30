@@ -20,6 +20,12 @@ export class User {
   @Column()
   password_hash!: string;
 
+  @Column()
+  first_name!: string;
+
+  @Column()
+  last_name!: string;
+
   @Column({
     type: 'enum',
     enum: UserRole

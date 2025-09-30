@@ -19,7 +19,7 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
   scheduleForDay,
 }) => {
   const filteredSchedule = scheduleForDay.filter(b => {
-    if (!building) return true
+    if (!building) {return true}
     const room = ROOMS.find(r => r.id === b.roomId)
     return room?.building === building
   })

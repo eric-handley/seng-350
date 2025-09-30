@@ -16,6 +16,8 @@ export class InitialSchema1732573200000 implements MigrationInterface {
                 "id" uuid NOT NULL DEFAULT gen_random_uuid(),
                 "email" character varying NOT NULL,
                 "password_hash" character varying NOT NULL,
+                "first_name" character varying NOT NULL,
+                "last_name" character varying NOT NULL,
                 "role" "public"."user_role_enum" NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),

@@ -13,6 +13,16 @@ export class CreateUserDto {
   @MinLength(6)
   password!: string;
 
+  @ApiProperty({ example: 'John', description: 'User first name' })
+  @IsString()
+  @IsNotEmpty()
+  first_name!: string;
+
+  @ApiProperty({ example: 'Doe', description: 'User last name' })
+  @IsString()
+  @IsNotEmpty()
+  last_name!: string;
+
   @ApiProperty({ enum: UserRole, example: UserRole.STAFF, description: 'User role' })
   @IsEnum(UserRole)
   role!: UserRole;
@@ -30,6 +40,18 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @MinLength(6)
   password?: string;
 
+  @ApiProperty({ example: 'John', description: 'User first name', required: false })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  first_name?: string;
+
+  @ApiProperty({ example: 'Doe', description: 'User last name', required: false })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  last_name?: string;
+
   @ApiProperty({ enum: UserRole, example: UserRole.REGISTRAR, description: 'User role', required: false })
   @IsOptional()
   @IsEnum(UserRole)
@@ -42,6 +64,12 @@ export class UserResponseDto {
 
   @ApiProperty({ example: 'user@uvic.ca', description: 'User email address' })
   email!: string;
+
+  @ApiProperty({ example: 'John', description: 'User first name' })
+  first_name!: string;
+
+  @ApiProperty({ example: 'Doe', description: 'User last name' })
+  last_name!: string;
 
   @ApiProperty({ enum: UserRole, example: UserRole.STAFF, description: 'User role' })
   role!: UserRole;

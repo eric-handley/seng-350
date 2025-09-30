@@ -4,6 +4,8 @@ erDiagram
         uuid id PK
         string email UK
         string password_hash
+        string first_name
+        string last_name
         enum role
         timestamp created_at
         timestamp updated_at

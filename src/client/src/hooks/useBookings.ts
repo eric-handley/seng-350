@@ -38,7 +38,7 @@ export const useBookings = () => {
   const getUnavailableRoomIds = (requestedStart: Date, requestedEnd: Date) => {
     const ids = new Set<string>()
     for (const b of bookings) {
-      if (b.cancelled) continue
+      if (b.cancelled) {continue}
       const bStart = new Date(b.start)
       const bEnd = new Date(b.end)
       if (overlap(requestedStart, requestedEnd, bStart, bEnd)) {
@@ -59,7 +59,7 @@ export const useBookings = () => {
     const dayEnd = isoAt(date, '23:59')
     return bookings
       .filter(b => {
-        if (b.cancelled) return false
+        if (b.cancelled) {return false}
         const s = new Date(b.start)
         const e = new Date(b.end)
         return s >= dayStart && e <= dayEnd

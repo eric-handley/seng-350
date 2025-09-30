@@ -12,6 +12,8 @@ describe('UsersController', () => {
   const mockUserResponse: UserResponseDto = {
     id: 'user-uuid',
     email: 'test@uvic.ca',
+    first_name: 'John',
+    last_name: 'Doe',
     role: UserRole.STAFF,
     created_at: new Date('2024-01-01T00:00:00Z'),
     updated_at: new Date('2024-01-01T00:00:00Z'),
@@ -48,6 +50,8 @@ describe('UsersController', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@uvic.ca',
       password: 'securePassword123',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     };
 

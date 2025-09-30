@@ -10,6 +10,8 @@ export class TestDataFactory {
     return {
       email: 'test@uvic.ca',
       password_hash: 'hashedPassword123',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
       ...overrides,
     };

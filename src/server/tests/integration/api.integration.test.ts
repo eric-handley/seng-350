@@ -110,6 +110,8 @@ describe('/users (e2e)', () => {
     const newUser = {
       email: `newuser-${Date.now()}@uvic.ca`,
       password: 'securePassword123',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     };
 
@@ -138,6 +140,8 @@ describe('/users (e2e)', () => {
     const testUser = userRepository.create({
       email: `test-get-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     });
     const savedUser = await userRepository.save(testUser);
@@ -155,6 +159,8 @@ describe('/users (e2e)', () => {
     const testUser = userRepository.create({
       email: `test-patch-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     });
     const savedUser = await userRepository.save(testUser);
@@ -287,6 +293,8 @@ describe('/bookings (e2e)', () => {
     testUser = userRepository.create({
       email: `test-bookings-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     });
     testUser = await userRepository.save(testUser);
@@ -489,6 +497,8 @@ describe('Error handling (e2e)', () => {
     testUser = userRepository.create({
       email: `test-errors-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
+      first_name: 'John',
+      last_name: 'Doe',
       role: UserRole.STAFF,
     });
     testUser = await userRepository.save(testUser);
@@ -516,6 +526,8 @@ describe('Error handling (e2e)', () => {
     const existingUser = {
       email: testUser.email,
       password: 'securePassword123',
+      first_name: 'Jane',
+      last_name: 'Smith',
       role: UserRole.STAFF,
     };
 
