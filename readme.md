@@ -91,28 +91,41 @@ npm run test:coverage # With coverage
 .
 ├── docs/                       - Project documentation
 │   ├── adr/                    - Architecture Decision Records
-│   └── team/                   - Team policies and expectations
+│   ├── api/                    - API documentation
+│   ├── db/                     - Database documentation
+│   ├── team/                   - Team policies and expectations
+│   └── ui/                     - UI assets and documentation
 ├── src/                        
 │   ├── client/                 
-│   │   ├── public/             - Static assets and HTML entry point
-│   │   │   └── assets/         - Compiled JS bundles and source maps
-│   │   ├── src/                - React source code
+│   │   ├── public/             - Compiled assets and HTML entry point
+│   │   ├── src/                
+│   │   │   ├── components/     - React components
+│   │   │   ├── constants/      - App constants
+│   │   │   ├── contexts/       - React contexts
+│   │   │   ├── hooks/          - Custom React hooks
+│   │   │   ├── pages/          - Page components
+│   │   │   ├── styles/         - CSS stylesheets
+│   │   │   ├── types/          - TypeScript type definitions
+│   │   │   └── utils/          - Utility functions
 │   │   └── tests/              - Frontend unit tests
+│   ├── scripts/                - Utility scripts
 │   └── server/                 
+│       ├── data/               - Static data files
 │       ├── src/                - NestJS backend code
-│       │   ├── app/            - Main application module
-│       │   ├── auth/           - Authentication modules (Auth.js)
 │       │   ├── api/            - REST controllers (users, rooms, bookings, etc.)
-│       │   ├── services/       - Business logic services  
-│       │   ├── dto/            - Data Transfer Objects for API validation
+│       │   ├── app/            - Main application module
+│       │   ├── auth/           - Authentication modules
+│       │   ├── config/         - Configuration files
 │       │   ├── database/       - TypeORM entities and migrations
 │       │   │   ├── entities/   - Database entity definitions
-│       │   │   └── migrations/ - Database schema migrations
+│       │   │   ├── migrations/ - Database schema migrations
 │       │   │   └── seeds/      - Scripts for importing preset data
-│       │   ├── shared/         - Shared utilities and guards
-│       │   │   ├── cache/      - Redis caching modules
-│       │   │   └── guards/     - Auth guards and middleware
-│       │   └── config/         - Configuration files
+│       │   ├── dto/            - Data Transfer Objects for API validation
+│       │   ├── filters/        - Exception filters
+│       │   ├── services/       - Business logic services  
+│       │   └── shared/         - Shared utilities and guards
+│       │       ├── cache/      - Redis caching modules
+│       │       └── guards/     - Auth guards and middleware
 │       └── tests/              - Backend unit tests
 └── .vscode/                    - Shared VS Code workspace settings
 ```
