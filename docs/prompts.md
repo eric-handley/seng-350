@@ -45,6 +45,17 @@ Branch `issue-31/db-setup`
     - set up basic CRUD endpoints for the server as defined by the project structure in @readme.md . use the schema reference in @docs/db/schema.md . only add endpoints that make sense, eg. buildings and equipment do not need to be updated or created via api. read the docs to get a better understanding of the app and which endpoints are needed
     - run `npm run lint` and fix linter errors
 
+Branch `feature-7/registrar`
+- ChatGPT prompts:
+    - how can i break up a .tsx file into multiple files for better code quality?
+    - how can I edit this function to properly add the submitted information to the table? const handleSaveNewUser = (updated: User) => {
+    setUsers((prev) =>
+      prev.map((u) => (u.id === updated.id ? updated : u))
+    );
+    setAddingUser(null);
+  };
+  - 
+
 **Design-I**
 
 1. "how can i link a gitlab milestone in a mrkdown file in the same project?" 

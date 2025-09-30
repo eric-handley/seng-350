@@ -1,5 +1,9 @@
 // App.tsx
 import React, { useMemo, useState } from 'react'
+import UsersTab from "./components/UserTab"
+import EditUser from "./components/EditUser"
+import { User } from "./types/models"
+import AddUser from './components/AddUser'
 
 type Room = {
   id: string
@@ -15,13 +19,6 @@ type Booking = {
   end: string   // ISO
   user: string
   cancelled?: boolean
-}
-
-type User = {
-    id: string
-    name: string
-    role: 'staff' | 'admin' | 'registrar'
-    email: string
 }
 
 const BUILDINGS = ['Engineering', 'Science', 'Business', 'Library'] as const
@@ -86,6 +83,8 @@ export default function App() {
     { id: '2', name: 'Bob Smith', role: 'staff', email: 'bobsmith@uvic.ca'},
     { id: '3', name: 'Charlie Doe', role: 'registrar', email: 'charliedoe@uvic.ca'},
   ])
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [addingUser, setAddingUser] = useState<User | null>(null);
 
   // Filters
   const [building, setBuilding] = useState<string>('')
@@ -150,12 +149,12 @@ export default function App() {
   }, [bookings, date])
 
   // Hardcoded current user as registrar (remove when sign-in is implemented)
-    const [currentUser] = useState<User>({
-        id: '3',
-        name: 'Charlie Doe',
-        role: 'registrar',
-        email: 'charliedoe@uvic.ca',
-    })
+  const [currentUser] = useState<User>({
+    id: '3',
+    name: 'Charlie Doe',
+    role: 'registrar',
+    email: 'charliedoe@uvic.ca',
+  })
 
   const handleBook = (room: Room) => {
     if (requestedEnd <= requestedStart) {
@@ -182,10 +181,44 @@ export default function App() {
     )
   }
 
-    const handleEditUser = (user: User) => {
-        alert(`Edit user: ${user.name} (${user.role})`)
+  // User management handlers
+  const handleEditUser = (user: User) => {
+    setEditingUser(user)
+  }
+
+  const handleSaveUser = (updated: User) => {
+    //TODO: interact with database
+    setUsers((prev) =>
+      prev.map((u) => (u.id === updated.id ? updated : u))
+    )
+    setEditingUser(null);
+  }
+
+  const handleAddUser = (user: User) => {
+    setAddingUser(user)
+  }
+  const handleSaveNewUser = (newUser: User) => {
+    //TODO: interact with database
+    setUsers((prev) => [
+      ...prev,
+      {
+        ...newUser,
+        id: Math.random().toString(36).slice(2, 9), // generate unique ID
+      },
+    ])
+    setAddingUser(null)
+  }
+
+  const handleBlockUser = (user: User) => {
+    //TODO: interact with database
+    //TODO: delete all booking associated with user?
+    //TODO: prevent blocking self?
+    //TODO: save history of blocked users?
+    if (window.confirm(`Are you sure you want to block ${user.name}? This action will remove them from the system, cancel any active booking, and cannot be undone.`)) {
+      setUsers((prev) => prev.filter((u) => u.id !== user.id));
     }
-    
+  }
+
 
   return (
     <div className="app-shell">
@@ -198,7 +231,7 @@ export default function App() {
         <button className="tab" role="tab" aria-selected={tab==='schedule'} onClick={()=>setTab('schedule')}>Schedule</button>
         <button className="tab" role="tab" aria-selected={tab==='book'} onClick={()=>setTab('book')}>Book Rooms</button>
         <button className="tab" role="tab" aria-selected={tab==='history'} onClick={()=>setTab('history')}>My Bookings & History</button>
-        {currentUser.role === 'admin' && (
+        {currentUser.role === 'registrar' && (
             <button className="tab" role="tab" aria-selected={tab==='users'} onClick={()=>setTab('users')}>User List</button>
         )}
         
@@ -360,41 +393,24 @@ export default function App() {
           )}
         </section>
       )}
-    {tab === 'users' && currentUser.role === 'registrar' &&(
-        <section className="panel" aria-labelledby="users-label">
-            <h2 id="users-label" style={{marginTop:0}}>All Users</h2>
-
-            {users.length === 0 ? (
-                <div className="empty">No users found.</div>
-            ) : (
-                <table className="table" aria-label="Users">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(u => (
-                            <tr key={u.id}>
-                                <td>{u.name}</td>
-                                <td>{u.role}</td>
-                                <td>
-                                    <button 
-                                        className="btn primary" 
-                                        onClick={() => handleEditUser(u)}
-                                    >
-                                        Edit
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-        </section>
+    {tab === 'users' && currentUser.role === 'registrar' && (
+      <UsersTab users={users} handleEditUser={handleEditUser} handleAddUser={handleAddUser} handleBlockUser={handleBlockUser}/>
     )}
+    {editingUser && (
+      <EditUser
+        user={editingUser}
+        onSave={handleSaveUser}
+        onCancel={() => setEditingUser(null)}
+      />
+    )}
+    {addingUser && (
+      <AddUser
+        user={addingUser}
+        onSave={handleSaveNewUser}
+        onCancel={() => setAddingUser(null)}
+      />
+    )}
+    
     </div>
   )
 }
