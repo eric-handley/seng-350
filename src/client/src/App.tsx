@@ -50,6 +50,7 @@ const initialDate = (() => {
   return d.toISOString().slice(0, 10) // YYYY-MM-DD
 })()
 
+//TODO: replace with real data from backend
 const initialBookings: Booking[] = [
   {
     id: 'bk-1',
@@ -214,12 +215,12 @@ export default function App() {
     //TODO: delete all booking associated with user?
     //TODO: prevent blocking self?
     //TODO: save history of blocked users?
-    if (window.confirm(`Are you sure you want to block ${user.name}? This action will remove them from the system, cancel any active booking, and cannot be undone.`)) {
+    if (window.confirm(`Are you sure you want to block ${user.name}? This action will remove them from the system, cancel any active bookings, and cannot be undone.`)) {
       setUsers((prev) => prev.filter((u) => u.id !== user.id));
     }
   }
 
-
+  //TODO: change to role of current user and/or name
   return (
     <div className="app-shell">
       <div className="header">
@@ -230,7 +231,7 @@ export default function App() {
       <div className="tabs" role="tablist" aria-label="Sections">
         <button className="tab" role="tab" aria-selected={tab==='schedule'} onClick={()=>setTab('schedule')}>Schedule</button>
         <button className="tab" role="tab" aria-selected={tab==='book'} onClick={()=>setTab('book')}>Book Rooms</button>
-        <button className="tab" role="tab" aria-selected={tab==='history'} onClick={()=>setTab('history')}>My Bookings & History</button>
+        <button className="tab" role="tab" aria-selected={tab==='history'} onClick={()=>setTab('history')}>Bookings & History</button>
         {currentUser.role === 'registrar' && (
             <button className="tab" role="tab" aria-selected={tab==='users'} onClick={()=>setTab('users')}>User List</button>
         )}
@@ -355,43 +356,84 @@ export default function App() {
       )}
 
       {tab === 'history' && (
-        <section className="panel" aria-labelledby="history-label">
-          <h2 id="history-label" style={{marginTop:0}}>My Bookings & History</h2>
-          {userHistory.length === 0 ? (
-            <div className="empty">You have no bookings yet.</div>
-          ) : (
-            <div className="grid">
-              {userHistory.map(b => {
-                const room = ROOMS.find(r => r.id === b.roomId)!
-                const d = new Date(b.start)
-                const dEnd = new Date(b.end)
-                const dateStr = d.toLocaleDateString()
-                const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
-                return (
-                  <article key={b.id} className="card">
-                    <div className="row">
-                      <h3>{room.name}</h3>
-                      <span className="kv">{room.building}</span>
-                    </div>
-                    <div className="meta">
-                      <span>{dateStr}</span>
-                      <span>{timeStr}</span>
-                      <span>ID: {b.id}</span>
-                    </div>
-                    <div className="row" style={{marginTop:12}}>
-                      <span className="meta">{b.cancelled ? 'Cancelled' : 'Active'}</span>
-                      {!b.cancelled ? (
-                        <button className="btn danger" onClick={()=>handleCancel(b.id)}>Cancel</button>
-                      ) : (
-                        <button className="btn ghost" onClick={()=>alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
-                      )}
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
+        <div>
+          <section className="panel" aria-labelledby="history-label">
+            <h2 id="history-label" style={{marginTop:0}}>My Bookings & History</h2>
+            {userHistory.length === 0 ? (
+              <div className="empty">You have no bookings yet.</div>
+            ) : (
+              <div className="grid">
+                {userHistory.map(b => {
+                  const room = ROOMS.find(r => r.id === b.roomId)!
+                  const d = new Date(b.start)
+                  const dEnd = new Date(b.end)
+                  const dateStr = d.toLocaleDateString()
+                  const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
+                  return (
+                    <article key={b.id} className="card">
+                      <div className="row">
+                        <h3>{room.name}</h3>
+                        <span className="kv">{room.building}</span>
+                      </div>
+                      <div className="meta">
+                        <span>{dateStr}</span>
+                        <span>{timeStr}</span>
+                        <span>ID: {b.id}</span>
+                      </div>
+                      <div className="row" style={{marginTop:12}}>
+                        <span className="meta">{b.cancelled ? 'Cancelled' : 'Active'}</span>
+                        {!b.cancelled ? (
+                          <button className="btn danger" onClick={()=>handleCancel(b.id)}>Cancel</button>
+                        ) : (
+                          <button className="btn ghost" onClick={()=>alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
+                        )}
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+          {currentUser.role === 'registrar' && (
+            <section className="panel" aria-labelledby="global-label">
+              <h2 id="global-label" style={{marginTop:0}}>All Bookings</h2>
+              {bookings.length === 0 ? (
+                <div className="empty">There are no bookings yet.</div>
+              ) : (
+                <div className="grid">
+                  {bookings.map(b => {
+                    const room = ROOMS.find(r => r.id === b.roomId)!
+                    const d = new Date(b.start)
+                    const dEnd = new Date(b.end)
+                    const dateStr = d.toLocaleDateString()
+                    const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
+                    return (
+                      <article key={b.id} className="card">
+                        <div className="row">
+                          <h3>{room.name}</h3>
+                          <span className="kv">{room.building}</span>
+                        </div>
+                        <div className="meta">
+                          <span>{dateStr}</span>
+                          <span>{timeStr}</span>
+                          <span>ID: {b.id}</span>
+                        </div>
+                        <div className="row" style={{marginTop:12}}>
+                          <span className="meta">{b.cancelled ? 'Cancelled' : 'Active'}</span>
+                          {!b.cancelled ? (
+                            <button className="btn danger" onClick={()=>handleCancel(b.id)}>Cancel</button>
+                          ) : (
+                            <button className="btn ghost" onClick={()=>alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
+                          )}
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </section>
           )}
-        </section>
+        </div>
       )}
     {tab === 'users' && currentUser.role === 'registrar' && (
       <UsersTab users={users} handleEditUser={handleEditUser} handleAddUser={handleAddUser} handleBlockUser={handleBlockUser}/>
