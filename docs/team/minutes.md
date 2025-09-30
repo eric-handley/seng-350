@@ -1,4 +1,12 @@
-### `2025-09-24
+### `2025-09-29`
+
+- Discussed existing changes and merges
+- Talked about merging UI changes
+- Resolved config problems and worked on project
+
+---
+
+### `2025-09-24`
 
 - Discussed existing docker/tech stack set up
 - Discussed design for frontend/UI
