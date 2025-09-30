@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { User } from "../types";
 
@@ -9,6 +10,7 @@ interface LoginPageProps {
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       registrar: { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'charliedoe@uvic.ca' }
     };
     onLogin(devUsers[role]);
+    
+    // Navigate based on role
+    if (role === 'admin') {
+      navigate('/admin-panel');
+    } else {
+      navigate('/home');
+    }
   };
 
   return (

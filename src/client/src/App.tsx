@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
 import { TabKey } from './types'
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
 import { useRoomFiltering } from './hooks/useRoomFiltering'
-import { useAuth } from './hooks/useAuth'
+import { useAuth, AuthProvider } from './contexts/AuthContext'
 import { TabNavigation } from './components/TabNavigation'
 import { BookingPage } from './pages/BookingPage'
 import { SchedulePage } from './pages/SchedulePage'
@@ -13,9 +14,11 @@ import { HistoryPage } from './pages/HistoryPage'
 import { UsersPage } from './pages/UsersPage'
 import LoginPage from './pages/LoginPage'
 import AdminConsole from './components/AdminConsole'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
-export default function App() {
-  const { currentUser, login, isAuthenticated } = useAuth()
+// Component for the home page (staff/registrar)
+const HomeComponent: React.FC = () => {
+  const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
   
   const { 
@@ -43,17 +46,7 @@ export default function App() {
     requestedEnd,
     getAvailableRooms,
   } = useRoomFiltering()
-  
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={login} />
-  }
 
-  // Role-based routing
-  if (currentUser!.role === 'admin') {
-    return <AdminConsole />
-  }
-
-  // Staff and Registrar use the room booking system
   const unavailableRoomIds = getUnavailableRoomIds(requestedStart, requestedEnd)
   const availableRooms = getAvailableRooms(unavailableRoomIds)
   const userHistory = getUserHistory()
@@ -121,5 +114,44 @@ export default function App() {
         />
       )}
     </div>
+  )
+}
+
+// App Router component that has access to hooks
+const AppRouter: React.FC = () => {
+  const { login } = useAuth()
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage onLogin={login} />} />
+      <Route 
+        path="/home" 
+        element={
+          <ProtectedRoute allowedRoles={['staff', 'registrar']}>
+            <HomeComponent />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin-panel" 
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminConsole />
+          </ProtectedRoute>
+        } 
+      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRouter />
+      </Router>
+    </AuthProvider>
   )
 }
