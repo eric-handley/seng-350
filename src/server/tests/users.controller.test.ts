@@ -4,10 +4,19 @@ import { UsersService } from '../src/services/users.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../src/dto/user.dto';
 import { UserRole } from '../src/database/entities/user.entity';
 import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { AuthenticatedUser } from '../src/auth/auth.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
+
+  const mockUser: AuthenticatedUser = {
+    id: 'user-uuid',
+    email: 'test@uvic.ca',
+    first_name: 'Test',
+    last_name: 'User',
+    role: UserRole.STAFF,
+  };
 
   const mockUserResponse: UserResponseDto = {
     id: 'user-uuid',
@@ -160,24 +169,24 @@ describe('UsersController', () => {
       const updatedUser = { ...mockUserResponse, ...updateUserDto };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
-      const result = await controller.update('user-uuid', updateUserDto);
+      const result = await controller.update('user-uuid', mockUser, updateUserDto);
 
-      expect(service.update).toHaveBeenCalledWith('user-uuid', updateUserDto);
+      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, updateUserDto);
       expect(result).toEqual(updatedUser);
     });
 
     it('should throw NotFoundException when user not found', async () => {
       mockUsersService.update.mockRejectedValue(new NotFoundException('User not found'));
 
-      await expect(controller.update('non-existent-uuid', updateUserDto)).rejects.toThrow(NotFoundException);
-      expect(service.update).toHaveBeenCalledWith('non-existent-uuid', updateUserDto);
+      await expect(controller.update('non-existent-uuid', mockUser, updateUserDto)).rejects.toThrow(NotFoundException);
+      expect(service.update).toHaveBeenCalledWith('non-existent-uuid', mockUser, updateUserDto);
     });
 
     it('should throw ConflictException when email already exists', async () => {
       mockUsersService.update.mockRejectedValue(new ConflictException('Email already exists'));
 
-      await expect(controller.update('user-uuid', updateUserDto)).rejects.toThrow(ConflictException);
-      expect(service.update).toHaveBeenCalledWith('user-uuid', updateUserDto);
+      await expect(controller.update('user-uuid', mockUser, updateUserDto)).rejects.toThrow(ConflictException);
+      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, updateUserDto);
     });
 
     it('should handle partial updates', async () => {
@@ -185,9 +194,9 @@ describe('UsersController', () => {
       const updatedUser = { ...mockUserResponse, email: 'newemail@uvic.ca' };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
-      const result = await controller.update('user-uuid', partialUpdate);
+      const result = await controller.update('user-uuid', mockUser, partialUpdate);
 
-      expect(service.update).toHaveBeenCalledWith('user-uuid', partialUpdate);
+      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, partialUpdate);
       expect(result).toEqual(updatedUser);
     });
 
@@ -196,9 +205,9 @@ describe('UsersController', () => {
       const updatedUser = { ...mockUserResponse, role: UserRole.ADMIN };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
-      const result = await controller.update('user-uuid', roleUpdate);
+      const result = await controller.update('user-uuid', mockUser, roleUpdate);
 
-      expect(service.update).toHaveBeenCalledWith('user-uuid', roleUpdate);
+      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, roleUpdate);
       expect(result).toEqual(updatedUser);
     });
   });
@@ -207,25 +216,25 @@ describe('UsersController', () => {
     it('should remove a user successfully', async () => {
       mockUsersService.remove.mockResolvedValue(undefined);
 
-      await controller.remove('user-uuid');
+      await controller.remove('user-uuid', mockUser);
 
-      expect(service.remove).toHaveBeenCalledWith('user-uuid');
+      expect(service.remove).toHaveBeenCalledWith('user-uuid', mockUser);
     });
 
     it('should throw NotFoundException when user not found', async () => {
       mockUsersService.remove.mockRejectedValue(new NotFoundException('User not found'));
 
-      await expect(controller.remove('non-existent-uuid')).rejects.toThrow(NotFoundException);
-      expect(service.remove).toHaveBeenCalledWith('non-existent-uuid');
+      await expect(controller.remove('non-existent-uuid', mockUser)).rejects.toThrow(NotFoundException);
+      expect(service.remove).toHaveBeenCalledWith('non-existent-uuid', mockUser);
     });
 
     it('should handle cascading deletions properly', async () => {
       // Assuming the service handles cascade deletions
       mockUsersService.remove.mockResolvedValue(undefined);
 
-      await controller.remove('user-uuid');
+      await controller.remove('user-uuid', mockUser);
 
-      expect(service.remove).toHaveBeenCalledWith('user-uuid');
+      expect(service.remove).toHaveBeenCalledWith('user-uuid', mockUser);
     });
   });
 });

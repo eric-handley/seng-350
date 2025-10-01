@@ -120,8 +120,8 @@ User is authenticated but lacks required role.
   - `POST /users` - Create user (Admin only)
   - `GET /users` - List users (Admin only)
   - `GET /users/:id` - Get user (Admin only)
-  - `PATCH /users/:id` - Update user (Admin only)
-  - `DELETE /users/:id` - Delete user (Admin only)
+  - `PATCH /users/:id` - Update user (Admin only, cannot change own role)
+  - `DELETE /users/:id` - Delete user (Admin only, cannot delete self)
 
 ---
 

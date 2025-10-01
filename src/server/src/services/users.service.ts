@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../database/entities/user.entity';
+import { AuthenticatedUser } from '../auth/auth.service'
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
 import bcrypt from 'bcryptjs';
 
@@ -51,7 +52,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(id: string, requester: AuthenticatedUser, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const user = await this.userRepository.findOne({ where: { id } });
     
     if (!user) {
@@ -67,6 +68,12 @@ export class UsersService {
         throw new ConflictException('User with this email already exists');
       }
     }
+    
+    if (updateUserDto.role && updateUserDto.role !== user.role) {
+      if (user.id === requester.id) {
+        throw new ForbiddenException('Users may not change their own role');
+      }
+    }
 
     if (updateUserDto.password) {
       const hashed = await bcrypt.hash(updateUserDto.password, 10);
@@ -79,11 +86,15 @@ export class UsersService {
     return this.toResponseDto(savedUser);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, requester: AuthenticatedUser): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id } });
     
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (user.id === requester.id) {
+      throw new ForbiddenException('Users may not delete themselves');
     }
 
     await this.userRepository.remove(user);

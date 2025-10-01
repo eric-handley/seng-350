@@ -24,6 +24,8 @@ import { UsersService } from '../services/users.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
 import { AuthGuard } from '../shared/guards/auth.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
+import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../auth/auth.service';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
 
@@ -104,11 +106,16 @@ export class UsersController {
     status: HttpStatus.CONFLICT,
     description: 'Email already exists',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'User update not permitted',
+  })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() requester: AuthenticatedUser,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(id, requester, updateUserDto);
   }
 
   @Delete(':id')
@@ -120,10 +127,17 @@ export class UsersController {
     description: 'User deleted successfully',
   })
   @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Users may not delete themselves',
+  })
+  @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
   })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.usersService.remove(id);
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() requester: AuthenticatedUser,
+  ): Promise<void> {
+    return this.usersService.remove(id, requester);
   }
 }

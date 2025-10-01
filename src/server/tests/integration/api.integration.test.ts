@@ -48,7 +48,7 @@ async function setupTestApp() {
         // Inject a default test user if not already set
         if (!request.user) {
           request.user = {
-            id: 'test-user-id',
+            id: '00000000-0000-0000-0000-000000000000',
             email: 'test@uvic.ca',
             first_name: 'Test',
             last_name: 'User',
@@ -92,7 +92,7 @@ async function setupTestApp() {
   app.use((req: any, _res: any, next: any) => {
     if (!req.user) {
       req.user = {
-        id: 'test-user-id',
+        id: '00000000-0000-0000-0000-000000000000',
         email: 'test@uvic.ca',
         first_name: 'Test',
         last_name: 'User',
@@ -328,6 +328,7 @@ describe('/bookings (e2e)', () => {
 
     // Create test user
     testUser = userRepository.create({
+      id: `00000000-0000-0000-0000-000000000000`,
       email: `test-bookings-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
       first_name: 'John',
@@ -559,7 +560,7 @@ describe('Error handling (e2e)', () => {
   });
 
   it('should return 404 for non-existent user', () => {
-    const nonExistentId = '00000000-0000-0000-0000-000000000000';
+    const nonExistentId = '99999999-0000-0000-0000-000000000000';
     return request(app.getHttpServer())
       .get(`/users/${nonExistentId}`)
       .expect(404);

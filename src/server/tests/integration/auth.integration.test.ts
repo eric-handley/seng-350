@@ -878,6 +878,89 @@ describe('User management edge cases (e2e)', () => {
       .expect(403);
   });
 
+  it('should allow admin to delete other users', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    // Create a user to delete
+    const userToDelete = userRepository.create({
+      email: `delete-target-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Delete',
+      last_name: 'Target',
+      role: UserRole.STAFF,
+    });
+    await userRepository.save(userToDelete);
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    // Delete other user - should succeed
+    return agent.delete(`/users/${userToDelete.id}`).expect(204);
+  });
+
+  it('should allow admin to change other users roles', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    // Create a user to modify
+    const userToModify = userRepository.create({
+      email: `modify-target-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Modify',
+      last_name: 'Target',
+      role: UserRole.STAFF,
+    });
+    await userRepository.save(userToModify);
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    // Change other user's role - should succeed
+    return agent
+      .patch(`/users/${userToModify.id}`)
+      .send({ role: UserRole.ADMIN })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.role).toBe(UserRole.ADMIN);
+      });
+  });
+
+  it('should allow admin to update their own non-role fields', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    // Create a fresh admin for this test
+    const selfUpdateAdmin = userRepository.create({
+      email: `self-update-admin-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'SelfUpdate',
+      last_name: 'Admin',
+      role: UserRole.ADMIN,
+    });
+    await userRepository.save(selfUpdateAdmin);
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: selfUpdateAdmin.email, password: 'password123' })
+      .expect(200);
+
+    // Update own non-role fields - should succeed
+    return agent
+      .patch(`/users/${selfUpdateAdmin.id}`)
+      .send({ first_name: 'Updated', last_name: 'Name' })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.first_name).toBe('Updated');
+        expect(res.body.last_name).toBe('Name');
+        expect(res.body.role).toBe(UserRole.ADMIN); // Role unchanged
+      });
+  });
+
   it('should reject creating user with duplicate email', async () => {
     const agent = request.agent(app.getHttpServer());
 
@@ -923,7 +1006,6 @@ describe('User management edge cases (e2e)', () => {
 describe('Cross-user authorization (e2e)', () => {
   let app: INestApplication;
   let userRepository: Repository<User>;
-  let bookingRepository: Repository<import('../../src/database/entities/booking.entity').Booking>;
   let roomRepository: Repository<import('../../src/database/entities/room.entity').Room>;
   let staffUser1: User;
   let staffUser2: User;
@@ -934,10 +1016,8 @@ describe('Cross-user authorization (e2e)', () => {
     userRepository = setup.userRepository;
 
     const { getRepositoryToken } = await import('@nestjs/typeorm');
-    const { Booking } = await import('../../src/database/entities/booking.entity');
     const { Room } = await import('../../src/database/entities/room.entity');
 
-    bookingRepository = (app.get as any)(getRepositoryToken(Booking));
     roomRepository = (app.get as any)(getRepositoryToken(Room));
 
     const hashedPassword = await bcrypt.hash('password123', 10);
