@@ -1,10 +1,18 @@
 import { Controller, Post, Get, Body, Req, Res, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
 
 class LoginDto {
+  @ApiProperty({ example: 'user@uvic.ca' })
+  @IsEmail()
+  @IsNotEmpty()
   email!: string;
+
+  @ApiProperty({ example: 'password123' })
+  @IsString()
+  @IsNotEmpty()
   password!: string;
 }
 

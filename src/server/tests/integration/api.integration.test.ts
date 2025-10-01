@@ -35,9 +35,17 @@ import { ValidationExceptionFilter } from '../../src/filters/validation-exceptio
 // Shared setup function
 async function setupTestApp() {
   const { AppModule } = await import('../../src/app/app.module');
+  const { AuthGuard } = await import('../../src/shared/guards/auth.guard');
+  const { RolesGuard } = await import('../../src/shared/guards/roles.guard');
+
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  })
+    .overrideGuard(AuthGuard)
+    .useValue({ canActivate: () => true })
+    .overrideGuard(RolesGuard)
+    .useValue({ canActivate: () => true })
+    .compile();
 
   const app = moduleFixture.createNestApplication();
   
