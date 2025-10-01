@@ -25,7 +25,7 @@ import session = require('express-session');
 import bcrypt from 'bcryptjs';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
-import { ValidationExceptionFilter } from '../../src/filters/validation-exception.filter';
+import { GlobalExceptionFilter } from '../../src/filters/global-exception.filter';
 
 async function setupTestAppWithAuth() {
   const { AppModule } = await import('../../src/app/app.module');
@@ -73,7 +73,7 @@ async function setupTestAppWithAuth() {
     }),
   );
 
-  app.useGlobalFilters(new ValidationExceptionFilter());
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   await app.init();
 
@@ -611,7 +611,9 @@ describe('Password validation (e2e)', () => {
       .send(newUser)
       .expect(400)
       .expect((res) => {
-        expect(res.body.message).toContain('password');
+        expect(res.body.message).toBe('Validation failed');
+        expect(Array.isArray(res.body.error)).toBe(true);
+        expect(res.body.error.some((msg: string) => msg.includes('password'))).toBe(true);
       });
   });
 

@@ -30,7 +30,7 @@ import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { BookingSeries } from '../../src/database/entities/booking-series.entity';
 import { AuditLog } from '../../src/database/entities/audit-log.entity';
-import { ValidationExceptionFilter } from '../../src/filters/validation-exception.filter';
+import { GlobalExceptionFilter } from '../../src/filters/global-exception.filter';
 
 // Shared setup function
 async function setupTestApp() {
@@ -48,7 +48,7 @@ async function setupTestApp() {
     .compile();
 
   const app = moduleFixture.createNestApplication();
-  
+
   // Apply the same validation pipe configuration as in main.ts
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
@@ -70,8 +70,8 @@ async function setupTestApp() {
     },
   }));
 
-  // Apply global exception filter for better error reporting
-  app.useGlobalFilters(new ValidationExceptionFilter());
+  // Apply global exception filter for consistent error reporting
+  app.useGlobalFilters(new GlobalExceptionFilter());
   
   await app.init();
 

@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationExceptionFilter } from './filters/validation-exception.filter';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import session = require('express-session');
 
 async function bootstrap() {
@@ -43,8 +43,8 @@ async function bootstrap() {
     },
   }));
 
-  // Apply global exception filter for better error reporting
-  app.useGlobalFilters(new ValidationExceptionFilter());
+  // Apply global exception filter for consistent error reporting
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' ? false : 'http://localhost:5173',
