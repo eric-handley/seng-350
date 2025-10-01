@@ -6,6 +6,7 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -13,13 +14,17 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { RoomsService } from '../services/rooms.service';
 import { RoomQueryDto, RoomResponseDto } from '../dto/room.dto';
 import { RoomType } from '../database/entities/room.entity';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 @ApiTags('Rooms')
+@ApiBearerAuth()
 @Controller('rooms')
+@UseGuards(AuthGuard)
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 

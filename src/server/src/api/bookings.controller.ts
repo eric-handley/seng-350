@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,12 +19,16 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BookingsService } from '../services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 @ApiTags('Bookings')
+@ApiBearerAuth()
 @Controller('bookings')
+@UseGuards(AuthGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
