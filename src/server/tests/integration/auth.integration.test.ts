@@ -851,7 +851,7 @@ describe('User management edge cases (e2e)', () => {
     await app.close();
   });
 
-  it('should allow admin to delete themselves', async () => {
+  it('should not allow admin to delete themselves', async () => {
     const agent = request.agent(app.getHttpServer());
 
     await agent
@@ -859,11 +859,11 @@ describe('User management edge cases (e2e)', () => {
       .send({ email: adminUser.email, password: 'password123' })
       .expect(200);
 
-    // Delete self - should succeed (business logic may want to prevent this)
-    return agent.delete(`/users/${adminUser.id}`).expect(204);
+    // Delete self - prevent
+    return agent.delete(`/users/${adminUser.id}`).expect(403);
   });
 
-  it('should allow admin to change their own role', async () => {
+  it('should not allow admin to change their own role', async () => {
     const agent = request.agent(app.getHttpServer());
 
     await agent
@@ -875,10 +875,7 @@ describe('User management edge cases (e2e)', () => {
     return agent
       .patch(`/users/${otherAdminUser.id}`)
       .send({ role: UserRole.STAFF })
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.role).toBe(UserRole.STAFF);
-      });
+      .expect(403);
   });
 
   it('should reject creating user with duplicate email', async () => {
@@ -977,7 +974,7 @@ describe('Cross-user authorization (e2e)', () => {
       .expect(200);
 
     return agent
-      .get(`/bookings?userId=${staffUser1.id}`)
+      .get('/bookings')
       .expect(200)
       .expect((res) => {
         expect(res.body).toBeInstanceOf(Array);
@@ -998,8 +995,9 @@ describe('Cross-user authorization (e2e)', () => {
       .expect(403);
   });
 
-  it('should prevent user from creating bookings for other users', async () => {
-    const agent = request.agent(app.getHttpServer());
+  it('should prevent staff from modifying other staff bookings', async () => {
+    const agent1 = request.agent(app.getHttpServer());
+    const agent2 = request.agent(app.getHttpServer());
 
     // Get a test room
     const room = await roomRepository.findOne({ where: {} });
@@ -1007,7 +1005,8 @@ describe('Cross-user authorization (e2e)', () => {
       throw new Error('No rooms found for testing');
     }
 
-    await agent
+    // Staff user 1 logs in and creates a booking
+    await agent1
       .post('/api/auth/login')
       .send({ email: staffUser1.email, password: 'password123' })
       .expect(200);
@@ -1018,17 +1017,32 @@ describe('Cross-user authorization (e2e)', () => {
       end_time: '2027-01-01T11:00:00Z',
     };
 
-    // User1 should NOT be able to create a booking for User2
-    return agent
-      .post(`/bookings?userId=${staffUser2.id}`)
+    const createdBooking = await agent1
+      .post('/bookings')
       .send(booking)
+      .expect(201);
+
+    // Staff user 2 logs in
+    await agent2
+      .post('/api/auth/login')
+      .send({ email: staffUser2.email, password: 'password123' })
+      .expect(200);
+
+    // Staff user 2 should NOT be able to update staff user 1's booking
+    await agent2
+      .patch(`/bookings/${createdBooking.body.id}`)
+      .send({ start_time: '2027-01-01T14:00:00Z' })
+      .expect(403);
+
+    // Staff user 2 should NOT be able to delete staff user 1's booking
+    return agent2
+      .delete(`/bookings/${createdBooking.body.id}`)
       .expect(403);
   });
 
   it('should allow user to create bookings for themselves', async () => {
     const agent = request.agent(app.getHttpServer());
 
-    // Get a test room
     const room = await roomRepository.findOne({ where: {} });
     if (!room) {
       throw new Error('No rooms found for testing');
@@ -1045,9 +1059,8 @@ describe('Cross-user authorization (e2e)', () => {
       end_time: '2027-01-01T13:00:00Z',
     };
 
-    // User1 CAN create a booking for themselves
     return agent
-      .post(`/bookings?userId=${staffUser1.id}`)
+      .post('/bookings')
       .send(booking)
       .expect(201)
       .expect((res) => {

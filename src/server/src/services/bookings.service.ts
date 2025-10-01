@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Booking, BookingStatus } from '../database/entities/booking.entity';
 import { Room } from '../database/entities/room.entity';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
+import { AuthenticatedUser } from '../auth/auth.service';
+import { UserRole } from '../database/entities/user.entity';
 
 @Injectable()
 export class BookingsService {
@@ -39,18 +41,30 @@ export class BookingsService {
   }
 
   async findAll(
-    userId?: string,
+    currentUser: AuthenticatedUser,
+    userIdFilter?: string,
     roomId?: string,
     startDate?: Date,
     endDate?: Date,
   ): Promise<BookingResponseDto[]> {
+    // Access control: Determine which user's bookings to query
+    let effectiveUserId: string;
+
+    if (userIdFilter) {
+      // If filtering by specific user, check authorization
+      if (userIdFilter !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+        throw new ForbiddenException('Cannot view other users bookings');
+      }
+      effectiveUserId = userIdFilter;
+    } else {
+      // No filter: default to current user's bookings
+      effectiveUserId = currentUser.id;
+    }
+
     const query = this.bookingRepository.createQueryBuilder('booking')
       .leftJoinAndSelect('booking.user', 'user')
-      .leftJoinAndSelect('booking.room', 'room');
-
-    if (userId) {
-      query.andWhere('booking.user_id = :userId', { userId });
-    }
+      .leftJoinAndSelect('booking.room', 'room')
+      .andWhere('booking.user_id = :userId', { userId: effectiveUserId });
 
     if (roomId) {
       query.andWhere('booking.room_id = :roomId', { roomId });
@@ -83,15 +97,16 @@ export class BookingsService {
     return this.toResponseDto(booking);
   }
 
-  async update(id: string, updateBookingDto: UpdateBookingDto, userId?: string): Promise<BookingResponseDto> {
+  async update(id: string, updateBookingDto: UpdateBookingDto, currentUser: AuthenticatedUser): Promise<BookingResponseDto> {
     const booking = await this.bookingRepository.findOne({ where: { id }, relations: ['user', 'room'] });
 
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
 
-    if (userId && booking.user_id !== userId) {
-      throw new ConflictException('You can only update your own bookings');
+    // Mandatory ownership check - allow if user owns booking OR is Admin
+    if (booking.user_id !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('You can only update your own bookings');
     }
 
     if (updateBookingDto.start_time && updateBookingDto.end_time) {
@@ -120,15 +135,16 @@ export class BookingsService {
     return this.toResponseDto(savedBooking);
   }
 
-  async remove(id: string, userId?: string): Promise<void> {
+  async remove(id: string, currentUser: AuthenticatedUser): Promise<void> {
     const booking = await this.bookingRepository.findOne({ where: { id } });
 
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
 
-    if (userId && booking.user_id !== userId) {
-      throw new ConflictException('You can only cancel your own bookings');
+    // Mandatory ownership check - allow if user owns booking OR is Admin
+    if (booking.user_id !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('You can only cancel your own bookings');
     }
 
     booking.status = BookingStatus.CANCELLED;

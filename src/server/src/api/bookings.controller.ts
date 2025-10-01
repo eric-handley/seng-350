@@ -24,6 +24,8 @@ import {
 import { BookingsService } from '../services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
 import { AuthGuard } from '../shared/guards/auth.guard';
+import { CurrentUser } from '../shared/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../auth/auth.service';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()
@@ -55,14 +57,14 @@ export class BookingsController {
   })
   async create(
     @Body() createBookingDto: CreateBookingDto,
-    @Query('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser() user: AuthenticatedUser,
   ): Promise<BookingResponseDto> {
-    return this.bookingsService.create(createBookingDto, userId);
+    return this.bookingsService.create(createBookingDto, user.id);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get bookings with optional filters' })
-  @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID' })
+  @ApiOperation({ summary: 'Get bookings with optional filters (Staff: own bookings, Admin: any user)' })
+  @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID (Admin only)' })
   @ApiQuery({ name: 'roomId', required: false, description: 'Filter by room ID' })
   @ApiQuery({ name: 'startDate', required: false, description: 'Filter by start date (ISO 8601)' })
   @ApiQuery({ name: 'endDate', required: false, description: 'Filter by end date (ISO 8601)' })
@@ -71,7 +73,12 @@ export class BookingsController {
     description: 'List of bookings',
     type: [BookingResponseDto],
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Cannot view other users bookings (non-Admin)',
+  })
   async findAll(
+    @CurrentUser() user: AuthenticatedUser,
     @Query('userId') userId?: string,
     @Query('roomId') roomId?: string,
     @Query('startDate') startDate?: string,
@@ -79,8 +86,8 @@ export class BookingsController {
   ): Promise<BookingResponseDto[]> {
     const startDateObj = startDate ? new Date(startDate) : undefined;
     const endDateObj = endDate ? new Date(endDate) : undefined;
-    
-    return this.bookingsService.findAll(userId, roomId, startDateObj, endDateObj);
+
+    return this.bookingsService.findAll(user, userId, roomId, startDateObj, endDateObj);
   }
 
   @Get(':id')
@@ -105,7 +112,6 @@ export class BookingsController {
   @ApiOperation({ summary: 'Update booking by ID' })
   @ApiParam({ name: 'id', description: 'Booking UUID' })
   @ApiBody({ type: UpdateBookingDto })
-  @ApiQuery({ name: 'userId', required: false, description: 'User ID for ownership validation' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Booking updated successfully',
@@ -116,22 +122,25 @@ export class BookingsController {
     description: 'Booking not found',
   })
   @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'You can only update your own bookings',
+  })
+  @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Room conflict or unauthorized access',
+    description: 'Room conflict',
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateBookingDto: UpdateBookingDto,
-    @Query('userId') userId?: string,
+    @CurrentUser() user: AuthenticatedUser,
   ): Promise<BookingResponseDto> {
-    return this.bookingsService.update(id, updateBookingDto, userId);
+    return this.bookingsService.update(id, updateBookingDto, user);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Cancel booking by ID' })
   @ApiParam({ name: 'id', description: 'Booking UUID' })
-  @ApiQuery({ name: 'userId', required: false, description: 'User ID for ownership validation' })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'Booking cancelled successfully',
@@ -141,13 +150,13 @@ export class BookingsController {
     description: 'Booking not found',
   })
   @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'Unauthorized to cancel this booking',
+    status: HttpStatus.FORBIDDEN,
+    description: 'You can only cancel your own bookings',
   })
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('userId') userId?: string,
+    @CurrentUser() user: AuthenticatedUser,
   ): Promise<void> {
-    return this.bookingsService.remove(id, userId);
+    return this.bookingsService.remove(id, user);
   }
 }

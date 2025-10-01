@@ -4,10 +4,20 @@ import { BookingsService } from '../src/services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../src/dto/booking.dto';
 import { BookingStatus } from '../src/database/entities/booking.entity';
 import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { AuthenticatedUser } from '../src/auth/auth.service';
+import { UserRole } from '../src/database/entities/user.entity';
 
 describe('BookingsController', () => {
   let controller: BookingsController;
   let service: BookingsService;
+
+  const mockUser: AuthenticatedUser = {
+    id: 'user-uuid',
+    email: 'test@uvic.ca',
+    first_name: 'Test',
+    last_name: 'User',
+    role: UserRole.STAFF,
+  };
 
   const mockBookingResponse: BookingResponseDto = {
     id: 'booking-uuid',
@@ -58,31 +68,31 @@ describe('BookingsController', () => {
     it('should create a booking successfully', async () => {
       mockBookingsService.create.mockResolvedValue(mockBookingResponse);
 
-      const result = await controller.create(createBookingDto, 'user-uuid');
+      const result = await controller.create(createBookingDto, mockUser);
 
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, 'user-uuid');
+      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
       expect(result).toEqual(mockBookingResponse);
     });
 
     it('should throw ConflictException when room is already booked', async () => {
       mockBookingsService.create.mockRejectedValue(new ConflictException('Room is already booked for this time slot'));
 
-      await expect(controller.create(createBookingDto, 'user-uuid')).rejects.toThrow(ConflictException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, 'user-uuid');
+      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(ConflictException);
+      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
     });
 
     it('should throw NotFoundException when room or user not found', async () => {
       mockBookingsService.create.mockRejectedValue(new NotFoundException('Room or user not found'));
 
-      await expect(controller.create(createBookingDto, 'user-uuid')).rejects.toThrow(NotFoundException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, 'user-uuid');
+      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(NotFoundException);
+      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
     });
 
     it('should throw BadRequestException for invalid booking data', async () => {
       mockBookingsService.create.mockRejectedValue(new BadRequestException('Invalid booking data'));
 
-      await expect(controller.create(createBookingDto, 'user-uuid')).rejects.toThrow(BadRequestException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, 'user-uuid');
+      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(BadRequestException);
+      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
     });
   });
 
@@ -91,9 +101,9 @@ describe('BookingsController', () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(mockUser);
 
-      expect(service.findAll).toHaveBeenCalledWith(undefined, undefined, undefined, undefined);
+      expect(service.findAll).toHaveBeenCalledWith(mockUser, undefined, undefined, undefined, undefined);
       expect(result).toEqual(mockBookings);
     });
 
@@ -101,9 +111,9 @@ describe('BookingsController', () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
 
-      const result = await controller.findAll('user-uuid');
+      const result = await controller.findAll(mockUser, 'user-uuid');
 
-      expect(service.findAll).toHaveBeenCalledWith('user-uuid', undefined, undefined, undefined);
+      expect(service.findAll).toHaveBeenCalledWith(mockUser, 'user-uuid', undefined, undefined, undefined);
       expect(result).toEqual(mockBookings);
     });
 
@@ -113,9 +123,10 @@ describe('BookingsController', () => {
       const startDate = '2024-01-01T00:00:00Z';
       const endDate = '2024-01-02T00:00:00Z';
 
-      const result = await controller.findAll('user-uuid', 'room-uuid', startDate, endDate);
+      const result = await controller.findAll(mockUser, 'user-uuid', 'room-uuid', startDate, endDate);
 
       expect(service.findAll).toHaveBeenCalledWith(
+        mockUser,
         'user-uuid',
         'room-uuid',
         new Date(startDate),
@@ -128,9 +139,10 @@ describe('BookingsController', () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
 
-      await controller.findAll(undefined, undefined, '2024-01-01T00:00:00Z');
+      await controller.findAll(mockUser, undefined, undefined, '2024-01-01T00:00:00Z');
 
       expect(service.findAll).toHaveBeenCalledWith(
+        mockUser,
         undefined,
         undefined,
         new Date('2024-01-01T00:00:00Z'),
@@ -167,34 +179,24 @@ describe('BookingsController', () => {
       const updatedBooking = { ...mockBookingResponse, ...updateBookingDto };
       mockBookingsService.update.mockResolvedValue(updatedBooking);
 
-      const result = await controller.update('booking-uuid', updateBookingDto, 'user-uuid');
+      const result = await controller.update('booking-uuid', updateBookingDto, mockUser);
 
-      expect(service.update).toHaveBeenCalledWith('booking-uuid', updateBookingDto, 'user-uuid');
-      expect(result).toEqual(updatedBooking);
-    });
-
-    it('should update booking without userId', async () => {
-      const updatedBooking = { ...mockBookingResponse, ...updateBookingDto };
-      mockBookingsService.update.mockResolvedValue(updatedBooking);
-
-      const result = await controller.update('booking-uuid', updateBookingDto);
-
-      expect(service.update).toHaveBeenCalledWith('booking-uuid', updateBookingDto, undefined);
+      expect(service.update).toHaveBeenCalledWith('booking-uuid', updateBookingDto, mockUser);
       expect(result).toEqual(updatedBooking);
     });
 
     it('should throw NotFoundException when booking not found', async () => {
       mockBookingsService.update.mockRejectedValue(new NotFoundException('Booking not found'));
 
-      await expect(controller.update('non-existent-uuid', updateBookingDto)).rejects.toThrow(NotFoundException);
-      expect(service.update).toHaveBeenCalledWith('non-existent-uuid', updateBookingDto, undefined);
+      await expect(controller.update('non-existent-uuid', updateBookingDto, mockUser)).rejects.toThrow(NotFoundException);
+      expect(service.update).toHaveBeenCalledWith('non-existent-uuid', updateBookingDto, mockUser);
     });
 
-    it('should throw ConflictException for unauthorized access or room conflict', async () => {
-      mockBookingsService.update.mockRejectedValue(new ConflictException('Room conflict or unauthorized access'));
+    it('should throw ConflictException for room conflict', async () => {
+      mockBookingsService.update.mockRejectedValue(new ConflictException('Room conflict'));
 
-      await expect(controller.update('booking-uuid', updateBookingDto, 'wrong-user')).rejects.toThrow(ConflictException);
-      expect(service.update).toHaveBeenCalledWith('booking-uuid', updateBookingDto, 'wrong-user');
+      await expect(controller.update('booking-uuid', updateBookingDto, mockUser)).rejects.toThrow(ConflictException);
+      expect(service.update).toHaveBeenCalledWith('booking-uuid', updateBookingDto, mockUser);
     });
   });
 
@@ -202,31 +204,23 @@ describe('BookingsController', () => {
     it('should remove a booking successfully', async () => {
       mockBookingsService.remove.mockResolvedValue(undefined);
 
-      await controller.remove('booking-uuid', 'user-uuid');
+      await controller.remove('booking-uuid', mockUser);
 
-      expect(service.remove).toHaveBeenCalledWith('booking-uuid', 'user-uuid');
-    });
-
-    it('should remove booking without userId', async () => {
-      mockBookingsService.remove.mockResolvedValue(undefined);
-
-      await controller.remove('booking-uuid');
-
-      expect(service.remove).toHaveBeenCalledWith('booking-uuid', undefined);
+      expect(service.remove).toHaveBeenCalledWith('booking-uuid', mockUser);
     });
 
     it('should throw NotFoundException when booking not found', async () => {
       mockBookingsService.remove.mockRejectedValue(new NotFoundException('Booking not found'));
 
-      await expect(controller.remove('non-existent-uuid')).rejects.toThrow(NotFoundException);
-      expect(service.remove).toHaveBeenCalledWith('non-existent-uuid', undefined);
+      await expect(controller.remove('non-existent-uuid', mockUser)).rejects.toThrow(NotFoundException);
+      expect(service.remove).toHaveBeenCalledWith('non-existent-uuid', mockUser);
     });
 
     it('should throw ConflictException for unauthorized cancellation', async () => {
       mockBookingsService.remove.mockRejectedValue(new ConflictException('Unauthorized to cancel this booking'));
 
-      await expect(controller.remove('booking-uuid', 'wrong-user')).rejects.toThrow(ConflictException);
-      expect(service.remove).toHaveBeenCalledWith('booking-uuid', 'wrong-user');
+      await expect(controller.remove('booking-uuid', mockUser)).rejects.toThrow(ConflictException);
+      expect(service.remove).toHaveBeenCalledWith('booking-uuid', mockUser);
     });
   });
 });

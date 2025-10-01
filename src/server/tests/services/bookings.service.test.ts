@@ -1,18 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 
 import { BookingsService } from '../../src/services/bookings.service';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { CreateBookingDto, UpdateBookingDto } from '../../src/dto/booking.dto';
 import { TestDataFactory, mockUUID, generateMockDate } from '../test-helpers';
+import { AuthenticatedUser } from '../../src/auth/auth.service';
+import { UserRole } from '../../src/database/entities/user.entity';
 
 describe('BookingsService', () => {
   let service: BookingsService;
   let bookingRepository: Repository<Booking>;
   let roomRepository: Repository<Room>;
+
+  const mockUser: AuthenticatedUser = {
+    id: mockUUID,
+    email: 'test@uvic.ca',
+    first_name: 'Test',
+    last_name: 'User',
+    role: UserRole.STAFF,
+  };
+
+  const mockAdminUser: AuthenticatedUser = {
+    id: 'admin-uuid',
+    email: 'admin@uvic.ca',
+    first_name: 'Admin',
+    last_name: 'User',
+    role: UserRole.ADMIN,
+  };
 
   const mockBooking = {
     id: mockUUID,
@@ -132,22 +150,7 @@ describe('BookingsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all bookings without filters', async () => {
-      const mockBookings = [mockBooking];
-      const mockQueryBuilder = {
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue(mockBookings),
-      };
-      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
-
-      const result = await service.findAll();
-
-      expect(bookingRepository.createQueryBuilder).toHaveBeenCalledWith('booking');
-      expect(result).toBeDefined();
-    });
-
-    it('should return bookings with filters', async () => {
+    it('should return all bookings for current user without filters', async () => {
       const mockBookings = [mockBooking];
       const mockQueryBuilder = {
         leftJoinAndSelect: jest.fn().mockReturnThis(),
@@ -157,10 +160,46 @@ describe('BookingsService', () => {
       };
       mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      const result = await service.findAll(mockUUID, mockUUID, generateMockDate(), generateMockDate(24));
+      const result = await service.findAll(mockUser);
+
+      expect(bookingRepository.createQueryBuilder).toHaveBeenCalledWith('booking');
+      expect(result).toBeDefined();
+    });
+
+    it('should return bookings for current user with filters', async () => {
+      const mockBookings = [mockBooking];
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockBookings),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.findAll(mockUser, mockUUID, mockUUID, generateMockDate(), generateMockDate(24));
 
       expect(bookingRepository.createQueryBuilder).toHaveBeenCalled();
       expect(result).toBeDefined();
+    });
+
+    it('should allow admin to view other users bookings', async () => {
+      const mockBookings = [mockBooking];
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockBookings),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.findAll(mockAdminUser, 'other-user-id');
+
+      expect(bookingRepository.createQueryBuilder).toHaveBeenCalled();
+      expect(result).toBeDefined();
+    });
+
+    it('should throw ForbiddenException when staff tries to view other users bookings', async () => {
+      await expect(service.findAll(mockUser, 'other-user-id')).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -203,7 +242,7 @@ describe('BookingsService', () => {
       };
       mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      const result = await service.update(mockUUID, updateBookingDto, mockUUID);
+      const result = await service.update(mockUUID, updateBookingDto, mockUser);
 
       expect(bookingRepository.findOne).toHaveBeenCalledWith({
         where: { id: mockUUID },
@@ -224,14 +263,35 @@ describe('BookingsService', () => {
     it('should throw NotFoundException when booking not found', async () => {
       mockBookingRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(mockUUID, updateBookingDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockUUID, updateBookingDto, mockUser)).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw ConflictException for unauthorized access', async () => {
+    it('should throw ForbiddenException for unauthorized access', async () => {
       const bookingWithDifferentUser = { ...mockBooking, user_id: 'different-user-id' };
       mockBookingRepository.findOne.mockResolvedValue(bookingWithDifferentUser);
 
-      await expect(service.update(mockUUID, updateBookingDto, mockUUID)).rejects.toThrow(ConflictException);
+      await expect(service.update(mockUUID, updateBookingDto, mockUser)).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should allow admin to update any booking', async () => {
+      const bookingWithDifferentUser = { ...mockBooking, user_id: 'different-user-id' };
+      const updatedBooking = { ...bookingWithDifferentUser, ...updateBookingDto };
+      mockBookingRepository.findOne.mockResolvedValue(bookingWithDifferentUser);
+      mockBookingRepository.save.mockResolvedValue(updatedBooking);
+
+      // Ensure conflict check query builder is properly mocked
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.update(mockUUID, updateBookingDto, mockAdminUser);
+
+      expect(bookingRepository.findOne).toHaveBeenCalled();
+      expect(bookingRepository.save).toHaveBeenCalled();
+      expect(result).toBeDefined();
     });
   });
 
@@ -241,7 +301,7 @@ describe('BookingsService', () => {
       mockBookingRepository.findOne.mockResolvedValue(bookingToCancel);
       mockBookingRepository.save.mockResolvedValue({ ...bookingToCancel, status: BookingStatus.CANCELLED });
 
-      await service.remove(mockUUID, mockUUID);
+      await service.remove(mockUUID, mockUser);
 
       expect(bookingRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -250,17 +310,28 @@ describe('BookingsService', () => {
     it('should throw NotFoundException when booking not found', async () => {
       mockBookingRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.remove(mockUUID)).rejects.toThrow(NotFoundException);
+      await expect(service.remove(mockUUID, mockUser)).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw ConflictException for unauthorized cancellation', async () => {
+    it('should throw ForbiddenException for unauthorized cancellation', async () => {
       const bookingWithDifferentUser = {
         ...mockBooking,
         user_id: 'different-user-id',
       };
       mockBookingRepository.findOne.mockResolvedValue(bookingWithDifferentUser);
 
-      await expect(service.remove(mockUUID, mockUUID)).rejects.toThrow(ConflictException);
+      await expect(service.remove(mockUUID, mockUser)).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should allow admin to cancel any booking', async () => {
+      const bookingWithDifferentUser = { ...mockBooking, user_id: 'different-user-id', status: BookingStatus.ACTIVE };
+      mockBookingRepository.findOne.mockResolvedValue(bookingWithDifferentUser);
+      mockBookingRepository.save.mockResolvedValue({ ...bookingWithDifferentUser, status: BookingStatus.CANCELLED });
+
+      await service.remove(mockUUID, mockAdminUser);
+
+      expect(bookingRepository.findOne).toHaveBeenCalled();
+      expect(bookingRepository.save).toHaveBeenCalled();
     });
   });
 });

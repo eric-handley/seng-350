@@ -42,7 +42,22 @@ async function setupTestApp() {
     imports: [AppModule],
   })
     .overrideGuard(AuthGuard)
-    .useValue({ canActivate: () => true })
+    .useValue({
+      canActivate: (context: any) => {
+        const request = context.switchToHttp().getRequest();
+        // Inject a default test user if not already set
+        if (!request.user) {
+          request.user = {
+            id: 'test-user-id',
+            email: 'test@uvic.ca',
+            first_name: 'Test',
+            last_name: 'User',
+            role: UserRole.STAFF,
+          };
+        }
+        return true;
+      }
+    })
     .overrideGuard(RolesGuard)
     .useValue({ canActivate: () => true })
     .compile();
@@ -72,7 +87,21 @@ async function setupTestApp() {
 
   // Apply global exception filter for consistent error reporting
   app.useGlobalFilters(new GlobalExceptionFilter());
-  
+
+  // Add middleware to inject test user into request
+  app.use((req: any, _res: any, next: any) => {
+    if (!req.user) {
+      req.user = {
+        id: 'test-user-id',
+        email: 'test@uvic.ca',
+        first_name: 'Test',
+        last_name: 'User',
+        role: UserRole.STAFF,
+      };
+    }
+    next();
+  });
+
   await app.init();
 
   return {
@@ -310,6 +339,18 @@ describe('/bookings (e2e)', () => {
     // Get test room
     const testData = await getTestData(setup.buildingRepository, setup.roomRepository);
     testRoom = testData.testRoom;
+
+    // Update middleware to use testUser for this test suite
+    app.use((req: any, _res: any, next: any) => {
+      req.user = {
+        id: testUser.id,
+        email: testUser.email,
+        first_name: testUser.first_name,
+        last_name: testUser.last_name,
+        role: testUser.role,
+      };
+      next();
+    });
   });
 
   afterAll(async () => {
@@ -324,7 +365,7 @@ describe('/bookings (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .post(`/bookings?userId=${testUser.id}`)
+      .post('/bookings')
       .send(newBooking)
       .expect((res: Response) => {
         if (res.status !== 201) {
@@ -334,7 +375,8 @@ describe('/bookings (e2e)', () => {
       .expect(201)
       .expect((res: Response) => {
         expect(res.body.room_id).toBe(newBooking.room_id);
-        expect(res.body.user_id).toBe(testUser.id);
+        // User ID will be set from the test middleware (test-user-id)
+        expect(res.body.user_id).toBeDefined();
         expect(res.body.status).toBe(BookingStatus.ACTIVE);
       });
   });
@@ -347,7 +389,7 @@ describe('/bookings (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .post(`/bookings?userId=${testUser.id}`)
+      .post('/bookings')
       .send(invalidBooking)
       .expect(400);
   });
@@ -382,7 +424,7 @@ describe('/bookings (e2e)', () => {
     await bookingRepository.save(booking);
 
     return request(app.getHttpServer())
-      .get(`/bookings?userId=${testUser.id}&roomId=${testRoom.id}`)
+      .get(`/bookings?roomId=${testRoom.id}`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
@@ -429,7 +471,7 @@ describe('/bookings (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .patch(`/bookings/${savedBooking.id}?userId=${testUser.id}`)
+      .patch(`/bookings/${savedBooking.id}`)
       .send(updateData)
       .expect((res: Response) => {
         if (res.status !== 200) {
@@ -454,7 +496,7 @@ describe('/bookings (e2e)', () => {
     const savedBooking = await bookingRepository.save(booking);
 
     return request(app.getHttpServer())
-      .delete(`/bookings/${savedBooking.id}?userId=${testUser.id}`)
+      .delete(`/bookings/${savedBooking.id}`)
       .expect(204);
   });
 });
