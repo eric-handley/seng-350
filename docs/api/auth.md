@@ -2,7 +2,7 @@
 
 ## Overview
 
-The authentication system uses session-based authentication with role-based access control (RBAC). Sessions are stored in cookies and expire after 24 hours.
+The authentication system uses session-based authentication with role-based access control. Sessions are stored in cookies and expire after 24 hours.
 
 ## User Roles
 
@@ -125,31 +125,7 @@ User is authenticated but lacks required role.
 
 ---
 
-## Usage Examples
-
-### Login Flow
-
-```bash
-# 1. Login
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@uvic.ca", "password": "password123"}' \
-  -c cookies.txt
-
-# 2. Access protected endpoint
-curl -X GET http://localhost:3000/users \
-  -b cookies.txt
-
-# 3. Check session
-curl -X GET http://localhost:3000/api/auth/session \
-  -b cookies.txt
-
-# 4. Logout
-curl -X POST http://localhost:3000/api/auth/logout \
-  -b cookies.txt
-```
-
-### Browser/Frontend Usage
+## Frontend Usage
 
 ```javascript
 // Login
@@ -194,83 +170,4 @@ Sessions are configured in `src/main.ts`:
 ```bash
 SESSION_SECRET=your-secure-random-secret-here
 NODE_ENV=production  # Enables secure cookies
-```
-
----
-
-## Security Notes
-
-1. **Password Storage:** Passwords are hashed using bcrypt with 10 salt rounds
-2. **Session Security:** Sessions use httpOnly cookies to prevent XSS attacks
-3. **CORS:** Configured to accept credentials from http://localhost:5173 in development
-4. **No Registration:** Users can only be created by Admins via `/users` endpoint
-5. **Role Enforcement:** RolesGuard checks user role against required roles on each request
-
----
-
-## Implementation Details
-
-### Decorators
-
-**@Roles(...roles: UserRole[])**
-- Marks endpoints with required roles
-- Example: `@Roles(UserRole.ADMIN, UserRole.REGISTRAR)`
-
-**@CurrentUser()**
-- Injects authenticated user into controller method
-- Returns `AuthenticatedUser` object
-- Example:
-```typescript
-@Get('profile')
-@UseGuards(AuthGuard)
-async getProfile(@CurrentUser() user: AuthenticatedUser) {
-  return user;
-}
-```
-
-### Guards
-
-**AuthGuard**
-- Checks if user is authenticated
-- Throws 401 if no valid session
-- Location: `src/shared/guards/auth.guard.ts`
-
-**RolesGuard**
-- Checks if user has required role(s)
-- Returns false if role doesn't match
-- Location: `src/shared/guards/roles.guard.ts`
-
----
-
-## Testing
-
-### Create Admin User (for testing)
-
-First, create an admin user via SQL or migration:
-
-```sql
-INSERT INTO users (id, email, password_hash, first_name, last_name, role)
-VALUES (
-  gen_random_uuid(),
-  'admin@uvic.ca',
-  '$2a$10$...',  -- bcrypt hash of 'password123'
-  'Admin',
-  'User',
-  'Admin'
-);
-```
-
-Or use the API (requires existing admin):
-
-```bash
-curl -X POST http://localhost:3000/users \
-  -H "Content-Type: application/json" \
-  -b admin-cookies.txt \
-  -d '{
-    "email": "newadmin@uvic.ca",
-    "password": "securepass123",
-    "first_name": "New",
-    "last_name": "Admin",
-    "role": "Admin"
-  }'
 ```
