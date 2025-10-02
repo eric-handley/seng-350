@@ -4,6 +4,7 @@ import UsersTab from "./components/UserTab"
 import EditUser from "./components/EditUser"
 import { User } from "./types/models"
 import AddUser from './components/AddUser'
+import BookingCard from './components/BookingCard'
 
 type Room = {
   id: string
@@ -365,30 +366,14 @@ export default function App() {
               <div className="grid">
                 {userHistory.map(b => {
                   const room = ROOMS.find(r => r.id === b.roomId)!
-                  const d = new Date(b.start)
-                  const dEnd = new Date(b.end)
-                  const dateStr = d.toLocaleDateString()
-                  const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
                   return (
-                    <article key={b.id} className="card">
-                      <div className="row">
-                        <h3>{room.name}</h3>
-                        <span className="kv">{room.building}</span>
-                      </div>
-                      <div className="meta">
-                        <span>{dateStr}</span>
-                        <span>{timeStr}</span>
-                        <span>ID: {b.id}</span>
-                      </div>
-                      <div className="row" style={{marginTop:12}}>
-                        <span className="meta">{b.cancelled ? 'Cancelled' : 'Active'}</span>
-                        {!b.cancelled ? (
-                          <button className="btn danger" onClick={()=>handleCancel(b.id)}>Cancel</button>
-                        ) : (
-                          <button className="btn ghost" onClick={()=>alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
-                        )}
-                      </div>
-                    </article>
+                    <BookingCard
+                      key={b.id}
+                      booking={b}
+                      room={room}
+                      onCancel={handleCancel}
+                      showUser={false}
+                    />
                   )
                 })}
               </div>
@@ -403,30 +388,14 @@ export default function App() {
                 <div className="grid">
                   {bookings.map(b => {
                     const room = ROOMS.find(r => r.id === b.roomId)!
-                    const d = new Date(b.start)
-                    const dEnd = new Date(b.end)
-                    const dateStr = d.toLocaleDateString()
-                    const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
                     return (
-                      <article key={b.id} className="card">
-                        <div className="row">
-                          <h3>{room.name}</h3>
-                          <span className="kv">{room.building}</span>
-                        </div>
-                        <div className="meta">
-                          <span>{dateStr}</span>
-                          <span>{timeStr}</span>
-                          <span>ID: {b.id}</span>
-                        </div>
-                        <div className="row" style={{marginTop:12}}>
-                          <span className="meta">{b.cancelled ? 'Cancelled' : 'Active'}</span>
-                          {!b.cancelled ? (
-                            <button className="btn danger" onClick={()=>handleCancel(b.id)}>Cancel</button>
-                          ) : (
-                            <button className="btn ghost" onClick={()=>alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
-                          )}
-                        </div>
-                      </article>
+                      <BookingCard
+                        key={b.id}
+                        booking={b}
+                        room={room}
+                        onCancel={handleCancel}
+                        showUser={true}
+                      />
                     )
                   })}
                 </div>
