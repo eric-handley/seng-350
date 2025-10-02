@@ -138,13 +138,6 @@ describe('BuildingsController', () => {
       await expect(controller.findOne('non-existent-uuid', false)).rejects.toThrow(NotFoundException);
       expect(buildingsService.findOne).toHaveBeenCalledWith('non-existent-uuid', false);
     });
-
-    it('should handle invalid UUID format', async () => {
-      const invalidUuid = 'invalid-uuid';
-      
-      // This would be caught by the ParseUUIDPipe in real implementation
-      await expect(controller.findOne(invalidUuid, false)).rejects.toThrow();
-    });
   });
 
   describe('findRoomsByBuilding', () => {

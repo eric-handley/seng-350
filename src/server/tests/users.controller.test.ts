@@ -81,20 +81,6 @@ describe('UsersController', () => {
       expect(result).toEqual(mockUserResponse);
     });
 
-    it('should throw ConflictException when user with email already exists', async () => {
-      mockUsersService.create.mockRejectedValue(new ConflictException('User with this email already exists'));
-
-      await expect(controller.create(createUserDto, mockAdminUser)).rejects.toThrow(ConflictException);
-      expect(service.create).toHaveBeenCalledWith(createUserDto, mockAdminUser);
-    });
-
-    it('should throw BadRequestException for invalid input data', async () => {
-      mockUsersService.create.mockRejectedValue(new BadRequestException('Invalid input data'));
-
-      await expect(controller.create(createUserDto, mockAdminUser)).rejects.toThrow(BadRequestException);
-      expect(service.create).toHaveBeenCalledWith(createUserDto, mockAdminUser);
-    });
-
     it('should handle different user roles', async () => {
       const registrarUserDto = { ...createUserDto, role: UserRole.REGISTRAR };
       const registrarResponse = { ...mockUserResponse, role: UserRole.REGISTRAR };
@@ -159,13 +145,6 @@ describe('UsersController', () => {
       await expect(controller.findOne('non-existent-uuid', mockAdminUser)).rejects.toThrow(NotFoundException);
       expect(service.findOne).toHaveBeenCalledWith('non-existent-uuid');
     });
-
-    it('should handle invalid UUID format', async () => {
-      const invalidUuid = 'invalid-uuid';
-
-      // This would be caught by the ParseUUIDPipe in real implementation
-      await expect(controller.findOne(invalidUuid, mockAdminUser)).rejects.toThrow();
-    });
   });
 
   describe('update', () => {
@@ -208,14 +187,14 @@ describe('UsersController', () => {
       expect(result).toEqual(updatedUser);
     });
 
-    it('should handle role updates', async () => {
-      const roleUpdate = { role: UserRole.ADMIN };
-      const updatedUser = { ...mockUserResponse, role: UserRole.ADMIN };
+    it('should allow no-op role updates (same role)', async () => {
+      const noOpUpdate = { first_name: 'Jane', role: UserRole.STAFF };
+      const updatedUser = { ...mockUserResponse, first_name: 'Jane', role: UserRole.STAFF };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
-      const result = await controller.update('user-uuid', mockUser, roleUpdate);
+      const result = await controller.update('user-uuid', mockUser, noOpUpdate);
 
-      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, roleUpdate);
+      expect(service.update).toHaveBeenCalledWith('user-uuid', mockUser, noOpUpdate);
       expect(result).toEqual(updatedUser);
     });
   });

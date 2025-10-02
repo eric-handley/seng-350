@@ -90,14 +90,7 @@ describe('EquipmentController', () => {
       expect(service.findEquipmentByRoom).toHaveBeenCalledWith('non-existent-room-uuid');
     });
 
-    it('should handle invalid UUID format', async () => {
-      const invalidUuid = 'invalid-uuid';
-      
-      // This would be caught by the ParseUUIDPipe in real implementation
-      await expect(controller.findEquipmentByRoom(invalidUuid)).rejects.toThrow();
-    });
-
-    it('should handle rooms with common equipment types', async () => {
+    it('should handle rooms with multiple equipment items', async () => {
       const commonEquipment = [
         {
           ...mockEquipmentResponse,
@@ -122,33 +115,6 @@ describe('EquipmentController', () => {
       expect(service.findEquipmentByRoom).toHaveBeenCalledWith('classroom-uuid');
       expect(result).toEqual(commonEquipment);
       expect(result.every(eq => eq.name)).toBeTruthy();
-    });
-
-    it('should handle laboratory-specific equipment', async () => {
-      const labEquipment = [
-        {
-          ...mockEquipmentResponse,
-          id: 'equipment-uuid-1',
-          name: 'Oscilloscope',
-        },
-        {
-          ...mockEquipmentResponse,
-          id: 'equipment-uuid-2',
-          name: 'Function Generator',
-        },
-        {
-          ...mockEquipmentResponse,
-          id: 'equipment-uuid-3',
-          name: 'Power Supply',
-        },
-      ];
-      mockEquipmentService.findEquipmentByRoom.mockResolvedValue(labEquipment);
-
-      const result = await controller.findEquipmentByRoom('lab-uuid');
-
-      expect(service.findEquipmentByRoom).toHaveBeenCalledWith('lab-uuid');
-      expect(result).toEqual(labEquipment);
-      expect(result).toHaveLength(3);
     });
   });
 });

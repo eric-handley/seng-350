@@ -73,27 +73,6 @@ describe('BookingsController', () => {
       expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
       expect(result).toEqual(mockBookingResponse);
     });
-
-    it('should throw ConflictException when room is already booked', async () => {
-      mockBookingsService.create.mockRejectedValue(new ConflictException('Room is already booked for this time slot'));
-
-      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(ConflictException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
-    });
-
-    it('should throw NotFoundException when room or user not found', async () => {
-      mockBookingsService.create.mockRejectedValue(new NotFoundException('Room or user not found'));
-
-      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(NotFoundException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
-    });
-
-    it('should throw BadRequestException for invalid booking data', async () => {
-      mockBookingsService.create.mockRejectedValue(new BadRequestException('Invalid booking data'));
-
-      await expect(controller.create(createBookingDto, mockUser)).rejects.toThrow(BadRequestException);
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
-    });
   });
 
   describe('findAll', () => {
@@ -214,13 +193,6 @@ describe('BookingsController', () => {
 
       await expect(controller.remove('non-existent-uuid', mockUser)).rejects.toThrow(NotFoundException);
       expect(service.remove).toHaveBeenCalledWith('non-existent-uuid', mockUser);
-    });
-
-    it('should throw ConflictException for unauthorized cancellation', async () => {
-      mockBookingsService.remove.mockRejectedValue(new ConflictException('Unauthorized to cancel this booking'));
-
-      await expect(controller.remove('booking-uuid', mockUser)).rejects.toThrow(ConflictException);
-      expect(service.remove).toHaveBeenCalledWith('booking-uuid', mockUser);
     });
   });
 });

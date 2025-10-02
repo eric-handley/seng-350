@@ -1041,6 +1041,382 @@ describe('User management edge cases (e2e)', () => {
   });
 });
 
+describe('Role update restrictions (e2e)', () => {
+  let app: INestApplication;
+  let userRepository: Repository<User>;
+  let staffUser: User;
+  let registrarUser: User;
+  let adminUser: User;
+
+  beforeAll(async () => {
+    const setup = await setupTestAppWithAuth();
+    app = setup.app;
+    userRepository = setup.userRepository;
+
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    staffUser = userRepository.create({
+      email: `staff-role-test-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Staff',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    });
+    staffUser = await userRepository.save(staffUser);
+
+    registrarUser = userRepository.create({
+      email: `registrar-role-test-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Registrar',
+      last_name: 'User',
+      role: UserRole.REGISTRAR,
+    });
+    registrarUser = await userRepository.save(registrarUser);
+
+    adminUser = userRepository.create({
+      email: `admin-role-test-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Admin',
+      last_name: 'User',
+      role: UserRole.ADMIN,
+    });
+    adminUser = await userRepository.save(adminUser);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should allow STAFF to update own profile with role unchanged', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: staffUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${staffUser.id}`)
+      .send({ first_name: 'Updated', role: UserRole.STAFF })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.first_name).toBe('Updated');
+        expect(res.body.role).toBe(UserRole.STAFF);
+      });
+  });
+
+  it('should block STAFF from changing own role to ADMIN', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: staffUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${staffUser.id}`)
+      .send({ role: UserRole.ADMIN })
+      .expect(403)
+      .expect((res) => {
+        expect(res.body.message).toContain('permission');
+      });
+  });
+
+  it('should block STAFF from changing own role to REGISTRAR', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: staffUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${staffUser.id}`)
+      .send({ role: UserRole.REGISTRAR })
+      .expect(403);
+  });
+
+  it('should allow REGISTRAR to update own profile with role unchanged', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${registrarUser.id}`)
+      .send({ email: `updated-${Date.now()}@uvic.ca`, role: UserRole.REGISTRAR })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.role).toBe(UserRole.REGISTRAR);
+      });
+  });
+
+  it('should block REGISTRAR from changing own role to ADMIN', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${registrarUser.id}`)
+      .send({ role: UserRole.ADMIN })
+      .expect(403);
+  });
+
+  it('should allow ADMIN to update own profile with role unchanged', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .patch(`/users/${adminUser.id}`)
+      .send({ first_name: 'UpdatedAdmin', role: UserRole.ADMIN })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.first_name).toBe('UpdatedAdmin');
+        expect(res.body.role).toBe(UserRole.ADMIN);
+      });
+  });
+});
+
+describe('User deletion with bookings (e2e)', () => {
+  let app: INestApplication;
+  let userRepository: Repository<User>;
+  let bookingRepository: Repository<import('../../src/database/entities/booking.entity').Booking>;
+  let roomRepository: Repository<import('../../src/database/entities/room.entity').Room>;
+  let adminUser: User;
+
+  beforeAll(async () => {
+    const setup = await setupTestAppWithAuth();
+    app = setup.app;
+    userRepository = setup.userRepository;
+
+    const { getRepositoryToken } = await import('@nestjs/typeorm');
+    const { Booking } = await import('../../src/database/entities/booking.entity');
+    const { Room } = await import('../../src/database/entities/room.entity');
+
+    bookingRepository = (app.get as any)(getRepositoryToken(Booking));
+    roomRepository = (app.get as any)(getRepositoryToken(Room));
+
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    adminUser = userRepository.create({
+      email: `admin-delete-test-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Admin',
+      last_name: 'DeleteTest',
+      role: UserRole.ADMIN,
+    });
+    adminUser = await userRepository.save(adminUser);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should cascade cancel all future bookings when user is deleted', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    // Create user with future bookings
+    const userToDelete = userRepository.create({
+      email: `user-with-bookings-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'ToDelete',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    });
+    await userRepository.save(userToDelete);
+
+    const room = await roomRepository.findOne({ where: {} });
+    if (!room) {
+      throw new Error('No rooms found for testing');
+    }
+
+    // Create future booking
+    const { Booking, BookingStatus } = await import('../../src/database/entities/booking.entity');
+    const futureBooking = bookingRepository.create({
+      user: userToDelete,
+      room: room,
+      start_time: new Date('2027-06-01T10:00:00Z'),
+      end_time: new Date('2027-06-01T11:00:00Z'),
+      status: BookingStatus.ACTIVE,
+    });
+    await bookingRepository.save(futureBooking);
+
+    // Login as admin and delete user
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    await agent.delete(`/users/${userToDelete.id}`).expect(204);
+
+    // Verify booking was cancelled (not deleted)
+    const { BookingStatus: Status } = await import('../../src/database/entities/booking.entity');
+    const cancelledBooking = await bookingRepository.findOne({
+      where: { id: futureBooking.id },
+    });
+
+    expect(cancelledBooking).toBeDefined();
+    expect(cancelledBooking?.status).toBe(Status.CANCELLED);
+  });
+
+  it('should preserve audit trail when user with bookings is deleted', async () => {
+    const agent = request.agent(app.getHttpServer());
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    const userToDelete = userRepository.create({
+      email: `user-audit-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Audit',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    });
+    await userRepository.save(userToDelete);
+
+    const room = await roomRepository.findOne({ where: {} });
+    if (!room) {
+      throw new Error('No rooms found for testing');
+    }
+
+    const { Booking, BookingStatus } = await import('../../src/database/entities/booking.entity');
+    const booking = bookingRepository.create({
+      user: userToDelete,
+      room: room,
+      start_time: new Date('2027-07-01T10:00:00Z'),
+      end_time: new Date('2027-07-01T11:00:00Z'),
+      status: BookingStatus.ACTIVE,
+    });
+    await bookingRepository.save(booking);
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    await agent.delete(`/users/${userToDelete.id}`).expect(204);
+
+    // Booking should still exist with user_id preserved
+    const preservedBooking = await bookingRepository.findOne({
+      where: { id: booking.id },
+    });
+
+    expect(preservedBooking).toBeDefined();
+    expect(preservedBooking?.user_id).toBe(userToDelete.id);
+  });
+});
+
+describe('User viewing permissions (e2e)', () => {
+  let app: INestApplication;
+  let userRepository: Repository<User>;
+  let staffUser1: User;
+  let staffUser2: User;
+  let registrarUser: User;
+  let adminUser: User;
+
+  beforeAll(async () => {
+    const setup = await setupTestAppWithAuth();
+    app = setup.app;
+    userRepository = setup.userRepository;
+
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    staffUser1 = userRepository.create({
+      email: `staff1-view-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Staff',
+      last_name: 'One',
+      role: UserRole.STAFF,
+    });
+    staffUser1 = await userRepository.save(staffUser1);
+
+    staffUser2 = userRepository.create({
+      email: `staff2-view-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Staff',
+      last_name: 'Two',
+      role: UserRole.STAFF,
+    });
+    staffUser2 = await userRepository.save(staffUser2);
+
+    registrarUser = userRepository.create({
+      email: `registrar-view-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Registrar',
+      last_name: 'User',
+      role: UserRole.REGISTRAR,
+    });
+    registrarUser = await userRepository.save(registrarUser);
+
+    adminUser = userRepository.create({
+      email: `admin-view-${Date.now()}@uvic.ca`,
+      password_hash: hashedPassword,
+      first_name: 'Admin',
+      last_name: 'User',
+      role: UserRole.ADMIN,
+    });
+    adminUser = await userRepository.save(adminUser);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should block STAFF from viewing another STAFF user record', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: staffUser1.email, password: 'password123' })
+      .expect(200);
+
+    return agent.get(`/users/${staffUser2.id}`).expect(403);
+  });
+
+  it('should block STAFF from viewing ADMIN user record', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: staffUser1.email, password: 'password123' })
+      .expect(200);
+
+    return agent.get(`/users/${adminUser.id}`).expect(403);
+  });
+
+  it('should allow REGISTRAR to view any user record', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    await agent.get(`/users/${staffUser1.id}`).expect(200);
+    await agent.get(`/users/${adminUser.id}`).expect(200);
+  });
+
+  it('should allow ADMIN to view any user record', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: adminUser.email, password: 'password123' })
+      .expect(200);
+
+    await agent.get(`/users/${staffUser1.id}`).expect(200);
+    await agent.get(`/users/${registrarUser.id}`).expect(200);
+  });
+});
+
 describe('Cross-user authorization (e2e)', () => {
   let app: INestApplication;
   let userRepository: Repository<User>;

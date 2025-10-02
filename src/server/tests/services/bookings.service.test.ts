@@ -136,7 +136,7 @@ describe('BookingsService', () => {
       const conflictingBooking = { id: 'conflict-id' };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
-      
+
       // Mock query builder for conflict check - return booking to indicate conflict
       const mockQueryBuilder = {
         where: jest.fn().mockReturnThis(),
@@ -146,6 +146,258 @@ describe('BookingsService', () => {
       mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
       await expect(service.create(createBookingDto, mockUUID)).rejects.toThrow(ConflictException);
+    });
+
+    it('should block STAFF from creating bookings in the past', async () => {
+      const pastBookingDto = {
+        ...createBookingDto,
+        start_time: new Date('2020-01-01T09:00:00Z'), // Past date
+        end_time: new Date('2020-01-01T10:00:00Z'),
+      };
+
+      await expect(service.create(pastBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should allow ADMIN to create bookings in the past', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const pastBookingDto = {
+        ...createBookingDto,
+        start_time: new Date('2020-01-01T09:00:00Z'),
+        end_time: new Date('2020-01-01T10:00:00Z'),
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(pastBookingDto, mockAdminUser.id);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should allow REGISTRAR to create bookings in the past', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRegistrarUser: AuthenticatedUser = {
+        id: 'registrar-uuid',
+        email: 'registrar@uvic.ca',
+        first_name: 'Registrar',
+        last_name: 'User',
+        role: UserRole.REGISTRAR,
+      };
+      const pastBookingDto = {
+        ...createBookingDto,
+        start_time: new Date('2020-01-01T09:00:00Z'),
+        end_time: new Date('2020-01-01T10:00:00Z'),
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(pastBookingDto, mockRegistrarUser.id);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should reject bookings shorter than 15 minutes', async () => {
+      const shortBookingDto = {
+        ...createBookingDto,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(9, 10), // Only 10 minutes
+      };
+
+      await expect(service.create(shortBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should accept bookings exactly 15 minutes long', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const minBookingDto = {
+        ...createBookingDto,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(9, 15), // Exactly 15 minutes
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(minBookingDto, mockUUID);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should reject bookings longer than 8 hours', async () => {
+      const longBookingDto = {
+        ...createBookingDto,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(18, 0), // 9 hours
+      };
+
+      await expect(service.create(longBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should accept bookings exactly 8 hours long', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const maxBookingDto = {
+        ...createBookingDto,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(17, 0), // Exactly 8 hours
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(maxBookingDto, mockUUID);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should block STAFF from booking more than 3 months in advance', async () => {
+      const now = new Date();
+      const fourMonthsAhead = new Date(now);
+      fourMonthsAhead.setMonth(fourMonthsAhead.getMonth() + 4);
+
+      const farFutureBookingDto = {
+        ...createBookingDto,
+        start_time: fourMonthsAhead,
+        end_time: new Date(fourMonthsAhead.getTime() + 60 * 60 * 1000), // +1 hour
+      };
+
+      await expect(service.create(farFutureBookingDto, mockUser.id)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should allow STAFF to book exactly 3 months in advance', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const now = new Date();
+      const threeMonthsAhead = new Date(now);
+      threeMonthsAhead.setMonth(threeMonthsAhead.getMonth() + 3);
+
+      const threeMonthBookingDto = {
+        ...createBookingDto,
+        start_time: threeMonthsAhead,
+        end_time: new Date(threeMonthsAhead.getTime() + 60 * 60 * 1000),
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(threeMonthBookingDto, mockUser.id);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should allow ADMIN to book more than 3 months in advance', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const now = new Date();
+      const sixMonthsAhead = new Date(now);
+      sixMonthsAhead.setMonth(sixMonthsAhead.getMonth() + 6);
+
+      const farFutureBookingDto = {
+        ...createBookingDto,
+        start_time: sixMonthsAhead,
+        end_time: new Date(sixMonthsAhead.getTime() + 60 * 60 * 1000),
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(farFutureBookingDto, mockAdminUser.id);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should allow REGISTRAR to book more than 3 months in advance', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRegistrarUser: AuthenticatedUser = {
+        id: 'registrar-uuid',
+        email: 'registrar@uvic.ca',
+        first_name: 'Registrar',
+        last_name: 'User',
+        role: UserRole.REGISTRAR,
+      };
+      const now = new Date();
+      const sixMonthsAhead = new Date(now);
+      sixMonthsAhead.setMonth(sixMonthsAhead.getMonth() + 6);
+
+      const farFutureBookingDto = {
+        ...createBookingDto,
+        start_time: sixMonthsAhead,
+        end_time: new Date(sixMonthsAhead.getTime() + 60 * 60 * 1000),
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.create(farFutureBookingDto, mockRegistrarUser.id);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
     });
   });
 
@@ -332,6 +584,231 @@ describe('BookingsService', () => {
 
       expect(bookingRepository.findOne).toHaveBeenCalled();
       expect(bookingRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('booking series', () => {
+    it('should create a series of recurring bookings', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const seriesDto = {
+        room_id: mockUUID,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(10, 0),
+        recurrence: 'weekly',
+        recurrence_count: 4,
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.create.mockReturnValue(mockBooking);
+      mockBookingRepository.save.mockResolvedValue(mockBooking);
+
+      const result = await service.createSeries(seriesDto, mockUUID);
+
+      expect(result).toBeDefined();
+      expect(result.length).toBe(4);
+      expect(bookingRepository.save).toHaveBeenCalledTimes(4);
+    });
+
+    it('should update a single booking in a series', async () => {
+      const seriesBooking = { ...mockBooking, booking_series_id: 'series-uuid' };
+      const updateDto = { start_time: generateMockDate(10, 0) };
+
+      mockBookingRepository.findOne.mockResolvedValue(seriesBooking);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.save.mockResolvedValue({ ...seriesBooking, ...updateDto });
+
+      const result = await service.update(mockUUID, updateDto, mockUser);
+
+      expect(bookingRepository.findOne).toHaveBeenCalled();
+      expect(bookingRepository.save).toHaveBeenCalledTimes(1); // Only one booking updated
+    });
+
+    it('should update all bookings in a series when specified', async () => {
+      const seriesBooking = { ...mockBooking, booking_series_id: 'series-uuid' };
+      const updateDto = { start_time: generateMockDate(10, 0), update_series: true };
+
+      mockBookingRepository.findOne.mockResolvedValue(seriesBooking);
+
+      const seriesBookings = [
+        { ...mockBooking, id: 'booking-1', booking_series_id: 'series-uuid' },
+        { ...mockBooking, id: 'booking-2', booking_series_id: 'series-uuid' },
+        { ...mockBooking, id: 'booking-3', booking_series_id: 'series-uuid' },
+      ];
+
+      mockBookingRepository.find.mockResolvedValue(seriesBookings);
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.save.mockResolvedValue(seriesBooking);
+
+      await service.updateSeries('series-uuid', updateDto, mockUser);
+
+      expect(bookingRepository.find).toHaveBeenCalledWith({
+        where: { booking_series_id: 'series-uuid' },
+      });
+      expect(bookingRepository.save).toHaveBeenCalledTimes(3);
+    });
+
+    it('should cancel a single booking in a series', async () => {
+      const seriesBooking = { ...mockBooking, booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE };
+
+      mockBookingRepository.findOne.mockResolvedValue(seriesBooking);
+      mockBookingRepository.save.mockResolvedValue({ ...seriesBooking, status: BookingStatus.CANCELLED });
+
+      await service.remove(mockUUID, mockUser);
+
+      expect(bookingRepository.save).toHaveBeenCalledTimes(1);
+      expect(bookingRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ status: BookingStatus.CANCELLED })
+      );
+    });
+
+    it('should cancel all bookings in a series when specified', async () => {
+      const seriesBooking = { ...mockBooking, booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE };
+
+      mockBookingRepository.findOne.mockResolvedValue(seriesBooking);
+
+      const seriesBookings = [
+        { ...mockBooking, id: 'booking-1', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
+        { ...mockBooking, id: 'booking-2', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
+        { ...mockBooking, id: 'booking-3', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
+      ];
+
+      mockBookingRepository.find.mockResolvedValue(seriesBookings);
+      mockBookingRepository.save.mockResolvedValue({ ...seriesBooking, status: BookingStatus.CANCELLED });
+
+      await service.removeSeries('series-uuid', mockUser);
+
+      expect(bookingRepository.find).toHaveBeenCalledWith({
+        where: { booking_series_id: 'series-uuid' },
+      });
+      expect(bookingRepository.save).toHaveBeenCalledTimes(3);
+    });
+
+    it('should detect conflicts when creating booking series', async () => {
+      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const seriesDto = {
+        room_id: mockUUID,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(10, 0),
+        recurrence: 'weekly',
+        recurrence_count: 4,
+      };
+
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+
+      // Mock conflict on second occurrence
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest
+          .fn()
+          .mockResolvedValueOnce(null) // First occurrence OK
+          .mockResolvedValueOnce({ id: 'conflict-id' }), // Second has conflict
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      await expect(service.createSeries(seriesDto, mockUUID)).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('post-start modifications', () => {
+    it('should block STAFF from updating booking after start_time', async () => {
+      const now = new Date();
+      const pastStartBooking = {
+        ...mockBooking,
+        start_time: new Date(now.getTime() - 60 * 60 * 1000), // 1 hour ago
+        end_time: new Date(now.getTime() + 60 * 60 * 1000), // 1 hour from now
+      };
+
+      mockBookingRepository.findOne.mockResolvedValue(pastStartBooking);
+
+      const updateDto = { end_time: new Date(now.getTime() + 2 * 60 * 60 * 1000) };
+
+      await expect(service.update(mockUUID, updateDto, mockUser)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should block STAFF from canceling booking after start_time', async () => {
+      const now = new Date();
+      const pastStartBooking = {
+        ...mockBooking,
+        start_time: new Date(now.getTime() - 60 * 60 * 1000),
+        end_time: new Date(now.getTime() + 60 * 60 * 1000),
+        status: BookingStatus.ACTIVE,
+      };
+
+      mockBookingRepository.findOne.mockResolvedValue(pastStartBooking);
+
+      await expect(service.remove(mockUUID, mockUser)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should allow ADMIN to update booking after start_time', async () => {
+      const now = new Date();
+      const pastStartBooking = {
+        ...mockBooking,
+        user_id: mockAdminUser.id,
+        start_time: new Date(now.getTime() - 60 * 60 * 1000),
+        end_time: new Date(now.getTime() + 60 * 60 * 1000),
+      };
+
+      mockBookingRepository.findOne.mockResolvedValue(pastStartBooking);
+
+      const updateDto = { end_time: new Date(now.getTime() + 2 * 60 * 60 * 1000) };
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      };
+      mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      mockBookingRepository.save.mockResolvedValue({ ...pastStartBooking, ...updateDto });
+
+      const result = await service.update(mockUUID, updateDto, mockAdminUser);
+
+      expect(result).toBeDefined();
+      expect(bookingRepository.save).toHaveBeenCalled();
+    });
+
+    it('should allow ADMIN to cancel booking after start_time', async () => {
+      const now = new Date();
+      const pastStartBooking = {
+        ...mockBooking,
+        user_id: mockAdminUser.id,
+        start_time: new Date(now.getTime() - 60 * 60 * 1000),
+        end_time: new Date(now.getTime() + 60 * 60 * 1000),
+        status: BookingStatus.ACTIVE,
+      };
+
+      mockBookingRepository.findOne.mockResolvedValue(pastStartBooking);
+      mockBookingRepository.save.mockResolvedValue({ ...pastStartBooking, status: BookingStatus.CANCELLED });
+
+      await service.remove(mockUUID, mockAdminUser);
+
+      expect(bookingRepository.save).toHaveBeenCalled();
+      expect(bookingRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ status: BookingStatus.CANCELLED })
+      );
     });
   });
 });
