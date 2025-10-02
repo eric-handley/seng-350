@@ -20,17 +20,29 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
-  
-  const { 
-    addBooking, 
-    cancelBooking, 
-    getUnavailableRoomIds, 
-    getUserHistory, 
-    getScheduleForDay 
+
+  const {
+    bookings,
+    addBooking,
+    cancelBooking,
+    getUnavailableRoomIds,
+    getUserHistory,
+    getScheduleForDay
   } = useBookings()
-  
-  const { users, editUser } = useUsers()
-  
+
+  const {
+    users,
+    editingUser,
+    addingUser,
+    handleEditUser,
+    handleSaveUser,
+    handleAddUser,
+    handleSaveNewUser,
+    handleBlockUser,
+    setEditingUser,
+    setAddingUser,
+  } = useUsers()
+
   const {
     building,
     setBuilding,
@@ -66,10 +78,10 @@ const HomeComponent: React.FC = () => {
         <h1 className="title">Rooms & Scheduling</h1>
       </div>
 
-      <TabNavigation 
-        currentTab={tab} 
-        setTab={setTab} 
-        currentUser={currentUser!} 
+      <TabNavigation
+        currentTab={tab}
+        setTab={setTab}
+        currentUser={currentUser!}
       />
 
       {tab === 'book' && (
@@ -102,6 +114,8 @@ const HomeComponent: React.FC = () => {
       {tab === 'history' && (
         <HistoryPage
           userHistory={userHistory}
+          allBookings={currentUser!.role === 'registrar' ? bookings : undefined}
+          currentUser={currentUser!}
           onCancel={cancelBooking}
         />
       )}
@@ -110,7 +124,15 @@ const HomeComponent: React.FC = () => {
         <UsersPage
           users={users}
           currentUser={currentUser!}
-          onEditUser={editUser}
+          editingUser={editingUser}
+          addingUser={addingUser}
+          onEditUser={handleEditUser}
+          onSaveUser={handleSaveUser}
+          onAddUser={handleAddUser}
+          onSaveNewUser={handleSaveNewUser}
+          onBlockUser={handleBlockUser}
+          onCancelEdit={() => setEditingUser(null)}
+          onCancelAdd={() => setAddingUser(null)}
         />
       )}
     </div>
@@ -124,21 +146,21 @@ const AppRouter: React.FC = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={login} />} />
-      <Route 
-        path="/home" 
+      <Route
+        path="/home"
         element={
           <ProtectedRoute allowedRoles={['staff', 'registrar']}>
             <HomeComponent />
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path="/admin-panel" 
+      <Route
+        path="/admin-panel"
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminConsole />
           </ProtectedRoute>
-        } 
+        }
       />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

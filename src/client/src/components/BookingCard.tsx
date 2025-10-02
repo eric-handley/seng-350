@@ -1,14 +1,21 @@
 import React from 'react'
-import { Booking } from '../types'
+import { Booking, Room } from '../types'
 import { ROOMS } from '../constants'
 
 interface BookingCardProps {
   booking: Booking
+  room?: Room
   onCancel: (id: string) => void
+  showUser?: boolean
 }
 
-export const BookingCard: React.FC<BookingCardProps> = ({ booking, onCancel }) => {
-  const room = ROOMS.find(r => r.id === booking.roomId)!
+export const BookingCard: React.FC<BookingCardProps> = ({
+  booking,
+  room: providedRoom,
+  onCancel,
+  showUser = false
+}) => {
+  const room = providedRoom || ROOMS.find(r => r.id === booking.roomId)!
   const d = new Date(booking.start)
   const dEnd = new Date(booking.end)
   const dateStr = d.toLocaleDateString()
@@ -23,6 +30,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, onCancel }) =
       <div className="meta">
         <span>{dateStr}</span>
         <span>{timeStr}</span>
+        {showUser && <span>User: {booking.user}</span>}
         <span>ID: {booking.id}</span>
       </div>
       <div className="row" style={{marginTop:12}}>
