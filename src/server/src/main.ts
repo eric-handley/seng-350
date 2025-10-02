@@ -2,11 +2,27 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationExceptionFilter } from './filters/validation-exception.filter';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
+import session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
+  // Configure session middleware
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET ?? 'dev-session-secret-change-in-production',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        sameSite: 'lax',
+      },
+    }),
+  );
+
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
@@ -27,9 +43,9 @@ async function bootstrap() {
     },
   }));
 
-  // Apply global exception filter for better error reporting
-  app.useGlobalFilters(new ValidationExceptionFilter());
-  
+  // Apply global exception filter for consistent error reporting
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' ? false : 'http://localhost:5173',
     credentials: true,

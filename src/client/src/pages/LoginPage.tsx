@@ -14,7 +14,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Logging in with:", { email, password });
+    console.warn("Logging in with:", { email, password });
   };
 
   const handleDevLogin = (role: 'staff' | 'admin' | 'registrar') => {

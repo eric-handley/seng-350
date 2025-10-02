@@ -45,8 +45,14 @@ This will:
 - Build and start the client (React app) on `localhost:5173`
 - Build and start the server (NestJS API) on `localhost:3000  `
     - Show Swagger API docs on `localhost:3000/api-docs`
-    - Start PostgreSQL database on `localhost:5432`
-    - Start Redis cache on `localhost:6379`
+- Start PostgreSQL database `postgres` on `localhost:5432`
+    - Start PostgreSQL database `test_db` on `localhost:5433`
+    - Seed both databases with room + building data
+    - Seed both databases with demo users
+        - `staff@uvic.ca`, password `staff`
+        - `registrar@uvic.ca`, password `registrar`
+        - `admin@uvic.ca`, password `admin`
+- Start Redis cache on `localhost:6379`
 
 To stop all services:
 ```bash

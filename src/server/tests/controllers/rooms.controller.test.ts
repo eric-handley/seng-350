@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RoomsController } from '../src/api/rooms.controller';
-import { RoomsService } from '../src/services/rooms.service';
-import { RoomQueryDto, RoomResponseDto } from '../src/dto/room.dto';
-import { RoomType } from '../src/database/entities/room.entity';
+import { RoomsController } from '../../src/api/rooms.controller';
+import { RoomsService } from '../../src/services/rooms.service';
+import { RoomQueryDto, RoomResponseDto } from '../../src/dto/room.dto';
+import { RoomType } from '../../src/database/entities/room.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('RoomsController', () => {
@@ -142,13 +142,6 @@ describe('RoomsController', () => {
 
       await expect(controller.findOne('non-existent-uuid')).rejects.toThrow(NotFoundException);
       expect(service.findOne).toHaveBeenCalledWith('non-existent-uuid');
-    });
-
-    it('should handle invalid UUID format', async () => {
-      const invalidUuid = 'invalid-uuid';
-      
-      // This would be caught by the ParseUUIDPipe in real implementation
-      await expect(controller.findOne(invalidUuid)).rejects.toThrow();
     });
   });
 });

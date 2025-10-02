@@ -53,6 +53,7 @@ export default {
       collectCoverageFrom: [
         'src/server/src/**/*.ts',
         '!src/server/src/**/*.d.ts',
+        '!src/server/src/**/*.test.ts',
         '!src/server/src/main.ts',
       ],
       coverageThreshold: {

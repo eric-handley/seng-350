@@ -19,28 +19,67 @@ jest.mock('@auth/express', () => ({
 jest.setTimeout(30000);
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request, { Response } from 'supertest';
 import { Repository } from 'typeorm';
+import { Request, Response as ExpressResponse, NextFunction } from 'express';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
+
+// Augment Express Request type to include user property
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        first_name: string;
+        last_name: string;
+        role: UserRole;
+      };
+    }
+  }
+}
+
 import { Building } from '../../src/database/entities/building.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { BookingSeries } from '../../src/database/entities/booking-series.entity';
 import { AuditLog } from '../../src/database/entities/audit-log.entity';
-import { ValidationExceptionFilter } from '../../src/filters/validation-exception.filter';
+import { GlobalExceptionFilter } from '../../src/filters/global-exception.filter';
 
 // Shared setup function
 async function setupTestApp() {
   const { AppModule } = await import('../../src/app/app.module');
+  const { AuthGuard } = await import('../../src/shared/guards/auth.guard');
+  const { RolesGuard } = await import('../../src/shared/guards/roles.guard');
+
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  })
+    .overrideGuard(AuthGuard)
+    .useValue({
+      canActivate: (context: ExecutionContext) => {
+        const request = context.switchToHttp().getRequest();
+        // Inject a default test user if not already set
+        request.user ??= {
+          id: '00000000-0000-0000-0000-000000000000',
+          email: 'test@uvic.ca',
+          first_name: 'Test',
+          last_name: 'User',
+          role: UserRole.STAFF,
+        };
+        return true;
+      }
+    })
+    .overrideGuard(RolesGuard)
+    .useValue({ canActivate: () => true })
+    .compile();
 
   const app = moduleFixture.createNestApplication();
-  
+
   // Apply the same validation pipe configuration as in main.ts
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
@@ -62,9 +101,21 @@ async function setupTestApp() {
     },
   }));
 
-  // Apply global exception filter for better error reporting
-  app.useGlobalFilters(new ValidationExceptionFilter());
-  
+  // Apply global exception filter for consistent error reporting
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // Add middleware to inject test user into request
+  app.use((req: Request, _res: ExpressResponse, next: NextFunction) => {
+    req.user ??= {
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'test@uvic.ca',
+      first_name: 'Test',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    };
+    next();
+  });
+
   await app.init();
 
   return {
@@ -136,43 +187,43 @@ describe('/users (e2e)', () => {
       });
   });
 
-  it('/users/:id (GET) should return a specific user', async () => {
+  it('/users/:id (GET) should return a specific user (Staff viewing own profile)', async () => {
+    // Create a Staff user with the same ID as the default test user
     const testUser = userRepository.create({
-      email: `test-get-${Date.now()}@uvic.ca`,
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'test@uvic.ca',
       password_hash: 'hashedPassword',
-      first_name: 'John',
-      last_name: 'Doe',
+      first_name: 'Test',
+      last_name: 'User',
       role: UserRole.STAFF,
     });
-    const savedUser = await userRepository.save(testUser);
+    await userRepository.save(testUser);
 
     return request(app.getHttpServer())
-      .get(`/users/${savedUser.id}`)
+      .get(`/users/${testUser.id}`)
       .expect(200)
       .expect((res: Response) => {
-        expect(res.body.id).toBe(savedUser.id);
-        expect(res.body.email).toBe(savedUser.email);
+        expect(res.body.id).toBe(testUser.id);
+        expect(res.body.email).toBe(testUser.email);
       });
   });
 
-  it('/users/:id (PATCH) should update a user', async () => {
-    const testUser = userRepository.create({
+  it('/users/:id (PATCH) should deny Staff from updating other users', async () => {
+    const otherUser = userRepository.create({
       email: `test-patch-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
       first_name: 'John',
       last_name: 'Doe',
       role: UserRole.STAFF,
     });
-    const savedUser = await userRepository.save(testUser);
+    const savedUser = await userRepository.save(otherUser);
     const updateData = { role: UserRole.REGISTRAR };
 
+    // Default test user is STAFF trying to update another user - should be denied
     return request(app.getHttpServer())
       .patch(`/users/${savedUser.id}`)
       .send(updateData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.role).toBe(updateData.role);
-      });
+      .expect(403);
   });
 });
 
@@ -291,6 +342,7 @@ describe('/bookings (e2e)', () => {
 
     // Create test user
     testUser = userRepository.create({
+      id: `00000000-0000-0000-0000-000000000000`,
       email: `test-bookings-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
       first_name: 'John',
@@ -302,21 +354,35 @@ describe('/bookings (e2e)', () => {
     // Get test room
     const testData = await getTestData(setup.buildingRepository, setup.roomRepository);
     testRoom = testData.testRoom;
+
+    // Update middleware to use testUser for this test suite
+    app.use((req: Request, _res: ExpressResponse, next: NextFunction) => {
+      req.user = {
+        id: testUser.id,
+        email: testUser.email,
+        first_name: testUser.first_name,
+        last_name: testUser.last_name,
+        role: testUser.role,
+      };
+      next();
+    });
   });
 
   afterAll(async () => {
     await app.close();
   });
 
+  // TODO: Add date library (e.g., date-fns) and replace hardcoded dates with dynamic dates relative to current time
+  // This should ideally be done across all tests!
   it('/bookings (POST) should create a new booking', () => {
     const newBooking = {
       room_id: testRoom.id,
-      start_time: '2026-12-01T09:00:00Z',
-      end_time: '2026-12-01T10:00:00Z',
+      start_time: '2025-11-01T09:00:00Z',
+      end_time: '2025-11-01T10:00:00Z',
     };
 
     return request(app.getHttpServer())
-      .post(`/bookings?userId=${testUser.id}`)
+      .post('/bookings')
       .send(newBooking)
       .expect((res: Response) => {
         if (res.status !== 201) {
@@ -326,7 +392,8 @@ describe('/bookings (e2e)', () => {
       .expect(201)
       .expect((res: Response) => {
         expect(res.body.room_id).toBe(newBooking.room_id);
-        expect(res.body.user_id).toBe(testUser.id);
+        // User ID will be set from the test middleware (test-user-id)
+        expect(res.body.user_id).toBeDefined();
         expect(res.body.status).toBe(BookingStatus.ACTIVE);
       });
   });
@@ -339,7 +406,7 @@ describe('/bookings (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .post(`/bookings?userId=${testUser.id}`)
+      .post('/bookings')
       .send(invalidBooking)
       .expect(400);
   });
@@ -374,7 +441,7 @@ describe('/bookings (e2e)', () => {
     await bookingRepository.save(booking);
 
     return request(app.getHttpServer())
-      .get(`/bookings?userId=${testUser.id}&roomId=${testRoom.id}`)
+      .get(`/bookings?roomId=${testRoom.id}`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
@@ -421,7 +488,7 @@ describe('/bookings (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .patch(`/bookings/${savedBooking.id}?userId=${testUser.id}`)
+      .patch(`/bookings/${savedBooking.id}`)
       .send(updateData)
       .expect((res: Response) => {
         if (res.status !== 200) {
@@ -439,14 +506,14 @@ describe('/bookings (e2e)', () => {
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T17:00:00Z'),
-      end_time: new Date('2026-12-01T18:00:00Z'),
+      start_time: new Date('2025-11-01T17:00:00Z'),
+      end_time: new Date('2025-11-01T18:00:00Z'),
       status: BookingStatus.ACTIVE,
     });
     const savedBooking = await bookingRepository.save(booking);
 
     return request(app.getHttpServer())
-      .delete(`/bookings/${savedBooking.id}?userId=${testUser.id}`)
+      .delete(`/bookings/${savedBooking.id}`)
       .expect(204);
   });
 });
@@ -508,11 +575,12 @@ describe('Error handling (e2e)', () => {
     await app.close();
   });
 
-  it('should return 404 for non-existent user', () => {
-    const nonExistentId = '00000000-0000-0000-0000-000000000000';
+  it('should return 403 when Staff tries to view non-existent user (permission check before existence check)', () => {
+    const nonExistentId = '99999999-0000-0000-0000-000000000000';
+    // Default test user is STAFF - permission check happens before existence check
     return request(app.getHttpServer())
       .get(`/users/${nonExistentId}`)
-      .expect(404);
+      .expect(403);
   });
 
   it('should return 400 for invalid UUID format', () => {

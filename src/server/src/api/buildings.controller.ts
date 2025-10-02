@@ -7,6 +7,7 @@ import {
   ParseBoolPipe,
   HttpStatus,
   DefaultValuePipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,14 +15,18 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BuildingsService } from '../services/buildings.service';
 import { RoomsService } from '../services/rooms.service';
 import { BuildingResponseDto } from '../dto/building.dto';
 import { RoomResponseDto } from '../dto/room.dto';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 @ApiTags('Buildings')
+@ApiBearerAuth()
 @Controller('buildings')
+@UseGuards(AuthGuard)
 export class BuildingsController {
   constructor(
     private readonly buildingsService: BuildingsService,

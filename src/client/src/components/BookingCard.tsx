@@ -21,6 +21,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   const dateStr = d.toLocaleDateString()
   const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
 
+  if (!room) {
+    return null
+  }
+
   return (
     <article className="card">
       <div className="row">
@@ -38,7 +42,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         {!booking.cancelled ? (
           <button className="btn danger" onClick={() => onCancel(booking.id)}>Cancel</button>
         ) : (
-          <button className="btn ghost" onClick={() => alert('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
+          <button className="btn ghost" onClick={() => console.error('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
         )}
       </div>
     </article>

@@ -4,18 +4,23 @@ import {
   Param,
   ParseUUIDPipe,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { EquipmentService } from '../services/equipment.service';
 import { EquipmentResponseDto } from '../dto/equipment.dto';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 @ApiTags('Equipment')
+@ApiBearerAuth()
 @Controller('equipment')
+@UseGuards(AuthGuard)
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 

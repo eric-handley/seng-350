@@ -2,6 +2,8 @@
 
 > **Swagger UI**: Interactive API documentation is available at `http://localhost:3000/api-docs` when the server is running. For adding Swagger documentation to backend code, see [swagger.md](./swagger.md).
 
+> **Authentication**: For information on authenticating with the API (required for `credentials: 'include'`) see [auth.md](./auth.md).
+
 ## Base URL
 ```
 http://localhost:3000
@@ -12,15 +14,21 @@ http://localhost:3000
 ### GET
 ```javascript
 // Get all items
-const response = await fetch('http://localhost:3000/api/users');
+const response = await fetch('http://localhost:3000/api/users', {
+  credentials: 'include' // Include session cookie
+});
 const users = await response.json();
 
 // Get specific item
-const response = await fetch('http://localhost:3000/api/users/123');
+const response = await fetch('http://localhost:3000/api/users/123', {
+  credentials: 'include'
+});
 const user = await response.json();
 
 // With query parameters
-const response = await fetch('http://localhost:3000/api/users?page=1&limit=10');
+const response = await fetch('http://localhost:3000/api/users?page=1&limit=10', {
+  credentials: 'include'
+});
 const results = await response.json();
 ```
 
@@ -36,7 +44,8 @@ const response = await fetch('http://localhost:3000/api/users', {
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify(newUser)
+  body: JSON.stringify(newUser),
+  credentials: 'include' // Include session cookie
 });
 
 const createdUser = await response.json();
@@ -54,7 +63,8 @@ const response = await fetch('http://localhost:3000/api/users/123', {
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify(updatedUser)
+  body: JSON.stringify(updatedUser),
+  credentials: 'include'
 });
 
 const result = await response.json();
@@ -71,7 +81,8 @@ const response = await fetch('http://localhost:3000/api/users/123', {
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify(updates)
+  body: JSON.stringify(updates),
+  credentials: 'include'
 });
 
 const result = await response.json();
@@ -80,7 +91,8 @@ const result = await response.json();
 ### DELETE
 ```javascript
 const response = await fetch('http://localhost:3000/api/users/123', {
-  method: 'DELETE'
+  method: 'DELETE',
+  credentials: 'include'
 });
 
 // DELETE often returns no content, just check status

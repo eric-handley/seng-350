@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { Room } from '../types'
 import { ROOMS } from '../constants'
 import { isoAt, getCurrentDate } from '../utils/dateHelpers'
 

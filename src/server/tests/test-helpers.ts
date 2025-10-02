@@ -114,9 +114,9 @@ export class TestDatabaseHelper {
 
 export const mockUUID = '12345678-1234-1234-1234-123456789012';
 
-export const generateMockDate = (offset = 0): Date => {
-  const baseDate = new Date('2024-01-01T00:00:00Z');
-  baseDate.setHours(baseDate.getHours() + offset);
+export const generateMockDate = (hour = 0, minute = 0): Date => {
+  const baseDate = new Date('2025-12-01T00:00:00Z');
+  baseDate.setHours(hour, minute, 0, 0);
   return baseDate;
 };
 

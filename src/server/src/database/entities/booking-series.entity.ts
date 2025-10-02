@@ -37,6 +37,6 @@ export class BookingSeries {
   @JoinColumn({ name: 'room_id' })
   room!: Room;
 
-  @OneToMany(() => Booking, booking => booking.booking_series)
+  @OneToMany(() => Booking, booking => booking.booking_series, { cascade: true })
   bookings!: Booking[];
 }
