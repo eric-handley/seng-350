@@ -11,6 +11,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -33,11 +34,11 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiBearerAuth()
 @Controller('users')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN, UserRole.REGISTRAR)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
@@ -56,11 +57,13 @@ export class UsersController {
   })
   async create(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @CurrentUser() requester: AuthenticatedUser,
   ): Promise<UserResponseDto> {
-    return this.usersService.create(createUserDto);
+    return this.usersService.create(createUserDto, requester);
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.REGISTRAR)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -72,7 +75,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ summary: 'Get user by ID (Staff: own profile only, Registrar/Admin: any user)' })
   @ApiParam({ name: 'id', description: 'User UUID' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -83,13 +86,23 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User not found',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Staff users can only view their own profile',
+  })
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() requester: AuthenticatedUser,
   ): Promise<UserResponseDto> {
+    // Permission check: Staff can only view their own profile
+    if (requester.role === UserRole.STAFF && id !== requester.id) {
+      throw new ForbiddenException('Staff users can only view their own profile');
+    }
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN, UserRole.REGISTRAR)
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiParam({ name: 'id', description: 'User UUID' })
   @ApiBody({ type: UpdateUserDto })
@@ -119,6 +132,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN, UserRole.REGISTRAR)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiParam({ name: 'id', description: 'User UUID' })

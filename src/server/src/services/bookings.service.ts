@@ -48,23 +48,30 @@ export class BookingsService {
     endDate?: Date,
   ): Promise<BookingResponseDto[]> {
     // Access control: Determine which user's bookings to query
-    let effectiveUserId: string;
+    const canViewAll = currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR;
+    let effectiveUserId: string | undefined;
 
     if (userIdFilter) {
       // If filtering by specific user, check authorization
-      if (userIdFilter !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+      if (userIdFilter !== currentUser.id && !canViewAll) {
         throw new ForbiddenException('Cannot view other users bookings');
       }
       effectiveUserId = userIdFilter;
     } else {
-      // No filter: default to current user's bookings
-      effectiveUserId = currentUser.id;
+      // No filter: STAFF sees own bookings, REGISTRAR/ADMIN see all bookings
+      if (!canViewAll) {
+        effectiveUserId = currentUser.id;
+      }
+      // For REGISTRAR/ADMIN, effectiveUserId remains undefined to show all bookings
     }
 
     const query = this.bookingRepository.createQueryBuilder('booking')
       .leftJoinAndSelect('booking.user', 'user')
-      .leftJoinAndSelect('booking.room', 'room')
-      .andWhere('booking.user_id = :userId', { userId: effectiveUserId });
+      .leftJoinAndSelect('booking.room', 'room');
+
+    if (effectiveUserId) {
+      query.andWhere('booking.user_id = :userId', { userId: effectiveUserId });
+    }
 
     if (roomId) {
       query.andWhere('booking.room_id = :roomId', { roomId });
@@ -104,8 +111,9 @@ export class BookingsService {
       throw new NotFoundException('Booking not found');
     }
 
-    // Mandatory ownership check - allow if user owns booking OR is Admin
-    if (booking.user_id !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+    // Mandatory ownership check - allow if user owns booking OR is Registrar/Admin
+    const canManageAll = currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR;
+    if (booking.user_id !== currentUser.id && !canManageAll) {
       throw new ForbiddenException('You can only update your own bookings');
     }
 
@@ -142,8 +150,9 @@ export class BookingsService {
       throw new NotFoundException('Booking not found');
     }
 
-    // Mandatory ownership check - allow if user owns booking OR is Admin
-    if (booking.user_id !== currentUser.id && currentUser.role !== UserRole.ADMIN) {
+    // Mandatory ownership check - allow if user owns booking OR is Registrar/Admin
+    const canManageAll = currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR;
+    if (booking.user_id !== currentUser.id && !canManageAll) {
       throw new ForbiddenException('You can only cancel your own bookings');
     }
 

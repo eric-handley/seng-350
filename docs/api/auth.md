@@ -7,8 +7,17 @@ The authentication system uses session-based authentication with role-based acce
 ## User Roles
 
 - **Staff** - Regular faculty/staff users
+  - Can view own profile, manage own bookings, and search rooms
 - **Registrar** - Course scheduling and management
+  - Can view/create/edit/delete Staff users (cannot edit roles)
+  - Can view and manage all bookings
+  - Can search rooms and buildings
 - **Admin** - Full system access including user management
+  - Can create/edit/delete any user (including role changes)
+  - Can view and manage all bookings
+  - Full access to rooms, buildings, equipment, and audit logs
+
+For a complete permission matrix, see [permissions.md](./permissions.md).
 
 ## Endpoints
 
@@ -116,12 +125,16 @@ Endpoints with `@UseGuards(AuthGuard, RolesGuard)` and `@Roles(...)` require spe
 User is authenticated but lacks required role.
 
 **Example Protected Endpoints:**
-- **User Management** (`/users/*`) - Requires `Admin` role
-  - `POST /users` - Create user (Admin only)
-  - `GET /users` - List users (Admin only)
-  - `GET /users/:id` - Get user (Admin only)
-  - `PATCH /users/:id` - Update user (Admin only, cannot change own role)
-  - `DELETE /users/:id` - Delete user (Admin only, cannot delete self)
+- **User Management** (`/users/*`)
+  - `POST /users` - Create user (Registrar: Staff only, Admin: any role)
+  - `GET /users` - List users (Registrar/Admin only)
+  - `GET /users/:id` - Get user (Staff: own profile only, Registrar/Admin: any user)
+  - `PATCH /users/:id` - Update user (Registrar: Staff users only, cannot change roles; Admin: any user, can change roles except own)
+  - `DELETE /users/:id` - Delete user (Registrar: Staff users only; Admin: any user except self)
+- **Bookings** (`/bookings/*`)
+  - All roles can create and manage their own bookings
+  - Registrar/Admin can view and manage all bookings
+  - Staff can only view and manage their own bookings
 
 ---
 
