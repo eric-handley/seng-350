@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BuildingsController } from '../src/api/buildings.controller';
-import { BuildingsService } from '../src/services/buildings.service';
-import { RoomsService } from '../src/services/rooms.service';
-import { BuildingResponseDto } from '../src/dto/building.dto';
-import { RoomResponseDto } from '../src/dto/room.dto';
-import { RoomType } from '../src/database/entities/room.entity';
+import { BuildingsController } from '../../src/api/buildings.controller';
+import { BuildingsService } from '../../src/services/buildings.service';
+import { RoomsService } from '../../src/services/rooms.service';
+import { BuildingResponseDto } from '../../src/dto/building.dto';
+import { RoomResponseDto } from '../../src/dto/room.dto';
+import { RoomType } from '../../src/database/entities/room.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('BuildingsController', () => {

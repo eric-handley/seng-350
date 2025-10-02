@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { AppService } from '../src/app/app.service';
+import { AppService } from '../../src/app/app.service';
 
 describe('AppService', () => {
   let service: AppService;

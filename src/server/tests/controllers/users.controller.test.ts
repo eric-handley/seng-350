@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from '../src/api/users.controller';
-import { UsersService } from '../src/services/users.service';
-import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../src/dto/user.dto';
-import { UserRole } from '../src/database/entities/user.entity';
+import { UsersController } from '../../src/api/users.controller';
+import { UsersService } from '../../src/services/users.service';
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../../src/dto/user.dto';
+import { UserRole } from '../../src/database/entities/user.entity';
 import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { AuthenticatedUser } from '../src/auth/auth.service';
+import { AuthenticatedUser } from '../../src/auth/auth.service';
 
 describe('UsersController', () => {
   let controller: UsersController;

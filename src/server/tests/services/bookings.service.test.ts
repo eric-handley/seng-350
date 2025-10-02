@@ -5,6 +5,7 @@ import { NotFoundException, ConflictException, BadRequestException, ForbiddenExc
 
 import { BookingsService } from '../../src/services/bookings.service';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
+import { BookingSeries } from '../../src/database/entities/booking-series.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { CreateBookingDto, UpdateBookingDto } from '../../src/dto/booking.dto';
 import { TestDataFactory, mockUUID, generateMockDate } from '../test-helpers';
@@ -54,6 +55,13 @@ describe('BookingsService', () => {
     createQueryBuilder: jest.fn(),
   };
 
+  const mockBookingSeriesRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+    remove: jest.fn(),
+  };
 
   const mockRoomRepository = {
     findOne: jest.fn(),
@@ -66,6 +74,10 @@ describe('BookingsService', () => {
         {
           provide: getRepositoryToken(Booking),
           useValue: mockBookingRepository,
+        },
+        {
+          provide: getRepositoryToken(BookingSeries),
+          useValue: mockBookingSeriesRepository,
         },
         {
           provide: getRepositoryToken(Room),
@@ -106,7 +118,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(createBookingDto, mockUUID);
+      const result = await service.create(createBookingDto, mockUser);
 
       expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -117,7 +129,7 @@ describe('BookingsService', () => {
     it('should throw NotFoundException when room not found', async () => {
       mockRoomRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createBookingDto, mockUUID)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createBookingDto, mockUser)).rejects.toThrow(NotFoundException);
       expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
     });
 
@@ -128,7 +140,7 @@ describe('BookingsService', () => {
         end_time: generateMockDate(9),
       };
 
-      await expect(service.create(invalidDto, mockUUID)).rejects.toThrow(BadRequestException);
+      await expect(service.create(invalidDto, mockUser)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw ConflictException when room is already booked', async () => {
@@ -145,7 +157,7 @@ describe('BookingsService', () => {
       };
       mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      await expect(service.create(createBookingDto, mockUUID)).rejects.toThrow(ConflictException);
+      await expect(service.create(createBookingDto, mockUser)).rejects.toThrow(ConflictException);
     });
 
     it('should block STAFF from creating bookings in the past', async () => {
@@ -155,7 +167,7 @@ describe('BookingsService', () => {
         end_time: new Date('2020-01-01T10:00:00Z'),
       };
 
-      await expect(service.create(pastBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+      await expect(service.create(pastBookingDto, mockUser)).rejects.toThrow(BadRequestException);
     });
 
     it('should allow ADMIN to create bookings in the past', async () => {
@@ -178,7 +190,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(pastBookingDto, mockAdminUser.id);
+      const result = await service.create(pastBookingDto, mockAdminUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -211,7 +223,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(pastBookingDto, mockRegistrarUser.id);
+      const result = await service.create(pastBookingDto, mockRegistrarUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -224,7 +236,7 @@ describe('BookingsService', () => {
         end_time: generateMockDate(9, 10), // Only 10 minutes
       };
 
-      await expect(service.create(shortBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+      await expect(service.create(shortBookingDto, mockUser)).rejects.toThrow(BadRequestException);
     });
 
     it('should accept bookings exactly 15 minutes long', async () => {
@@ -247,7 +259,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(minBookingDto, mockUUID);
+      const result = await service.create(minBookingDto, mockUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -260,7 +272,7 @@ describe('BookingsService', () => {
         end_time: generateMockDate(18, 0), // 9 hours
       };
 
-      await expect(service.create(longBookingDto, mockUUID)).rejects.toThrow(BadRequestException);
+      await expect(service.create(longBookingDto, mockUser)).rejects.toThrow(BadRequestException);
     });
 
     it('should accept bookings exactly 8 hours long', async () => {
@@ -283,7 +295,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(maxBookingDto, mockUUID);
+      const result = await service.create(maxBookingDto, mockUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -300,7 +312,7 @@ describe('BookingsService', () => {
         end_time: new Date(fourMonthsAhead.getTime() + 60 * 60 * 1000), // +1 hour
       };
 
-      await expect(service.create(farFutureBookingDto, mockUser.id)).rejects.toThrow(BadRequestException);
+      await expect(service.create(farFutureBookingDto, mockUser)).rejects.toThrow(BadRequestException);
     });
 
     it('should allow STAFF to book exactly 3 months in advance', async () => {
@@ -327,7 +339,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(threeMonthBookingDto, mockUser.id);
+      const result = await service.create(threeMonthBookingDto, mockUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -357,7 +369,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(farFutureBookingDto, mockAdminUser.id);
+      const result = await service.create(farFutureBookingDto, mockAdminUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -394,7 +406,7 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      const result = await service.create(farFutureBookingDto, mockRegistrarUser.id);
+      const result = await service.create(farFutureBookingDto, mockRegistrarUser);
 
       expect(result).toBeDefined();
       expect(bookingRepository.save).toHaveBeenCalled();
@@ -590,6 +602,7 @@ describe('BookingsService', () => {
   describe('booking series', () => {
     it('should create a series of recurring bookings', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockSeries = { id: 'series-uuid' };
       const seriesDto = {
         room_id: mockUUID,
         start_time: generateMockDate(9, 0),
@@ -599,6 +612,8 @@ describe('BookingsService', () => {
       };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+      mockBookingSeriesRepository.create.mockReturnValue(mockSeries);
+      mockBookingSeriesRepository.save.mockResolvedValue(mockSeries);
 
       const mockQueryBuilder = {
         where: jest.fn().mockReturnThis(),
@@ -683,30 +698,30 @@ describe('BookingsService', () => {
       );
     });
 
-    it('should cancel all bookings in a series when specified', async () => {
-      const seriesBooking = { ...mockBooking, booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE };
+    it('should delete all bookings in a series when specified', async () => {
+      const mockSeries = {
+        id: 'series-uuid',
+        user_id: mockUser.id,
+        room_id: mockUUID,
+        start_time: generateMockDate(9, 0),
+        end_time: generateMockDate(10, 0),
+        series_end_date: generateMockDate(9, 0),
+      };
 
-      mockBookingRepository.findOne.mockResolvedValue(seriesBooking);
-
-      const seriesBookings = [
-        { ...mockBooking, id: 'booking-1', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
-        { ...mockBooking, id: 'booking-2', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
-        { ...mockBooking, id: 'booking-3', booking_series_id: 'series-uuid', status: BookingStatus.ACTIVE },
-      ];
-
-      mockBookingRepository.find.mockResolvedValue(seriesBookings);
-      mockBookingRepository.save.mockResolvedValue({ ...seriesBooking, status: BookingStatus.CANCELLED });
+      mockBookingSeriesRepository.findOne.mockResolvedValue(mockSeries);
+      mockBookingSeriesRepository.remove.mockResolvedValue(mockSeries);
 
       await service.removeSeries('series-uuid', mockUser);
 
-      expect(bookingRepository.find).toHaveBeenCalledWith({
-        where: { booking_series_id: 'series-uuid' },
+      expect(mockBookingSeriesRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'series-uuid' },
       });
-      expect(bookingRepository.save).toHaveBeenCalledTimes(3);
+      expect(mockBookingSeriesRepository.remove).toHaveBeenCalledWith(mockSeries);
     });
 
     it('should detect conflicts when creating booking series', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockSeries = { id: 'series-uuid' };
       const seriesDto = {
         room_id: mockUUID,
         start_time: generateMockDate(9, 0),
@@ -716,6 +731,8 @@ describe('BookingsService', () => {
       };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
+      mockBookingSeriesRepository.create.mockReturnValue(mockSeries);
+      mockBookingSeriesRepository.save.mockResolvedValue(mockSeries);
 
       // Mock conflict on second occurrence
       const mockQueryBuilder = {

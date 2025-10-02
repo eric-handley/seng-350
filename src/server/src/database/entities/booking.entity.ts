@@ -40,7 +40,7 @@ export class Booking {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @ManyToOne(() => User, user => user.bookings)
+  @ManyToOne(() => User, user => user.bookings, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
@@ -48,7 +48,7 @@ export class Booking {
   @JoinColumn({ name: 'room_id' })
   room!: Room;
 
-  @ManyToOne(() => BookingSeries, series => series.bookings, { nullable: true })
+  @ManyToOne(() => BookingSeries, series => series.bookings, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'booking_series_id' })
   booking_series!: BookingSeries;
 }

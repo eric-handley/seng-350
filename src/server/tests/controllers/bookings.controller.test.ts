@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BookingsController } from '../src/api/bookings.controller';
-import { BookingsService } from '../src/services/bookings.service';
-import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../src/dto/booking.dto';
-import { BookingStatus } from '../src/database/entities/booking.entity';
+import { BookingsController } from '../../src/api/bookings.controller';
+import { BookingsService } from '../../src/services/bookings.service';
+import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../../src/dto/booking.dto';
+import { BookingStatus } from '../../src/database/entities/booking.entity';
 import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { AuthenticatedUser } from '../src/auth/auth.service';
-import { UserRole } from '../src/database/entities/user.entity';
+import { AuthenticatedUser } from '../../src/auth/auth.service';
+import { UserRole } from '../../src/database/entities/user.entity';
 
 describe('BookingsController', () => {
   let controller: BookingsController;
@@ -70,7 +70,7 @@ describe('BookingsController', () => {
 
       const result = await controller.create(createBookingDto, mockUser);
 
-      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser.id);
+      expect(service.create).toHaveBeenCalledWith(createBookingDto, mockUser);
       expect(result).toEqual(mockBookingResponse);
     });
   });

@@ -59,7 +59,7 @@ export class BookingsController {
     @Body() createBookingDto: CreateBookingDto,
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<BookingResponseDto> {
-    return this.bookingsService.create(createBookingDto, user.id);
+    return this.bookingsService.create(createBookingDto, user);
   }
 
   @Get()

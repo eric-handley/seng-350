@@ -358,11 +358,13 @@ describe('/bookings (e2e)', () => {
     await app.close();
   });
 
+  // TODO: Add date library (e.g., date-fns) and replace hardcoded dates with dynamic dates relative to current time
+  // This should ideally be done across all tests!
   it('/bookings (POST) should create a new booking', () => {
     const newBooking = {
       room_id: testRoom.id,
-      start_time: '2026-12-01T09:00:00Z',
-      end_time: '2026-12-01T10:00:00Z',
+      start_time: '2025-11-01T09:00:00Z',
+      end_time: '2025-11-01T10:00:00Z',
     };
 
     return request(app.getHttpServer())
@@ -490,8 +492,8 @@ describe('/bookings (e2e)', () => {
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T17:00:00Z'),
-      end_time: new Date('2026-12-01T18:00:00Z'),
+      start_time: new Date('2025-11-01T17:00:00Z'),
+      end_time: new Date('2025-11-01T18:00:00Z'),
       status: BookingStatus.ACTIVE,
     });
     const savedBooking = await bookingRepository.save(booking);

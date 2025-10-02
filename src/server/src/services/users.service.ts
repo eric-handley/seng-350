@@ -66,7 +66,8 @@ export class UsersService {
     }
 
     // Permission check: Registrar can only edit Staff users (excluding role)
-    if (requester.role === UserRole.REGISTRAR) {
+    // Exception: Users can always update their own profile (except role field)
+    if (requester.role === UserRole.REGISTRAR && user.id !== requester.id) {
       if (user.role !== UserRole.STAFF) {
         throw new ForbiddenException('Registrars can only edit Staff users');
       }

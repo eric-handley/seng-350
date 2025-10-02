@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EquipmentController } from '../src/api/equipment.controller';
-import { EquipmentService } from '../src/services/equipment.service';
-import { EquipmentResponseDto } from '../src/dto/equipment.dto';
+import { EquipmentController } from '../../src/api/equipment.controller';
+import { EquipmentService } from '../../src/services/equipment.service';
+import { EquipmentResponseDto } from '../../src/dto/equipment.dto';
 import { NotFoundException } from '@nestjs/common';
 
 describe('EquipmentController', () => {
