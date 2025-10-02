@@ -3,7 +3,7 @@ import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
-import session = require('express-session');
+import session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

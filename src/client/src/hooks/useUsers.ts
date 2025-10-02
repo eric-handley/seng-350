@@ -3,10 +3,10 @@ import { User } from '../types'
 import { INITIAL_USERS } from '../constants'
 
 export const useUsers = () => {
-  const [users, setUsers] = useState<User[]>(INITIAL_USERS)
+  const [users] = useState<User[]>(INITIAL_USERS)
 
   const editUser = (user: User) => {
-    alert(`Edit user: ${user.name} (${user.role})`)
+    console.error(`Edit user: ${user.name} (${user.role})`)
   }
 
   return {

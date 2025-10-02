@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
-import { TabKey } from './types'
+import { TabKey, Room } from './types'
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
 import { useRoomFiltering } from './hooks/useRoomFiltering'
@@ -20,17 +20,17 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
-  
-  const { 
-    addBooking, 
-    cancelBooking, 
-    getUnavailableRoomIds, 
-    getUserHistory, 
-    getScheduleForDay 
+
+  const {
+    addBooking,
+    cancelBooking,
+    getUnavailableRoomIds,
+    getUserHistory,
+    getScheduleForDay
   } = useBookings()
-  
+
   const { users, editUser } = useUsers()
-  
+
   const {
     building,
     setBuilding,
@@ -52,24 +52,28 @@ const HomeComponent: React.FC = () => {
   const userHistory = getUserHistory()
   const scheduleForDay = getScheduleForDay(date)
 
-  const handleBook = (room: any) => {
+  const handleBook = (room: Room) => {
     const success = addBooking(room, date, start, end)
     if (success) {
       setTab('history')
     }
   }
 
+  if (!currentUser) {
+    return null
+  }
+
   return (
     <div className="app-shell">
       <div className="header">
-        <span className="badge">{currentUser!.role.toUpperCase()}</span>
+        <span className="badge">{currentUser.role.toUpperCase()}</span>
         <h1 className="title">Rooms & Scheduling</h1>
       </div>
 
-      <TabNavigation 
-        currentTab={tab} 
-        setTab={setTab} 
-        currentUser={currentUser!} 
+      <TabNavigation
+        currentTab={tab}
+        setTab={setTab}
+        currentUser={currentUser}
       />
 
       {tab === 'book' && (
@@ -109,7 +113,7 @@ const HomeComponent: React.FC = () => {
       {tab === 'users' && (
         <UsersPage
           users={users}
-          currentUser={currentUser!}
+          currentUser={currentUser}
           onEditUser={editUser}
         />
       )}

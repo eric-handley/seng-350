@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Booking, Room } from '../types'
 import { INITIAL_BOOKINGS } from '../constants'
 import { formatDate, isoAt, overlap } from '../utils/dateHelpers'
@@ -11,7 +11,7 @@ export const useBookings = () => {
     const requestedEnd = isoAt(date, end)
     
     if (requestedEnd <= requestedStart) {
-      alert('End time must be after start time.')
+      console.error('End time must be after start time.')
       return false
     }
 

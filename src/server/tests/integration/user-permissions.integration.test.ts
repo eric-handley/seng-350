@@ -124,7 +124,7 @@ describe('Cross-user authorization (e2e)', () => {
     app = setup.app;
     userRepository = setup.userRepository;
 
-    roomRepository = (app.get as any)(getRepositoryToken(Room));
+    roomRepository = app.get<Repository<Room>>(getRepositoryToken(Room));
 
     const hashedPassword = await bcrypt.hash('password123', 10);
 
@@ -268,8 +268,8 @@ describe('User deletion with bookings (e2e)', () => {
     app = setup.app;
     userRepository = setup.userRepository;
 
-    bookingRepository = (app.get as any)(getRepositoryToken(Booking));
-    roomRepository = (app.get as any)(getRepositoryToken(Room));
+    bookingRepository = app.get<Repository<Booking>>(getRepositoryToken(Booking));
+    roomRepository = app.get<Repository<Room>>(getRepositoryToken(Room));
 
     const hashedPassword = await bcrypt.hash('password123', 10);
 

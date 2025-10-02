@@ -60,9 +60,10 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
           </thead>
           <tbody>
             {filteredSchedule.map(b => {
-              const room = ROOMS.find(r => r.id === b.roomId)!
+              const room = ROOMS.find(r => r.id === b.roomId)
               const start = new Date(b.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
               const end = new Date(b.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+              if (!room) {return null}
               return (
                 <tr key={b.id}>
                   <td>{start}–{end}</td>

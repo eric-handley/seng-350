@@ -185,7 +185,7 @@ function AuditTable({ rows }: { rows: AuditRow[] }) {
       "ip",
     ] as const;
     const csv = [headers.join(",")]
-      .concat(filtered.map((r) => headers.map((h) => (r as any)[h]).join(",")))
+      .concat(filtered.map((r) => headers.map((h) => r[h]).join(",")))
       .join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -210,7 +210,7 @@ function AuditTable({ rows }: { rows: AuditRow[] }) {
           <select
             className="select"
             value={sev}
-            onChange={(e) => setSev(e.target.value as any)}
+            onChange={(e) => setSev(e.target.value as "all" | "low" | "medium" | "high")}
           >
             <option value="all">All severities</option>
             <option value="low">Low</option>

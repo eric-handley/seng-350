@@ -6,7 +6,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     // Check if user exists in session or request
-    const user = request.session?.user || request.user;
+    const user = request.session?.user ?? request.user;
 
     if (!user) {
       throw new UnauthorizedException('Authentication required');

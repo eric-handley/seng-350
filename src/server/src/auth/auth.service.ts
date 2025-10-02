@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import bcrypt from 'bcryptjs';
 import { UserRole } from '../database/entities/user.entity';
+import { Session as ExpressSession } from 'express-session';
 
 export interface AuthenticatedUser {
   id: string;
@@ -51,7 +52,7 @@ export class AuthService {
     return user;
   }
 
-  async getSession(req: { session?: any; user?: AuthenticatedUser }): Promise<Session | null> {
+  async getSession(req: { session?: ExpressSession; user?: AuthenticatedUser }): Promise<Session | null> {
     if (req.user) {
       return { user: req.user };
     }

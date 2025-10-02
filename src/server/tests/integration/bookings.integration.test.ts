@@ -17,14 +17,14 @@ jest.mock('@auth/express', () => ({
 jest.setTimeout(30000);
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Repository } from 'typeorm';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
 import { Room } from '../../src/database/entities/room.entity';
-import { Booking } from '../../src/database/entities/booking.entity';
+import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { GlobalExceptionFilter } from '../../src/filters/global-exception.filter';
 
 describe('Bookings Integration Tests', () => {
@@ -38,7 +38,7 @@ describe('Bookings Integration Tests', () => {
   let testRoom: Room;
 
   // Map to hold test users for guard override
-  const testUsers = new Map<string, any>();
+  const testUsers = new Map<string, { id: string; email: string; first_name: string; last_name: string; role: UserRole }>();
 
   beforeAll(async () => {
     const { AppModule } = await import('../../src/app/app.module');
@@ -50,21 +50,20 @@ describe('Bookings Integration Tests', () => {
     })
       .overrideGuard(AuthGuard)
       .useValue({
-        canActivate: (context: any) => {
+        canActivate: (context: ExecutionContext) => {
           const request = context.switchToHttp().getRequest();
           // Check for test user ID header and set the appropriate user
           const testUserId = request.headers['x-test-user-id'];
           if (testUserId && testUsers.has(testUserId)) {
             request.user = testUsers.get(testUserId);
-          } else if (!request.user) {
-            request.user = {
-              id: '00000000-0000-0000-0000-000000000000',
-              email: 'test@uvic.ca',
-              first_name: 'Test',
-              last_name: 'User',
-              role: UserRole.STAFF,
-            };
           }
+          request.user ??= {
+            id: '00000000-0000-0000-0000-000000000000',
+            email: 'test@uvic.ca',
+            first_name: 'Test',
+            last_name: 'User',
+            role: UserRole.STAFF,
+          };
           return true;
         }
       })
@@ -414,7 +413,7 @@ describe('Bookings Integration Tests', () => {
         room_id: testRoom.id,
         start_time: tomorrow,
         end_time: endTime,
-        status: 'Active' as any,
+        status: BookingStatus.ACTIVE,
       });
 
       // Try to insert overlapping booking directly
@@ -425,7 +424,7 @@ describe('Bookings Integration Tests', () => {
           room_id: testRoom.id,
           start_time: tomorrow,
           end_time: endTime,
-          status: 'Active' as any,
+          status: BookingStatus.ACTIVE,
         })
       ).rejects.toThrow(/violates exclusion constraint|no_overlapping_bookings/);
     });

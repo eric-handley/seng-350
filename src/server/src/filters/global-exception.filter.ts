@@ -31,7 +31,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Format the error response for consistent format across all exceptions
     let errorMessage: string;
-    let details: any;
+    let details: unknown;
 
     if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
       const responseObj = exceptionResponse as Record<string, unknown>;
@@ -43,13 +43,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       } else if (responseObj.message) {
         // Standard HttpException with message
         errorMessage = responseObj.message as string;
-        details = responseObj.error || exception.name;
+        details = responseObj.error ?? exception.name;
       } else {
-        errorMessage = exception.message || exception.name;
+        errorMessage = exception.message ?? exception.name;
         details = responseObj;
       }
     } else {
-      errorMessage = exceptionResponse as string || exception.message || exception.name;
+      errorMessage = (exceptionResponse as string) ?? exception.message ?? exception.name;
       details = exception.name;
     }
 

@@ -17,9 +17,9 @@ jest.mock('@auth/express', () => ({
 jest.setTimeout(30000);
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import session = require('express-session');
+import session from 'express-session';
 import { Repository } from 'typeorm';
 
 import { User } from '../../src/database/entities/user.entity';

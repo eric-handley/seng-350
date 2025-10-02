@@ -3,6 +3,12 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiProperty } from '@nestj
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
+import { Session } from 'express-session';
+
+interface RequestWithUser extends Request {
+  user?: AuthenticatedUser;
+  session: Session & Partial<{ user?: AuthenticatedUser }>;
+}
 
 class LoginDto {
   @ApiProperty({ example: 'user@uvic.ca' })
@@ -35,17 +41,17 @@ export class AuthController {
   })
   async login(
     @Body() loginDto: LoginDto,
-    @Req() req: Request,
+    @Req() req: RequestWithUser,
   ): Promise<AuthenticatedUser> {
     const user = await this.authService.login(loginDto.email, loginDto.password);
 
     // Store user in session
     if (req.session) {
-      (req.session as any).user = user;
+      req.session.user = user;
     }
 
     // Also attach to request for immediate use
-    (req as any).user = user;
+    req.user = user;
 
     return user;
   }
@@ -86,8 +92,8 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Not authenticated',
   })
-  async getSession(@Req() req: Request): Promise<{ user: AuthenticatedUser }> {
-    const user = (req.session as any)?.user || (req as any).user;
+  async getSession(@Req() req: RequestWithUser): Promise<{ user: AuthenticatedUser }> {
+    const user = req.session?.user ?? req.user;
 
     if (!user) {
       throw new UnauthorizedException('Not authenticated');

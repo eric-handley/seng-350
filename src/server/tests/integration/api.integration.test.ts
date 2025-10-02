@@ -19,12 +19,30 @@ jest.mock('@auth/express', () => ({
 jest.setTimeout(30000);
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request, { Response } from 'supertest';
 import { Repository } from 'typeorm';
+import { Request, Response as ExpressResponse, NextFunction } from 'express';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
+
+// Augment Express Request type to include user property
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        first_name: string;
+        last_name: string;
+        role: UserRole;
+      };
+    }
+  }
+}
+
 import { Building } from '../../src/database/entities/building.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
@@ -43,18 +61,16 @@ async function setupTestApp() {
   })
     .overrideGuard(AuthGuard)
     .useValue({
-      canActivate: (context: any) => {
+      canActivate: (context: ExecutionContext) => {
         const request = context.switchToHttp().getRequest();
         // Inject a default test user if not already set
-        if (!request.user) {
-          request.user = {
-            id: '00000000-0000-0000-0000-000000000000',
-            email: 'test@uvic.ca',
-            first_name: 'Test',
-            last_name: 'User',
-            role: UserRole.STAFF,
-          };
-        }
+        request.user ??= {
+          id: '00000000-0000-0000-0000-000000000000',
+          email: 'test@uvic.ca',
+          first_name: 'Test',
+          last_name: 'User',
+          role: UserRole.STAFF,
+        };
         return true;
       }
     })
@@ -89,16 +105,14 @@ async function setupTestApp() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Add middleware to inject test user into request
-  app.use((req: any, _res: any, next: any) => {
-    if (!req.user) {
-      req.user = {
-        id: '00000000-0000-0000-0000-000000000000',
-        email: 'test@uvic.ca',
-        first_name: 'Test',
-        last_name: 'User',
-        role: UserRole.STAFF,
-      };
-    }
+  app.use((req: Request, _res: ExpressResponse, next: NextFunction) => {
+    req.user ??= {
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'test@uvic.ca',
+      first_name: 'Test',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    };
     next();
   });
 
@@ -342,7 +356,7 @@ describe('/bookings (e2e)', () => {
     testRoom = testData.testRoom;
 
     // Update middleware to use testUser for this test suite
-    app.use((req: any, _res: any, next: any) => {
+    app.use((req: Request, _res: ExpressResponse, next: NextFunction) => {
       req.user = {
         id: testUser.id,
         email: testUser.email,

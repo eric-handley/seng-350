@@ -70,10 +70,10 @@ async function main() {
       });
 
       await userRepository.save(user);
-      console.log(`Created user: ${userData.email}`);
+      console.warn(`Created user: ${userData.email}`);
     }
 
-    console.log('Demo users seeding completed successfully');
+    console.warn('Demo users seeding completed successfully');
   } catch (error) {
     console.error('Error during seeding:', error);
     process.exit(1);

@@ -647,7 +647,7 @@ describe('BookingsService', () => {
 
       mockBookingRepository.save.mockResolvedValue({ ...seriesBooking, ...updateDto });
 
-      const result = await service.update(mockUUID, updateDto, mockUser);
+      await service.update(mockUUID, updateDto, mockUser);
 
       expect(bookingRepository.findOne).toHaveBeenCalled();
       expect(bookingRepository.save).toHaveBeenCalledTimes(1); // Only one booking updated

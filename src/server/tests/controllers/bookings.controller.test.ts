@@ -3,7 +3,7 @@ import { BookingsController } from '../../src/api/bookings.controller';
 import { BookingsService } from '../../src/services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../../src/dto/booking.dto';
 import { BookingStatus } from '../../src/database/entities/booking.entity';
-import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { AuthenticatedUser } from '../../src/auth/auth.service';
 import { UserRole } from '../../src/database/entities/user.entity';
 
