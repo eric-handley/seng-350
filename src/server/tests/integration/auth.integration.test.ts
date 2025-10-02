@@ -460,7 +460,7 @@ describe('REGISTRAR role (e2e)', () => {
     return agent.get('/buildings').expect(200);
   });
 
-  it('should deny Registrar access to /users (admin only)', async () => {
+  it('should allow Registrar to view all users', async () => {
     const agent = request.agent(app.getHttpServer());
 
     await agent
@@ -468,10 +468,10 @@ describe('REGISTRAR role (e2e)', () => {
       .send({ email: registrarUser.email, password: 'password123' })
       .expect(200);
 
-    return agent.get('/users').expect(403);
+    return agent.get('/users').expect(200);
   });
 
-  it('should deny Registrar from creating users', async () => {
+  it('should allow Registrar to create Staff users', async () => {
     const agent = request.agent(app.getHttpServer());
 
     await agent
@@ -479,15 +479,53 @@ describe('REGISTRAR role (e2e)', () => {
       .send({ email: registrarUser.email, password: 'password123' })
       .expect(200);
 
-    const newUser = {
-      email: `blocked-by-registrar-${Date.now()}@uvic.ca`,
+    const newStaffUser = {
+      email: `staff-by-registrar-${Date.now()}@uvic.ca`,
       password: 'password123',
-      first_name: 'Blocked',
+      first_name: 'Staff',
       last_name: 'User',
       role: UserRole.STAFF,
     };
 
-    return agent.post('/users').send(newUser).expect(403);
+    return agent.post('/users').send(newStaffUser).expect(201);
+  });
+
+  it('should deny Registrar from creating Registrar users', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    const newRegistrarUser = {
+      email: `registrar-by-registrar-${Date.now()}@uvic.ca`,
+      password: 'password123',
+      first_name: 'Registrar',
+      last_name: 'User',
+      role: UserRole.REGISTRAR,
+    };
+
+    return agent.post('/users').send(newRegistrarUser).expect(403);
+  });
+
+  it('should deny Registrar from creating Admin users', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    const newAdminUser = {
+      email: `admin-by-registrar-${Date.now()}@uvic.ca`,
+      password: 'password123',
+      first_name: 'Admin',
+      last_name: 'User',
+      role: UserRole.ADMIN,
+    };
+
+    return agent.post('/users').send(newAdminUser).expect(403);
   });
 });
 

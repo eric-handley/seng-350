@@ -173,43 +173,43 @@ describe('/users (e2e)', () => {
       });
   });
 
-  it('/users/:id (GET) should return a specific user', async () => {
+  it('/users/:id (GET) should return a specific user (Staff viewing own profile)', async () => {
+    // Create a Staff user with the same ID as the default test user
     const testUser = userRepository.create({
-      email: `test-get-${Date.now()}@uvic.ca`,
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'test@uvic.ca',
       password_hash: 'hashedPassword',
-      first_name: 'John',
-      last_name: 'Doe',
+      first_name: 'Test',
+      last_name: 'User',
       role: UserRole.STAFF,
     });
-    const savedUser = await userRepository.save(testUser);
+    await userRepository.save(testUser);
 
     return request(app.getHttpServer())
-      .get(`/users/${savedUser.id}`)
+      .get(`/users/${testUser.id}`)
       .expect(200)
       .expect((res: Response) => {
-        expect(res.body.id).toBe(savedUser.id);
-        expect(res.body.email).toBe(savedUser.email);
+        expect(res.body.id).toBe(testUser.id);
+        expect(res.body.email).toBe(testUser.email);
       });
   });
 
-  it('/users/:id (PATCH) should update a user', async () => {
-    const testUser = userRepository.create({
+  it('/users/:id (PATCH) should deny Staff from updating other users', async () => {
+    const otherUser = userRepository.create({
       email: `test-patch-${Date.now()}@uvic.ca`,
       password_hash: 'hashedPassword',
       first_name: 'John',
       last_name: 'Doe',
       role: UserRole.STAFF,
     });
-    const savedUser = await userRepository.save(testUser);
+    const savedUser = await userRepository.save(otherUser);
     const updateData = { role: UserRole.REGISTRAR };
 
+    // Default test user is STAFF trying to update another user - should be denied
     return request(app.getHttpServer())
       .patch(`/users/${savedUser.id}`)
       .send(updateData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.role).toBe(updateData.role);
-      });
+      .expect(403);
   });
 });
 
@@ -559,11 +559,12 @@ describe('Error handling (e2e)', () => {
     await app.close();
   });
 
-  it('should return 404 for non-existent user', () => {
+  it('should return 403 when Staff tries to view non-existent user (permission check before existence check)', () => {
     const nonExistentId = '99999999-0000-0000-0000-000000000000';
+    // Default test user is STAFF - permission check happens before existence check
     return request(app.getHttpServer())
       .get(`/users/${nonExistentId}`)
-      .expect(404);
+      .expect(403);
   });
 
   it('should return 400 for invalid UUID format', () => {

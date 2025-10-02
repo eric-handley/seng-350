@@ -18,6 +18,14 @@ describe('UsersController', () => {
     role: UserRole.STAFF,
   };
 
+  const mockAdminUser: AuthenticatedUser = {
+    id: 'admin-uuid',
+    email: 'admin@uvic.ca',
+    first_name: 'Admin',
+    last_name: 'User',
+    role: UserRole.ADMIN,
+  };
+
   const mockUserResponse: UserResponseDto = {
     id: 'user-uuid',
     email: 'test@uvic.ca',
@@ -67,24 +75,24 @@ describe('UsersController', () => {
     it('should create a user successfully', async () => {
       mockUsersService.create.mockResolvedValue(mockUserResponse);
 
-      const result = await controller.create(createUserDto);
+      const result = await controller.create(createUserDto, mockAdminUser);
 
-      expect(service.create).toHaveBeenCalledWith(createUserDto);
+      expect(service.create).toHaveBeenCalledWith(createUserDto, mockAdminUser);
       expect(result).toEqual(mockUserResponse);
     });
 
     it('should throw ConflictException when user with email already exists', async () => {
       mockUsersService.create.mockRejectedValue(new ConflictException('User with this email already exists'));
 
-      await expect(controller.create(createUserDto)).rejects.toThrow(ConflictException);
-      expect(service.create).toHaveBeenCalledWith(createUserDto);
+      await expect(controller.create(createUserDto, mockAdminUser)).rejects.toThrow(ConflictException);
+      expect(service.create).toHaveBeenCalledWith(createUserDto, mockAdminUser);
     });
 
     it('should throw BadRequestException for invalid input data', async () => {
       mockUsersService.create.mockRejectedValue(new BadRequestException('Invalid input data'));
 
-      await expect(controller.create(createUserDto)).rejects.toThrow(BadRequestException);
-      expect(service.create).toHaveBeenCalledWith(createUserDto);
+      await expect(controller.create(createUserDto, mockAdminUser)).rejects.toThrow(BadRequestException);
+      expect(service.create).toHaveBeenCalledWith(createUserDto, mockAdminUser);
     });
 
     it('should handle different user roles', async () => {
@@ -92,9 +100,9 @@ describe('UsersController', () => {
       const registrarResponse = { ...mockUserResponse, role: UserRole.REGISTRAR };
       mockUsersService.create.mockResolvedValue(registrarResponse);
 
-      const result = await controller.create(registrarUserDto);
+      const result = await controller.create(registrarUserDto, mockAdminUser);
 
-      expect(service.create).toHaveBeenCalledWith(registrarUserDto);
+      expect(service.create).toHaveBeenCalledWith(registrarUserDto, mockAdminUser);
       expect(result).toEqual(registrarResponse);
     });
   });
@@ -139,7 +147,7 @@ describe('UsersController', () => {
     it('should return a user by id', async () => {
       mockUsersService.findOne.mockResolvedValue(mockUserResponse);
 
-      const result = await controller.findOne('user-uuid');
+      const result = await controller.findOne('user-uuid', mockUser);
 
       expect(service.findOne).toHaveBeenCalledWith('user-uuid');
       expect(result).toEqual(mockUserResponse);
@@ -148,15 +156,15 @@ describe('UsersController', () => {
     it('should throw NotFoundException when user not found', async () => {
       mockUsersService.findOne.mockRejectedValue(new NotFoundException('User not found'));
 
-      await expect(controller.findOne('non-existent-uuid')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('non-existent-uuid', mockAdminUser)).rejects.toThrow(NotFoundException);
       expect(service.findOne).toHaveBeenCalledWith('non-existent-uuid');
     });
 
     it('should handle invalid UUID format', async () => {
       const invalidUuid = 'invalid-uuid';
-      
+
       // This would be caught by the ParseUUIDPipe in real implementation
-      await expect(controller.findOne(invalidUuid)).rejects.toThrow();
+      await expect(controller.findOne(invalidUuid, mockAdminUser)).rejects.toThrow();
     });
   });
 
