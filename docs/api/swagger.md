@@ -1,6 +1,6 @@
 ## Access
 
-Swagger UI is available at `http://localhost:3000/api-docs` when the server is running.
+Swagger UI is available at `http://localhost:3000/api-docs` when the server is running. Make sure to read [auth.md](auth.md) as testing most endpoints will require you to authenticate first.
 
 ## Core Decorators
 

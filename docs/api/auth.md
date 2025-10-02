@@ -19,6 +19,11 @@ The authentication system uses session-based authentication with role-based acce
 
 For a complete permission matrix, see [permissions.md](./permissions.md).
 
+Test users are set up in the database with the following credentials:
+- `staff@uvic.ca`, password `staff`
+- `registrar@uvic.ca`, password `registrar`
+- `admin@uvic.ca`, password `admin`
+
 ## Endpoints
 
 ### POST /api/auth/login
@@ -28,8 +33,8 @@ Authenticate a user with email and password.
 **Request Body:**
 ```json
 {
-  "email": "user@uvic.ca",
-  "password": "password123"
+  "email": "staff@uvic.ca",
+  "password": "staff"
 }
 ```
 
@@ -37,9 +42,9 @@ Authenticate a user with email and password.
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "email": "user@uvic.ca",
-  "first_name": "John",
-  "last_name": "Doe",
+  "email": "staff@uvic.ca",
+  "first_name": "Staff",
+  "last_name": "User",
   "role": "Staff"
 }
 ```
@@ -85,9 +90,9 @@ Get information about the current authenticated user.
 {
   "user": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "email": "user@uvic.ca",
-    "first_name": "John",
-    "last_name": "Doe",
+    "email": "admin@uvic.ca",
+    "first_name": "Admin",
+    "last_name": "User",
     "role": "Admin"
   }
 }
@@ -148,7 +153,7 @@ const response = await fetch('http://localhost:3000/api/auth/login', {
   credentials: 'include', // Important: include cookies
   body: JSON.stringify({
     email: 'admin@uvic.ca',
-    password: 'password123'
+    password: 'admin'
   })
 });
 
