@@ -56,6 +56,13 @@ Branch `feature-7/registrar`
   };
   - 
 
+Branch `feature/init-ui`
+- ChatGPT Conversation (involved some longer form prompt for debugging, etc.): 
+  https://chatgpt.com/share/68df2d60-12b4-8009-be76-51cd8625a89a
+
+Branch `feature/staff-functionality`
+- ChatGPT Conversation regarding database access:
+
 **Design-I**
 
 1. "how can i link a gitlab milestone in a mrkdown file in the same project?" 
