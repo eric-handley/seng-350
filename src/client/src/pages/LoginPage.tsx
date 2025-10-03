@@ -19,9 +19,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const handleDevLogin = (role: 'staff' | 'admin' | 'registrar') => {
     const devUsers = {
-      staff: { id: '2', name: 'Bob Smith', role: 'staff' as const, email: 'bobsmith@uvic.ca' },
-      admin: { id: '1', name: 'Alice Johnson', role: 'admin' as const, email: 'alicejohnson@uvic.ca' },
-      registrar: { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'charliedoe@uvic.ca' }
+      staff: { id: '2', name: 'Bob Smith', role: 'staff' as const, email: 'staff@uvic.ca' },
+      admin: { id: '1', name: 'Alice Johnson', role: 'admin' as const, email: 'admin@uvic.ca' },
+      registrar: { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'registrar@uvic.ca' }
     };
     onLogin(devUsers[role]);
     
