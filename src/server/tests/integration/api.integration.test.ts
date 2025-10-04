@@ -135,7 +135,7 @@ async function getTestData(buildingRepository: Repository<Building>, roomReposit
     throw new Error('No buildings found in seed data');
   }
 
-  const testRoom = await roomRepository.findOne({ where: { building_id: testBuilding.id } });
+  const testRoom = await roomRepository.findOne({ where: { building_short_name: testBuilding.short_name } });
   if (!testRoom) {
     throw new Error('No rooms found in seed data');
   }
@@ -253,24 +253,24 @@ describe('/buildings (e2e)', () => {
       });
   });
 
-  it('/buildings/:id (GET) should return a specific building', () => {
+  it('/buildings/:short_name (GET) should return a specific building', () => {
     return request(app.getHttpServer())
-      .get(`/buildings/${testBuilding.id}`)
+      .get(`/buildings/${testBuilding.short_name}`)
       .expect(200)
       .expect((res: Response) => {
-        expect(res.body.id).toBe(testBuilding.id);
         expect(res.body.short_name).toBe(testBuilding.short_name);
+        expect(res.body.name).toBe(testBuilding.name);
       });
   });
 
-  it('/buildings/:id/rooms (GET) should return rooms in a building', () => {
+  it('/buildings/:short_name/rooms (GET) should return rooms in a building', () => {
     return request(app.getHttpServer())
-      .get(`/buildings/${testBuilding.id}/rooms`)
+      .get(`/buildings/${testBuilding.short_name}/rooms`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
         expect(res.body.length).toBeGreaterThan(0);
-        expect(res.body[0].building_id).toBe(testBuilding.id);
+        expect(res.body[0].building_short_name).toBe(testBuilding.short_name);
       });
   });
 });
@@ -305,24 +305,24 @@ describe('/rooms (e2e)', () => {
 
   it('/rooms (GET) with filters should filter results', () => {
     return request(app.getHttpServer())
-      .get(`/rooms?building_id=${testBuilding.id}&min_capacity=20`)
+      .get(`/rooms?building_short_name=${testBuilding.short_name}&min_capacity=20`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
         if (res.body.length > 0) {
-          expect(res.body[0].building_id).toBe(testBuilding.id);
+          expect(res.body[0].building_short_name).toBe(testBuilding.short_name);
           expect(res.body[0].capacity).toBeGreaterThanOrEqual(20);
         }
       });
   });
 
-  it('/rooms/:id (GET) should return a specific room', () => {
+  it('/rooms/:room_id (GET) should return a specific room', () => {
     return request(app.getHttpServer())
-      .get(`/rooms/${testRoom.id}`)
+      .get(`/rooms/${testRoom.room_id}`)
       .expect(200)
       .expect((res: Response) => {
-        expect(res.body.id).toBe(testRoom.id);
-        expect(res.body.room).toBe(testRoom.room);
+        expect(res.body.room_id).toBe(testRoom.room_id);
+        expect(res.body.room_number).toBe(testRoom.room_number);
       });
   });
 });
@@ -376,7 +376,7 @@ describe('/bookings (e2e)', () => {
   // This should ideally be done across all tests!
   it('/bookings (POST) should create a new booking', () => {
     const newBooking = {
-      room_id: testRoom.id,
+      room_id: testRoom.room_id,
       start_time: '2025-11-01T09:00:00Z',
       end_time: '2025-11-01T10:00:00Z',
     };
@@ -400,7 +400,7 @@ describe('/bookings (e2e)', () => {
 
   it('/bookings (POST) should reject invalid date values', () => {
     const invalidBooking = {
-      room_id: testRoom.id,
+      room_id: testRoom.room_id,
       start_time: 'invalid-date',
       end_time: '2026-12-01T10:00:00Z',
     };
@@ -441,13 +441,13 @@ describe('/bookings (e2e)', () => {
     await bookingRepository.save(booking);
 
     return request(app.getHttpServer())
-      .get(`/bookings?roomId=${testRoom.id}`)
+      .get(`/bookings?roomId=${testRoom.room_id}`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
         if (res.body.length > 0) {
           expect(res.body[0].user_id).toBe(testUser.id);
-          expect(res.body[0].room_id).toBe(testRoom.id);
+          expect(res.body[0].room_id).toBe(testRoom.room_id);
         }
       });
   });
@@ -468,7 +468,7 @@ describe('/bookings (e2e)', () => {
       .expect((res: Response) => {
         expect(res.body.id).toBe(savedBooking.id);
         expect(res.body.user_id).toBe(testUser.id);
-        expect(res.body.room_id).toBe(testRoom.id);
+        expect(res.body.room_id).toBe(testRoom.room_id);
       });
   });
 
@@ -536,7 +536,7 @@ describe('/equipment/room/:roomId (e2e)', () => {
 
   it('should return equipment for a specific room', () => {
     return request(app.getHttpServer())
-      .get(`/equipment/room/${testRoom.id}`)
+      .get(`/equipment/room/${testRoom.room_id}`)
       .expect(200)
       .expect((res: Response) => {
         expect(res.body).toBeInstanceOf(Array);
@@ -544,7 +544,7 @@ describe('/equipment/room/:roomId (e2e)', () => {
   });
 
   it('should return 404 for non-existent room', () => {
-    const nonExistentRoomId = '00000000-0000-0000-0000-000000000000';
+    const nonExistentRoomId = 'NONEXISTENT-999';
     return request(app.getHttpServer())
       .get(`/equipment/room/${nonExistentRoomId}`)
       .expect(404);

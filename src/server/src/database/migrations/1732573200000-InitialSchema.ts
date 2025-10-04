@@ -29,30 +29,27 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         // Create buildings table
         await queryRunner.query(`
             CREATE TABLE "buildings" (
-                "id" uuid NOT NULL DEFAULT gen_random_uuid(),
-                "name" character varying NOT NULL,
                 "short_name" character varying NOT NULL,
+                "name" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "UQ_buildings_name" UNIQUE ("name"),
-                CONSTRAINT "UQ_buildings_short_name" UNIQUE ("short_name"),
-                CONSTRAINT "PK_buildings_id" PRIMARY KEY ("id")
+                CONSTRAINT "PK_buildings_short_name" PRIMARY KEY ("short_name")
             )
         `);
 
         // Create rooms table
         await queryRunner.query(`
             CREATE TABLE "rooms" (
-                "id" uuid NOT NULL DEFAULT gen_random_uuid(),
-                "room" character varying NOT NULL,
-                "building_id" uuid NOT NULL,
+                "room_id" character varying NOT NULL,
+                "building_short_name" character varying NOT NULL,
+                "room_number" character varying NOT NULL,
                 "capacity" integer NOT NULL,
                 "room_type" "public"."room_type_enum" NOT NULL,
                 "url" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                CONSTRAINT "UQ_rooms_room_building" UNIQUE ("room", "building_id"),
-                CONSTRAINT "PK_rooms_id" PRIMARY KEY ("id")
+                CONSTRAINT "PK_rooms_room_id" PRIMARY KEY ("room_id")
             )
         `);
 
@@ -71,7 +68,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         // Create room_equipment table
         await queryRunner.query(`
             CREATE TABLE "room_equipment" (
-                "room_id" uuid NOT NULL,
+                "room_id" character varying NOT NULL,
                 "equipment_id" uuid NOT NULL,
                 "quantity" integer,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -85,7 +82,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
             CREATE TABLE "booking_series" (
                 "id" uuid NOT NULL DEFAULT gen_random_uuid(),
                 "user_id" uuid NOT NULL,
-                "room_id" uuid NOT NULL,
+                "room_id" character varying NOT NULL,
                 "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "end_time" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "series_end_date" DATE NOT NULL,
@@ -102,7 +99,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
             CREATE TABLE "bookings" (
                 "id" uuid NOT NULL DEFAULT gen_random_uuid(),
                 "user_id" uuid NOT NULL,
-                "room_id" uuid NOT NULL,
+                "room_id" character varying NOT NULL,
                 "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "end_time" TIMESTAMP WITH TIME ZONE NOT NULL,
                 "status" "public"."booking_status_enum" NOT NULL,
@@ -143,13 +140,13 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         `);
 
         // Create foreign key constraints
-        await queryRunner.query(`ALTER TABLE "rooms" ADD CONSTRAINT "FK_rooms_building_id" FOREIGN KEY ("building_id") REFERENCES "buildings"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "rooms" ADD CONSTRAINT "FK_rooms_building_short_name" FOREIGN KEY ("building_short_name") REFERENCES "buildings"("short_name") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_equipment_id" FOREIGN KEY ("equipment_id") REFERENCES "equipment"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "booking_series" ADD CONSTRAINT "FK_booking_series_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "booking_series" ADD CONSTRAINT "FK_booking_series_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "booking_series" ADD CONSTRAINT "FK_booking_series_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_booking_series_id" FOREIGN KEY ("booking_series_id") REFERENCES "booking_series"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "audit_logs" ADD CONSTRAINT "FK_audit_logs_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
     }
@@ -164,7 +161,7 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "booking_series" DROP CONSTRAINT "FK_booking_series_user_id"`);
         await queryRunner.query(`ALTER TABLE "room_equipment" DROP CONSTRAINT "FK_room_equipment_equipment_id"`);
         await queryRunner.query(`ALTER TABLE "room_equipment" DROP CONSTRAINT "FK_room_equipment_room_id"`);
-        await queryRunner.query(`ALTER TABLE "rooms" DROP CONSTRAINT "FK_rooms_building_id"`);
+        await queryRunner.query(`ALTER TABLE "rooms" DROP CONSTRAINT "FK_rooms_building_short_name"`);
 
         // Drop exclusion constraint and extension
         await queryRunner.query(`ALTER TABLE "bookings" DROP CONSTRAINT "no_overlapping_bookings"`);

@@ -31,7 +31,7 @@ export class BookingsService {
     this.validateNotInPast(start_time, currentUser.role);
     this.validateAdvanceBooking(start_time, currentUser.role);
 
-    const room = await this.roomRepository.findOne({ where: { id: room_id } });
+    const room = await this.roomRepository.findOne({ where: { room_id } });
     if (!room) {
       throw new NotFoundException('Room not found');
     }
@@ -143,7 +143,7 @@ export class BookingsService {
     }
 
     if (updateBookingDto.room_id) {
-      const room = await this.roomRepository.findOne({ where: { id: updateBookingDto.room_id } });
+      const room = await this.roomRepository.findOne({ where: { room_id: updateBookingDto.room_id } });
       if (!room) {
         throw new NotFoundException('Room not found');
       }
@@ -206,7 +206,7 @@ export class BookingsService {
       throw new BadRequestException('Start time must be before end time');
     }
 
-    const room = await this.roomRepository.findOne({ where: { id: room_id } });
+    const room = await this.roomRepository.findOne({ where: { room_id } });
     if (!room) {
       throw new NotFoundException('Room not found');
     }

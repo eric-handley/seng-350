@@ -4,8 +4,8 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class CreateBookingDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book' })
-  @IsUUID()
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book' })
+  @IsString()
   @IsNotEmpty()
   room_id!: string;
 
@@ -26,9 +26,9 @@ export class CreateBookingDto {
 }
 
 export class UpdateBookingDto extends PartialType(CreateBookingDto) {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book', required: false })
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   room_id?: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)', required: false })
@@ -56,7 +56,7 @@ export class BookingResponseDto {
   @ApiProperty({ example: 'uuid-string', description: 'User ID who made the booking' })
   user_id!: string;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID that was booked' })
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID that was booked' })
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time' })
@@ -79,8 +79,8 @@ export class BookingResponseDto {
 }
 
 export class CreateBookingSeriesDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book' })
-  @IsUUID()
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book' })
+  @IsString()
   @IsNotEmpty()
   room_id!: string;
 

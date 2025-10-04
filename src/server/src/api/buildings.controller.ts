@@ -3,7 +3,6 @@ import {
   Get,
   Param,
   Query,
-  ParseUUIDPipe,
   ParseBoolPipe,
   HttpStatus,
   DefaultValuePipe,
@@ -53,15 +52,15 @@ export class BuildingsController {
     return this.buildingsService.findAll(includeRooms);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get building by ID' })
-  @ApiParam({ name: 'id', description: 'Building UUID' })
-  @ApiQuery({ 
-    name: 'includeRooms', 
-    required: false, 
-    type: Boolean, 
+  @Get(':short_name')
+  @ApiOperation({ summary: 'Get building by short name' })
+  @ApiParam({ name: 'short_name', description: 'Building short name (e.g., ECS)' })
+  @ApiQuery({
+    name: 'includeRooms',
+    required: false,
+    type: Boolean,
     description: 'Include rooms data in the response',
-    example: false 
+    example: false
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -73,16 +72,16 @@ export class BuildingsController {
     description: 'Building not found',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('short_name') short_name: string,
     @Query('includeRooms', new DefaultValuePipe(false), ParseBoolPipe) includeRooms: boolean,
   ): Promise<BuildingResponseDto> {
-    return this.buildingsService.findOne(id, includeRooms);
+    return this.buildingsService.findOne(short_name, includeRooms);
   }
 
 
-  @Get(':id/rooms')
+  @Get(':short_name/rooms')
   @ApiOperation({ summary: 'Get all rooms in a specific building' })
-  @ApiParam({ name: 'id', description: 'Building UUID' })
+  @ApiParam({ name: 'short_name', description: 'Building short name (e.g., ECS)' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of rooms in the building',
@@ -93,8 +92,8 @@ export class BuildingsController {
     description: 'Building not found',
   })
   async findRoomsByBuilding(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('short_name') short_name: string,
   ): Promise<RoomResponseDto[]> {
-    return this.roomsService.findByBuilding(id);
+    return this.roomsService.findByBuilding(short_name);
   }
 }

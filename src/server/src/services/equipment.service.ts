@@ -21,7 +21,7 @@ export class EquipmentService {
   async findEquipmentByRoom(roomId: string): Promise<EquipmentResponseDto[]> {
     // Check if room exists first
     const room = await this.roomRepository.findOne({
-      where: { id: roomId },
+      where: { room_id: roomId },
     });
     
     if (!room) {

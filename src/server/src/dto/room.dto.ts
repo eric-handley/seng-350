@@ -4,10 +4,10 @@ import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RoomQueryDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Filter by building ID', required: false })
+  @ApiProperty({ example: 'ECS', description: 'Filter by building short name', required: false })
   @IsOptional()
-  @IsUUID()
-  building_id?: string;
+  @IsString()
+  building_short_name?: string;
 
   @ApiProperty({ example: 50, description: 'Minimum room capacity', required: false })
   @IsOptional()
@@ -28,14 +28,14 @@ export class RoomQueryDto {
 }
 
 export class RoomResponseDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room unique identifier' })
-  id!: string;
+  @ApiProperty({ example: 'ECS-124', description: 'Room unique identifier (building_short_name + room_number)' })
+  room_id!: string;
 
-  @ApiProperty({ example: 'A101', description: 'Room number/name' })
-  room!: string;
+  @ApiProperty({ example: 'ECS', description: 'Building short name' })
+  building_short_name!: string;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Building ID' })
-  building_id!: string;
+  @ApiProperty({ example: '124', description: 'Room number' })
+  room_number!: string;
 
   @ApiProperty({ example: 50, description: 'Room capacity' })
   capacity!: number;
@@ -54,9 +54,8 @@ export class RoomResponseDto {
 
   @ApiProperty({ description: 'Building information', required: false })
   building?: {
-    id: string;
-    name: string;
     short_name: string;
+    name: string;
   };
 
   @ApiProperty({ description: 'Room equipment', required: false })

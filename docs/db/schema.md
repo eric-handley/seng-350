@@ -12,17 +12,16 @@ erDiagram
     }
 
     Buildings {
-        uuid id PK
+        string short_name PK
         string name UK
-        string short_name UK
         timestamp created_at
         timestamp updated_at
     }
 
     Rooms {
-        uuid id PK
-        string room UK "room + building_id unique"
-        uuid building_id FK
+        string room_id PK "building_short_name + room_number"
+        string building_short_name FK
+        string room_number
         integer capacity
         enum room_type
         string url
@@ -38,7 +37,7 @@ erDiagram
     }
 
     RoomEquipment {
-        uuid room_id FK
+        string room_id FK
         uuid equipment_id FK
         integer quantity "nullable"
         timestamp created_at
@@ -48,7 +47,7 @@ erDiagram
     Bookings {
         uuid id PK
         uuid user_id FK
-        uuid room_id FK
+        string room_id FK
         timestamptz start_time "stored as UTC"
         timestamptz end_time "stored as UTC"
         enum status
@@ -60,7 +59,7 @@ erDiagram
     BookingSeries {
         uuid id PK
         uuid user_id FK
-        uuid room_id FK
+        string room_id FK
         timestamptz start_time "stored as UTC"
         timestamptz end_time "stored as UTC"
         date series_end_date

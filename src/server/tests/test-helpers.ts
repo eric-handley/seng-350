@@ -26,12 +26,16 @@ export class TestDataFactory {
   }
 
   static createRoom(building?: Building, overrides?: Partial<Room>): Partial<Room> {
+    const buildingShortName = building?.short_name || 'ELW';
+    const roomNumber = '101';
     return {
-      room: '101',
+      room_id: `${buildingShortName}-${roomNumber}`,
+      building_short_name: buildingShortName,
+      room_number: roomNumber,
       building,
       capacity: 30,
       room_type: RoomType.CLASSROOM,
-      url: 'https://example.com/ELW/101',
+      url: `https://example.com/${buildingShortName}/${roomNumber}`,
       ...overrides,
     };
   }

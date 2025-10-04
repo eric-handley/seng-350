@@ -199,7 +199,7 @@ describe('Cross-user authorization (e2e)', () => {
 
     // TODO: Add date library (e.g., date-fns) and replace hardcoded dates with dynamic dates relative to current time
     const booking = {
-      room_id: room.id,
+      room_id: room.room_id,
       start_time: '2025-12-01T10:00:00Z',
       end_time: '2025-12-01T11:00:00Z',
     };
@@ -241,7 +241,7 @@ describe('Cross-user authorization (e2e)', () => {
       .expect(200);
 
     const booking = {
-      room_id: room.id,
+      room_id: room.room_id,
       start_time: '2025-12-01T12:00:00Z',
       end_time: '2025-12-01T13:00:00Z',
     };

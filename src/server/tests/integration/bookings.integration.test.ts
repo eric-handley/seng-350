@@ -164,7 +164,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -175,7 +175,7 @@ describe('Bookings Integration Tests', () => {
       const res = await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -196,7 +196,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -211,7 +211,7 @@ describe('Bookings Integration Tests', () => {
       const res = await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: overlapStart.toISOString(),
           end_time: overlapEnd.toISOString(),
         })
@@ -232,7 +232,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -247,7 +247,7 @@ describe('Bookings Integration Tests', () => {
       const res = await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: overlapStart.toISOString(),
           end_time: overlapEnd.toISOString(),
         })
@@ -268,7 +268,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -283,7 +283,7 @@ describe('Bookings Integration Tests', () => {
       const res = await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: wrapStart.toISOString(),
           end_time: wrapEnd.toISOString(),
         })
@@ -307,7 +307,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: midTime.toISOString(),
         })
@@ -317,7 +317,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: midTime.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -370,7 +370,7 @@ describe('Bookings Integration Tests', () => {
       const createRes = await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -387,7 +387,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -410,7 +410,7 @@ describe('Bookings Integration Tests', () => {
 
       await bookingRepository.save({
         user_id: staffUser.id,
-        room_id: testRoom.id,
+        room_id: testRoom.room_id,
         start_time: tomorrow,
         end_time: endTime,
         status: BookingStatus.ACTIVE,
@@ -421,7 +421,7 @@ describe('Bookings Integration Tests', () => {
       await expect(
         bookingRepository.save({
           user_id: staffUser.id,
-          room_id: testRoom.id,
+          room_id: testRoom.room_id,
           start_time: tomorrow,
           end_time: endTime,
           status: BookingStatus.ACTIVE,
@@ -443,7 +443,7 @@ describe('Bookings Integration Tests', () => {
         const res = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: yesterday.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -464,7 +464,7 @@ describe('Bookings Integration Tests', () => {
         await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: yesterday.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -485,7 +485,7 @@ describe('Bookings Integration Tests', () => {
         const res = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: tomorrow.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -506,7 +506,7 @@ describe('Bookings Integration Tests', () => {
         await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: tomorrow.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -525,7 +525,7 @@ describe('Bookings Integration Tests', () => {
         const res = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: tomorrow.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -546,7 +546,7 @@ describe('Bookings Integration Tests', () => {
         await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: tomorrow.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -567,7 +567,7 @@ describe('Bookings Integration Tests', () => {
         const res = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: fourMonthsAhead.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -588,7 +588,7 @@ describe('Bookings Integration Tests', () => {
         await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: threeMonthsAhead.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -607,7 +607,7 @@ describe('Bookings Integration Tests', () => {
         await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: sixMonthsAhead.toISOString(),
             end_time: endTime.toISOString(),
           })
@@ -628,7 +628,7 @@ describe('Bookings Integration Tests', () => {
         const createRes = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: twoHoursAgo.toISOString(),
             end_time: fourHoursLater.toISOString(),
           })
@@ -662,7 +662,7 @@ describe('Bookings Integration Tests', () => {
         const createRes = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: twoHoursAgo.toISOString(),
             end_time: fourHoursLater.toISOString(),
           })
@@ -691,7 +691,7 @@ describe('Bookings Integration Tests', () => {
         const createRes = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: twoHoursAgo.toISOString(),
             end_time: fourHoursLater.toISOString(),
           })
@@ -718,7 +718,7 @@ describe('Bookings Integration Tests', () => {
         const createRes = await request(app.getHttpServer())
           .post('/bookings')
           .send({
-            room_id: testRoom.id,
+            room_id: testRoom.room_id,
             start_time: twoHoursAgo.toISOString(),
             end_time: fourHoursLater.toISOString(),
           })

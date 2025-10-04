@@ -20,8 +20,8 @@ export class RoomsService {
       .leftJoinAndSelect('room.room_equipment', 'room_equipment')
       .leftJoinAndSelect('room_equipment.equipment', 'equipment');
 
-    if (queryDto.building_id) {
-      query.andWhere('room.building_id = :building_id', { building_id: queryDto.building_id });
+    if (queryDto.building_short_name) {
+      query.andWhere('room.building_short_name = :building_short_name', { building_short_name: queryDto.building_short_name });
     }
 
     if (queryDto.min_capacity) {
@@ -36,15 +36,15 @@ export class RoomsService {
       query.andWhere('equipment.name ILIKE :equipment', { equipment: `%${queryDto.equipment}%` });
     }
 
-    query.orderBy('building.name', 'ASC').addOrderBy('room.room', 'ASC');
+    query.orderBy('building.name', 'ASC').addOrderBy('room.room_number', 'ASC');
 
     const rooms = await query.getMany();
     return rooms.map(room => this.toResponseDto(room));
   }
 
-  async findOne(id: string): Promise<RoomResponseDto> {
+  async findOne(room_id: string): Promise<RoomResponseDto> {
     const room = await this.roomRepository.findOne({
-      where: { id },
+      where: { room_id },
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
     });
 
@@ -55,11 +55,11 @@ export class RoomsService {
     return this.toResponseDto(room);
   }
 
-  async findByBuilding(buildingId: string): Promise<RoomResponseDto[]> {
+  async findByBuilding(buildingShortName: string): Promise<RoomResponseDto[]> {
     const rooms = await this.roomRepository.find({
-      where: { building_id: buildingId },
+      where: { building_short_name: buildingShortName },
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
-      order: { room: 'ASC' },
+      order: { room_number: 'ASC' },
     });
 
     return rooms.map(room => this.toResponseDto(room));
@@ -67,18 +67,17 @@ export class RoomsService {
 
   private toResponseDto(room: Room): RoomResponseDto {
     return {
-      id: room.id,
-      room: room.room,
-      building_id: room.building_id,
+      room_id: room.room_id,
+      building_short_name: room.building_short_name,
+      room_number: room.room_number,
       capacity: room.capacity,
       room_type: room.room_type,
       url: room.url,
       created_at: room.created_at,
       updated_at: room.updated_at,
       building: room.building ? {
-        id: room.building.id,
-        name: room.building.name,
         short_name: room.building.short_name,
+        name: room.building.name,
       } : undefined,
       room_equipment: room.room_equipment?.map(re => ({
         equipment: {
