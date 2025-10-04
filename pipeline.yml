@@ -39,7 +39,7 @@ lint:
   stage: lint
   script:
     - echo "Running ESlint checks..."
-    - npm run lint
+    - npx eslint .
   allow_failure: false
 
 test:
