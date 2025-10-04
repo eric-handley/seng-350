@@ -24,7 +24,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         body: JSON.stringify({ email, password }),
         credentials: "include", // send cookies (needed if using sessions)
       });
-      console.log(await response.clone().text());
+
       if (response.status === 401) {
         throw new Error("Invalid email or password");
       }
@@ -39,10 +39,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       onLogin(user);
 
       // Navigate based on rsole (assuming `user.role` exists)
-      if (role === 'admin') navigate('/admin-panel');
-      else if (role === 'registrar') navigate('/registrar-panel');
-      else navigate('/home'); // staff
-
+      if (role === 'admin') {
+        navigate('/admin-panel');
+      } else {
+        navigate('/home');
+      }
     } catch (err: any) {
       setError(err.message || "Login failed");
     }
