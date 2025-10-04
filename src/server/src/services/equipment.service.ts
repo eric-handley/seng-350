@@ -19,9 +19,11 @@ export class EquipmentService {
 
 
   async findEquipmentByRoom(roomId: string): Promise<EquipmentResponseDto[]> {
+    const normalizedRoomId = this.normalizeRoomId(roomId);
+
     // Check if room exists first
     const room = await this.roomRepository.findOne({
-      where: { room_id: roomId },
+      where: { room_id: normalizedRoomId },
     });
     
     if (!room) {
@@ -29,7 +31,7 @@ export class EquipmentService {
     }
 
     const roomEquipments = await this.roomEquipmentRepository.find({
-      where: { room_id: roomId },
+      where: { room_id: normalizedRoomId },
       relations: ['equipment'],
       order: { equipment: { name: 'ASC' } },
     });
@@ -40,6 +42,16 @@ export class EquipmentService {
       created_at: re.equipment.created_at,
       updated_at: re.equipment.updated_at,
     }));
+  }
+
+  private normalizeRoomId(value: string): string {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return trimmed.toUpperCase();
   }
 
 }

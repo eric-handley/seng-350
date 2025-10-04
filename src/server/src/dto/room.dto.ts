@@ -1,12 +1,36 @@
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
+
+const ROOM_TYPE_LOOKUP: Record<string, RoomType> = Object.values(RoomType).reduce(
+  (acc, type) => {
+    acc[type.toLowerCase()] = type;
+    return acc;
+  },
+  {} as Record<string, RoomType>,
+);
+
+const normalizeRoomType = (value: unknown): unknown => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return value;
+  }
+
+  return ROOM_TYPE_LOOKUP[trimmed.toLowerCase()] ?? value;
+};
 
 export class RoomQueryDto {
   @ApiProperty({ example: 'ECS', description: 'Filter by building short name', required: false })
   @IsOptional()
   @IsString()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   building_short_name?: string;
 
   @ApiProperty({ example: 50, description: 'Minimum room capacity', required: false })
@@ -19,6 +43,7 @@ export class RoomQueryDto {
   @ApiProperty({ enum: RoomType, example: RoomType.CLASSROOM, description: 'Filter by room type', required: false })
   @IsOptional()
   @IsEnum(RoomType)
+  @Transform(({ value }) => normalizeRoomType(value))
   room_type?: RoomType;
 
   @ApiProperty({ example: 'projector', description: 'Filter by equipment name', required: false })

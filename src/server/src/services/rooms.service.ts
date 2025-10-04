@@ -35,18 +35,25 @@ export class RoomsService {
       slot_type = 'available',
     } = queryDto;
 
+    const normalizedRoomId = this.normalizeIdentifier(room_id);
+    const normalizedBuildingShortName = this.normalizeIdentifier(
+      building_short_name,
+    );
+
     const roomQuery = this.roomRepository
       .createQueryBuilder('room')
       .leftJoinAndSelect('room.building', 'building')
       .orderBy('building.name', 'ASC')
       .addOrderBy('room.room_number', 'ASC');
 
-    if (room_id) {
-      roomQuery.andWhere('room.room_id = :room_id', { room_id });
+    if (normalizedRoomId) {
+      roomQuery.andWhere('room.room_id = :room_id', {
+        room_id: normalizedRoomId,
+      });
     }
-    if (building_short_name) {
+    if (normalizedBuildingShortName) {
       roomQuery.andWhere('room.building_short_name = :building_short_name', {
-        building_short_name,
+        building_short_name: normalizedBuildingShortName,
       });
     }
 
@@ -143,9 +150,13 @@ export class RoomsService {
       .leftJoinAndSelect('room.room_equipment', 'room_equipment')
       .leftJoinAndSelect('room_equipment.equipment', 'equipment');
 
-    if (queryDto.building_short_name) {
+    const normalizedBuildingShortName = this.normalizeIdentifier(
+      queryDto.building_short_name,
+    );
+
+    if (normalizedBuildingShortName) {
       query.andWhere('room.building_short_name = :building_short_name', {
-        building_short_name: queryDto.building_short_name,
+        building_short_name: normalizedBuildingShortName,
       });
     }
 
@@ -176,8 +187,14 @@ export class RoomsService {
   }
 
   async findOne(room_id: string): Promise<RoomResponseDto> {
+    const normalizedRoomId = this.normalizeIdentifier(room_id);
+
+    if (!normalizedRoomId) {
+      throw new NotFoundException('Room not found');
+    }
+
     const room = await this.roomRepository.findOne({
-      where: { room_id },
+      where: { room_id: normalizedRoomId },
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
     });
 
@@ -191,13 +208,30 @@ export class RoomsService {
   async findByBuilding(
     buildingShortName: string,
   ): Promise<RoomResponseDto[]> {
+    const normalizedBuildingShortName = this.normalizeIdentifier(
+      buildingShortName,
+    );
+
+    if (!normalizedBuildingShortName) {
+      return [];
+    }
+
     const rooms = await this.roomRepository.find({
-      where: { building_short_name: buildingShortName },
+      where: { building_short_name: normalizedBuildingShortName },
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
       order: { room_number: 'ASC' },
     });
 
     return rooms.map((room) => this.toResponseDto(room));
+  }
+
+  private normalizeIdentifier(value?: string): string | undefined {
+    if (typeof value !== 'string') {
+      return undefined;
+    }
+
+    const trimmed = value.trim();
+    return trimmed ? trimmed.toUpperCase() : undefined;
   }
 
   private toResponseDto(room: Room): RoomResponseDto {

@@ -25,8 +25,10 @@ export class BuildingsService {
   async findOne(short_name: string, includeRooms = false): Promise<BuildingResponseDto> {
     const relations = includeRooms ? ['rooms', 'rooms.room_equipment', 'rooms.room_equipment.equipment'] : [];
 
+    const normalizedShortName = this.normalizeShortName(short_name);
+
     const building = await this.buildingRepository.findOne({
-      where: { short_name },
+      where: { short_name: normalizedShortName },
       relations,
     });
 
@@ -69,5 +71,15 @@ export class BuildingsService {
     }
 
     return response;
+  }
+
+  private normalizeShortName(value: string): string {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      throw new NotFoundException('Building not found');
+    }
+
+    return trimmed.toUpperCase();
   }
 }

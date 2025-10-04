@@ -1,17 +1,23 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsArray, ValidateNested, IsNumber, Matches } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 
 export class ScheduleQueryDto {
   @ApiPropertyOptional({ description: "Filter by specific room ID (e.g., 'ECS-124')" })
   @IsOptional()
   @IsString()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   room_id?: string;
 
   @ApiPropertyOptional({ description: "Filter by building (e.g., 'ECS')" })
   @IsOptional()
   @IsString()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   building_short_name?: string;
 
   @ApiPropertyOptional({ description: "Filter by date (YYYY-MM-DD). Defaults to today." })
