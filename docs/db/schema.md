@@ -97,3 +97,7 @@ erDiagram
 - `status`: Active, Cancelled  
 - `room_type`: Classroom, Lecture theatre, Multi-access classroom, Flury Hall, Unknown, David Lam Auditorium
 - `entity_type`: User, Building, Room, Equipment, RoomEquipment, Booking, BookingSeries
+
+**Identifier Notes**
+- Buildings are keyed by `short_name` (for example `ECS`), replacing the previous UUID-based identifier.
+- Rooms are keyed by `room_id`, built from `building_short_name` + `room_number` (for example `ECS-116`). Bookings, equipment, and API requests now reference this combined value.
