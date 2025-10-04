@@ -31,7 +31,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || `Login failed: ${response.status}`);
+        throw new Error(errorData?.message ?? `Login failed: ${response.status}`);
       }
 
       const user: User = await response.json(); // backend should return the user object
@@ -45,7 +45,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         navigate('/home');
       }
     } catch (err: any) {
-      setError(err.message || "Login failed");
+      setError(err.message ?? "Login failed");
     }
     //console.warn("Logging in with:", { email, password });
   };
