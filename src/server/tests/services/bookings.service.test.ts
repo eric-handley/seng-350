@@ -120,7 +120,7 @@ describe('BookingsService', () => {
 
       const result = await service.create(createBookingDto, mockUser);
 
-      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
+      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { room_id: mockUUID } });
       expect(bookingRepository.save).toHaveBeenCalled();
       expect(result).toBeDefined();
     });
@@ -130,7 +130,7 @@ describe('BookingsService', () => {
       mockRoomRepository.findOne.mockResolvedValue(null);
 
       await expect(service.create(createBookingDto, mockUser)).rejects.toThrow(NotFoundException);
-      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
+      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { room_id: mockUUID } });
     });
 
     it('should throw BadRequestException when start time is after end time', async () => {

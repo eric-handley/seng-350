@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
@@ -37,7 +36,7 @@ export class EquipmentController {
     description: 'Room not found or no equipment in room',
   })
   async findEquipmentByRoom(
-    @Param('roomId', ParseUUIDPipe) roomId: string,
+    @Param('roomId') roomId: string,
   ): Promise<EquipmentResponseDto[]> {
     return this.equipmentService.findEquipmentByRoom(roomId);
   }

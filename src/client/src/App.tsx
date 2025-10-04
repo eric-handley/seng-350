@@ -78,7 +78,7 @@ const HomeComponent: React.FC = () => {
   // }
 
   // TODO: TEMPORARY FIX - Mock user for testing without auth
-  const activeUser = currentUser || { id: 'temp', name: 'Guest', email: 'guest@example.com', role: 'staff' as const, isBlocked: false }
+  const activeUser = currentUser ?? { id: 'temp', name: 'Guest', email: 'guest@example.com', role: 'staff' as const, isBlocked: false }
 
   return (
     <div className="app-shell">

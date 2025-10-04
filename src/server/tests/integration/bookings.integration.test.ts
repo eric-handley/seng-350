@@ -341,7 +341,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: rooms[0].id,
+          room_id: rooms[0].room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })
@@ -351,7 +351,7 @@ describe('Bookings Integration Tests', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send({
-          room_id: rooms[1].id,
+          room_id: rooms[1].room_id,
           start_time: tomorrow.toISOString(),
           end_time: endTime.toISOString(),
         })

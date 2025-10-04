@@ -30,7 +30,7 @@ export class RoomsController {
   @Get()
   @ApiOperation({ summary: 'Get all rooms with optional filters' })
   @ApiQuery({ name: 'building_short_name', required: false, description: 'Filter by building short name' })
-  @ApiQuery({ name: 'min_capacity', required: false, description: 'Minimum room capacity' })
+  @ApiQuery({ name: 'min_capacity',  required: false, description: 'Minimum room capacity' })
   @ApiQuery({ name: 'room_type', required: false, enum: RoomType, description: 'Filter by room type' })
   @ApiQuery({ name: 'equipment', required: false, description: 'Filter by equipment name' })
   @ApiResponse({

@@ -15,7 +15,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   onCancel,
   showUser = false
 }) => {
-  const room = providedRoom || ROOMS.find(r => r.id === booking.roomId)!
+  const room = providedRoom ?? ROOMS.find(r => r.id === booking.roomId)
   const d = new Date(booking.start)
   const dEnd = new Date(booking.end)
   const dateStr = d.toLocaleDateString()

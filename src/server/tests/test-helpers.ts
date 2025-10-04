@@ -26,7 +26,7 @@ export class TestDataFactory {
   }
 
   static createRoom(building?: Building, overrides?: Partial<Room>): Partial<Room> {
-    const buildingShortName = building?.short_name || 'ELW';
+    const buildingShortName = building?.short_name ?? 'ELW';
     const roomNumber = '101';
     return {
       room_id: `${buildingShortName}-${roomNumber}`,
