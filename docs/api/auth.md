@@ -140,6 +140,8 @@ User is authenticated but lacks required role.
   - All roles can create and manage their own bookings
   - Registrar/Admin can view and manage all bookings
   - Staff can only view and manage their own bookings
+- **Schedule** (`/schedule`)
+  - Staff, Registrar, and Admin can query available or booked time slots grouped by building and room
 
 ---
 

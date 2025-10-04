@@ -11,12 +11,12 @@ interface RequestWithUser extends Request {
 }
 
 class LoginDto {
-  @ApiProperty({ example: 'user@uvic.ca' })
+  @ApiProperty({ example: 'admin@uvic.ca' })
   @IsEmail()
   @IsNotEmpty()
   email!: string;
 
-  @ApiProperty({ example: 'password123' })
+  @ApiProperty({ example: 'admin' })
   @IsString()
   @IsNotEmpty()
   password!: string;

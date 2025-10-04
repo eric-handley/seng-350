@@ -4,7 +4,6 @@ import {
   Param,
   Query,
   ValidationPipe,
-  ParseUUIDPipe,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
@@ -30,8 +29,8 @@ export class RoomsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all rooms with optional filters' })
-  @ApiQuery({ name: 'building_id', required: false, description: 'Filter by building ID' })
-  @ApiQuery({ name: 'min_capacity', required: false, description: 'Minimum room capacity' })
+  @ApiQuery({ name: 'building_short_name', required: false, description: 'Filter by building short name' })
+  @ApiQuery({ name: 'min_capacity',  required: false, description: 'Minimum room capacity' })
   @ApiQuery({ name: 'room_type', required: false, enum: RoomType, description: 'Filter by room type' })
   @ApiQuery({ name: 'equipment', required: false, description: 'Filter by equipment name' })
   @ApiResponse({
@@ -45,9 +44,9 @@ export class RoomsController {
     return this.roomsService.findAll(queryDto);
   }
 
-  @Get(':id')
+  @Get(':room_id')
   @ApiOperation({ summary: 'Get room by ID' })
-  @ApiParam({ name: 'id', description: 'Room UUID' })
+  @ApiParam({ name: 'room_id', description: 'Room ID (e.g., ECS-124)' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Room found',
@@ -58,8 +57,8 @@ export class RoomsController {
     description: 'Room not found',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('room_id') room_id: string,
   ): Promise<RoomResponseDto> {
-    return this.roomsService.findOne(id);
+    return this.roomsService.findOne(room_id);
   }
 }

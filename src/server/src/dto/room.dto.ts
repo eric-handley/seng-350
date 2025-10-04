@@ -1,13 +1,37 @@
-import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
+const ROOM_TYPE_LOOKUP: Record<string, RoomType> = Object.values(RoomType).reduce(
+  (acc, type) => {
+    acc[type.toLowerCase()] = type;
+    return acc;
+  },
+  {} as Record<string, RoomType>,
+);
+
+const normalizeRoomType = (value: unknown): unknown => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return value;
+  }
+
+  return ROOM_TYPE_LOOKUP[trimmed.toLowerCase()] ?? value;
+};
+
 export class RoomQueryDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Filter by building ID', required: false })
+  @ApiProperty({ example: 'ECS', description: 'Filter by building short name', required: false })
   @IsOptional()
-  @IsUUID()
-  building_id?: string;
+  @IsString()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
+  building_short_name?: string;
 
   @ApiProperty({ example: 50, description: 'Minimum room capacity', required: false })
   @IsOptional()
@@ -19,6 +43,7 @@ export class RoomQueryDto {
   @ApiProperty({ enum: RoomType, example: RoomType.CLASSROOM, description: 'Filter by room type', required: false })
   @IsOptional()
   @IsEnum(RoomType)
+  @Transform(({ value }) => normalizeRoomType(value))
   room_type?: RoomType;
 
   @ApiProperty({ example: 'projector', description: 'Filter by equipment name', required: false })
@@ -28,14 +53,14 @@ export class RoomQueryDto {
 }
 
 export class RoomResponseDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room unique identifier' })
-  id!: string;
+  @ApiProperty({ example: 'ECS-124', description: 'Room unique identifier (building_short_name + room_number)' })
+  room_id!: string;
 
-  @ApiProperty({ example: 'A101', description: 'Room number/name' })
-  room!: string;
+  @ApiProperty({ example: 'ECS', description: 'Building short name' })
+  building_short_name!: string;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Building ID' })
-  building_id!: string;
+  @ApiProperty({ example: '124', description: 'Room number' })
+  room_number!: string;
 
   @ApiProperty({ example: 50, description: 'Room capacity' })
   capacity!: number;
@@ -54,9 +79,8 @@ export class RoomResponseDto {
 
   @ApiProperty({ description: 'Building information', required: false })
   building?: {
-    id: string;
-    name: string;
     short_name: string;
+    name: string;
   };
 
   @ApiProperty({ description: 'Room equipment', required: false })

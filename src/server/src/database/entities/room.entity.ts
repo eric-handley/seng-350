@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Unique } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Building } from './building.entity';
 import { Booking } from './booking.entity';
 import { BookingSeries } from './booking-series.entity';
@@ -14,16 +14,15 @@ export enum RoomType {
 }
 
 @Entity('rooms')
-@Unique(['room', 'building_id'])
 export class Room {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryColumn()
+  room_id!: string;
 
   @Column()
-  room!: string;
+  building_short_name!: string;
 
   @Column()
-  building_id!: string;
+  room_number!: string;
 
   @Column()
   capacity!: number;
@@ -44,7 +43,7 @@ export class Room {
   updated_at!: Date;
 
   @ManyToOne(() => Building, building => building.rooms)
-  @JoinColumn({ name: 'building_id' })
+  @JoinColumn({ name: 'building_short_name' })
   building!: Building;
 
   @OneToMany(() => Booking, booking => booking.room)

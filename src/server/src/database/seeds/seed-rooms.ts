@@ -101,11 +101,10 @@ async function main() {
 
         const roomType = mapRoomType(roomData.room_type);
 
+        const room_id = `${building.short_name}-${roomData.room_number}`;
+
         const existingRoom = await roomRepository.findOne({
-          where: {
-            room: roomData.room_number,
-            building_id: building.id
-          }
+          where: { room_id }
         });
 
         if (existingRoom) {
@@ -113,8 +112,9 @@ async function main() {
         }
 
         const room = roomRepository.create({
-          room: roomData.room_number,
-          building_id: building.id,
+          room_id,
+          building_short_name: building.short_name,
+          room_number: roomData.room_number,
           capacity: roomData.capacity,
           room_type: roomType,
           url: roomData.url
@@ -140,7 +140,7 @@ async function main() {
           }
 
           const roomEquipment = roomEquipmentRepository.create({
-            room_id: savedRoom.id,
+            room_id: savedRoom.room_id,
             equipment_id: equipment.id,
             quantity: equipmentData.quantity
           });

@@ -1,12 +1,43 @@
-import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsUUID, IsString, IsInt, Min } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
 import { BookingStatus } from '../database/entities/booking.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+
+const normalizeRoomId = (value: unknown): unknown => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed ? trimmed.toUpperCase() : value;
+};
+
+const BOOKING_STATUS_LOOKUP: Record<string, BookingStatus> = Object.values(BookingStatus).reduce(
+  (acc, status) => {
+    acc[status.toLowerCase()] = status;
+    return acc;
+  },
+  {} as Record<string, BookingStatus>,
+);
+
+const normalizeBookingStatus = (value: unknown): unknown => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return value;
+  }
+
+  return BOOKING_STATUS_LOOKUP[trimmed.toLowerCase()] ?? value;
+};
 
 export class CreateBookingDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book' })
-  @IsUUID()
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book' })
+  @IsString()
   @IsNotEmpty()
+  @Transform(({ value }) => normalizeRoomId(value))
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)' })
@@ -19,16 +50,17 @@ export class CreateBookingDto {
   @IsDate()
   end_time!: Date;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
-  @IsOptional()
-  @IsUUID()
-  booking_series_id?: string;
+  // @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
+  // @IsOptional()
+  // @IsUUID()
+  // booking_series_id?: string;
 }
 
 export class UpdateBookingDto extends PartialType(CreateBookingDto) {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book', required: false })
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
+  @Transform(({ value }) => normalizeRoomId(value))
   room_id?: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)', required: false })
@@ -46,6 +78,7 @@ export class UpdateBookingDto extends PartialType(CreateBookingDto) {
   @ApiProperty({ enum: BookingStatus, example: BookingStatus.CANCELLED, description: 'Booking status', required: false })
   @IsOptional()
   @IsEnum(BookingStatus)
+  @Transform(({ value }) => normalizeBookingStatus(value))
   status?: BookingStatus;
 }
 
@@ -56,7 +89,7 @@ export class BookingResponseDto {
   @ApiProperty({ example: 'uuid-string', description: 'User ID who made the booking' })
   user_id!: string;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID that was booked' })
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID that was booked' })
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time' })
@@ -79,9 +112,10 @@ export class BookingResponseDto {
 }
 
 export class CreateBookingSeriesDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book' })
-  @IsUUID()
+  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book' })
+  @IsString()
   @IsNotEmpty()
+  @Transform(({ value }) => normalizeRoomId(value))
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)' })

@@ -10,9 +10,9 @@ describe('RoomsController', () => {
   let service: RoomsService;
 
   const mockRoomResponse: RoomResponseDto = {
-    id: 'room-uuid',
-    room: '101',
-    building_id: 'building-uuid',
+    room_id: 'ELW-101',
+    building_short_name: 'ELW',
+    room_number: '101',
     capacity: 30,
     room_type: RoomType.CLASSROOM,
     url: 'https://example.com/room/101',
@@ -56,10 +56,10 @@ describe('RoomsController', () => {
       expect(result).toEqual(mockRooms);
     });
 
-    it('should return rooms with building_id filter', async () => {
+    it('should return rooms with building_short_name filter', async () => {
       const mockRooms = [mockRoomResponse];
       mockRoomsService.findAll.mockResolvedValue(mockRooms);
-      const queryDto: RoomQueryDto = { building_id: 'building-uuid' };
+      const queryDto: RoomQueryDto = { building_short_name: 'ELW' };
 
       const result = await controller.findAll(queryDto);
 
@@ -104,7 +104,7 @@ describe('RoomsController', () => {
       const mockRooms = [mockRoomResponse];
       mockRoomsService.findAll.mockResolvedValue(mockRooms);
       const queryDto: RoomQueryDto = {
-        building_id: 'building-uuid',
+        building_short_name: 'ELW',
         min_capacity: 20,
         room_type: RoomType.CLASSROOM,
         equipment: 'projector',
@@ -128,20 +128,20 @@ describe('RoomsController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a room by id', async () => {
+    it('should return a room by room_id', async () => {
       mockRoomsService.findOne.mockResolvedValue(mockRoomResponse);
 
-      const result = await controller.findOne('room-uuid');
+      const result = await controller.findOne('ELW-101');
 
-      expect(service.findOne).toHaveBeenCalledWith('room-uuid');
+      expect(service.findOne).toHaveBeenCalledWith('ELW-101');
       expect(result).toEqual(mockRoomResponse);
     });
 
     it('should throw NotFoundException when room not found', async () => {
       mockRoomsService.findOne.mockRejectedValue(new NotFoundException('Room not found'));
 
-      await expect(controller.findOne('non-existent-uuid')).rejects.toThrow(NotFoundException);
-      expect(service.findOne).toHaveBeenCalledWith('non-existent-uuid');
+      await expect(controller.findOne('NONEXISTENT-999')).rejects.toThrow(NotFoundException);
+      expect(service.findOne).toHaveBeenCalledWith('NONEXISTENT-999');
     });
   });
 });

@@ -22,11 +22,13 @@ export class BuildingsService {
     return buildings.map(building => this.toResponseDto(building, includeRooms));
   }
 
-  async findOne(id: string, includeRooms = false): Promise<BuildingResponseDto> {
+  async findOne(short_name: string, includeRooms = false): Promise<BuildingResponseDto> {
     const relations = includeRooms ? ['rooms', 'rooms.room_equipment', 'rooms.room_equipment.equipment'] : [];
-    
+
+    const normalizedShortName = this.normalizeShortName(short_name);
+
     const building = await this.buildingRepository.findOne({
-      where: { id },
+      where: { short_name: normalizedShortName },
       relations,
     });
 
@@ -40,20 +42,19 @@ export class BuildingsService {
 
   private toResponseDto(building: Building, includeRooms = false): BuildingResponseDto {
     const response: BuildingResponseDto = {
-      id: building.id,
-      name: building.name,
       short_name: building.short_name,
+      name: building.name,
       created_at: building.created_at,
       updated_at: building.updated_at,
     };
 
     if (includeRooms && building.rooms) {
       response.rooms = building.rooms
-        .sort((a, b) => a.room.localeCompare(b.room))
+        .sort((a, b) => a.room_number.localeCompare(b.room_number))
         .map(room => ({
-          id: room.id,
-          room: room.room,
-          building_id: room.building_id,
+          room_id: room.room_id,
+          building_short_name: room.building_short_name,
+          room_number: room.room_number,
           capacity: room.capacity,
           room_type: room.room_type,
           url: room.url,
@@ -70,5 +71,15 @@ export class BuildingsService {
     }
 
     return response;
+  }
+
+  private normalizeShortName(value: string): string {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      throw new NotFoundException('Building not found');
+    }
+
+    return trimmed.toUpperCase();
   }
 }

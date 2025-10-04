@@ -11,7 +11,7 @@
     "prestart": "docker compose build",
     "start": "docker compose up -d",
     "stop": "docker compose down",
-    "restart": "docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate",
+    "restart": "docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate --wait",
     "tmux": "bash .vscode/tmux.sh && npm stop",
     "dev:client": "npm run dev -w client",
     "dev:server": "npm run dev -w server",

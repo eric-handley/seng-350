@@ -13,17 +13,16 @@ describe('BuildingsController', () => {
   let roomsService: RoomsService;
 
   const mockBuildingResponse: BuildingResponseDto = {
-    id: 'building-uuid',
-    name: 'Elliott Building',
     short_name: 'ELW',
+    name: 'Elliott Building',
     created_at: new Date('2024-01-01T00:00:00Z'),
     updated_at: new Date('2024-01-01T00:00:00Z'),
   };
 
   const mockRoomResponse: RoomResponseDto = {
-    id: 'room-uuid',
-    room: '101',
-    building_id: 'building-uuid',
+    room_id: 'ELW-101',
+    building_short_name: 'ELW',
+    room_number: '101',
     capacity: 30,
     room_type: RoomType.CLASSROOM,
     url: 'https://example.com/room/101',
@@ -110,33 +109,33 @@ describe('BuildingsController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a building by id without rooms', async () => {
+    it('should return a building by short_name without rooms', async () => {
       mockBuildingsService.findOne.mockResolvedValue(mockBuildingResponse);
 
-      const result = await controller.findOne('building-uuid', false);
+      const result = await controller.findOne('ELW', false);
 
-      expect(buildingsService.findOne).toHaveBeenCalledWith('building-uuid', false);
+      expect(buildingsService.findOne).toHaveBeenCalledWith('ELW', false);
       expect(result).toEqual(mockBuildingResponse);
     });
 
-    it('should return a building by id with rooms when includeRooms is true', async () => {
+    it('should return a building by short_name with rooms when includeRooms is true', async () => {
       const buildingWithRooms = {
         ...mockBuildingResponse,
         rooms: [mockRoomResponse],
       };
       mockBuildingsService.findOne.mockResolvedValue(buildingWithRooms);
 
-      const result = await controller.findOne('building-uuid', true);
+      const result = await controller.findOne('ELW', true);
 
-      expect(buildingsService.findOne).toHaveBeenCalledWith('building-uuid', true);
+      expect(buildingsService.findOne).toHaveBeenCalledWith('ELW', true);
       expect(result).toEqual(buildingWithRooms);
     });
 
     it('should throw NotFoundException when building not found', async () => {
       mockBuildingsService.findOne.mockRejectedValue(new NotFoundException('Building not found'));
 
-      await expect(controller.findOne('non-existent-uuid', false)).rejects.toThrow(NotFoundException);
-      expect(buildingsService.findOne).toHaveBeenCalledWith('non-existent-uuid', false);
+      await expect(controller.findOne('NONEXISTENT', false)).rejects.toThrow(NotFoundException);
+      expect(buildingsService.findOne).toHaveBeenCalledWith('NONEXISTENT', false);
     });
   });
 
@@ -145,26 +144,26 @@ describe('BuildingsController', () => {
       const mockRooms = [mockRoomResponse];
       mockRoomsService.findByBuilding.mockResolvedValue(mockRooms);
 
-      const result = await controller.findRoomsByBuilding('building-uuid');
+      const result = await controller.findRoomsByBuilding('ELW');
 
-      expect(roomsService.findByBuilding).toHaveBeenCalledWith('building-uuid');
+      expect(roomsService.findByBuilding).toHaveBeenCalledWith('ELW');
       expect(result).toEqual(mockRooms);
     });
 
     it('should return empty array when building has no rooms', async () => {
       mockRoomsService.findByBuilding.mockResolvedValue([]);
 
-      const result = await controller.findRoomsByBuilding('building-uuid');
+      const result = await controller.findRoomsByBuilding('ELW');
 
-      expect(roomsService.findByBuilding).toHaveBeenCalledWith('building-uuid');
+      expect(roomsService.findByBuilding).toHaveBeenCalledWith('ELW');
       expect(result).toEqual([]);
     });
 
     it('should throw NotFoundException when building does not exist', async () => {
       mockRoomsService.findByBuilding.mockRejectedValue(new NotFoundException('Building not found'));
 
-      await expect(controller.findRoomsByBuilding('non-existent-uuid')).rejects.toThrow(NotFoundException);
-      expect(roomsService.findByBuilding).toHaveBeenCalledWith('non-existent-uuid');
+      await expect(controller.findRoomsByBuilding('NONEXISTENT')).rejects.toThrow(NotFoundException);
+      expect(roomsService.findByBuilding).toHaveBeenCalledWith('NONEXISTENT');
     });
 
     it('should handle multiple rooms in building', async () => {
@@ -172,16 +171,16 @@ describe('BuildingsController', () => {
         mockRoomResponse,
         {
           ...mockRoomResponse,
-          id: 'room-uuid-2',
-          room: '102',
+          room_id: 'ELW-102',
+          room_number: '102',
           room_type: RoomType.LECTURE_THEATRE,
         },
       ];
       mockRoomsService.findByBuilding.mockResolvedValue(mockRooms);
 
-      const result = await controller.findRoomsByBuilding('building-uuid');
+      const result = await controller.findRoomsByBuilding('ELW');
 
-      expect(roomsService.findByBuilding).toHaveBeenCalledWith('building-uuid');
+      expect(roomsService.findByBuilding).toHaveBeenCalledWith('ELW');
       expect(result).toEqual(mockRooms);
       expect(result).toHaveLength(2);
     });

@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
@@ -24,9 +23,9 @@ import { AuthGuard } from '../shared/guards/auth.guard';
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 
-  @Get('room/:roomId')
+  @Get('room/:room_id')
   @ApiOperation({ summary: 'Get all equipment in a specific room' })
-  @ApiParam({ name: 'roomId', description: 'Room UUID' })
+  @ApiParam({ name: 'room_id', description: 'Room ID, building_short_name + room_number (e.g. ECS-116)' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of equipment in the room',
@@ -37,8 +36,8 @@ export class EquipmentController {
     description: 'Room not found or no equipment in room',
   })
   async findEquipmentByRoom(
-    @Param('roomId', ParseUUIDPipe) roomId: string,
+    @Param('room_id') room_id: string,
   ): Promise<EquipmentResponseDto[]> {
-    return this.equipmentService.findEquipmentByRoom(roomId);
+    return this.equipmentService.findEquipmentByRoom(room_id);
   }
 }

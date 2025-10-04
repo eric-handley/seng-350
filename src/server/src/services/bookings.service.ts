@@ -20,7 +20,12 @@ export class BookingsService {
   ) {}
 
   async create(createBookingDto: CreateBookingDto, currentUser: AuthenticatedUser): Promise<BookingResponseDto> {
-    const { room_id, start_time, end_time } = createBookingDto;
+    const { start_time, end_time } = createBookingDto;
+    const normalizedRoomId = this.normalizeRoomId(createBookingDto.room_id);
+
+    if (!normalizedRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
 
     if (new Date(start_time) >= new Date(end_time)) {
       throw new BadRequestException('Start time must be before end time');
@@ -31,15 +36,16 @@ export class BookingsService {
     this.validateNotInPast(start_time, currentUser.role);
     this.validateAdvanceBooking(start_time, currentUser.role);
 
-    const room = await this.roomRepository.findOne({ where: { id: room_id } });
+    const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
     if (!room) {
       throw new NotFoundException('Room not found');
     }
 
-    await this.checkForConflicts(room_id, start_time, end_time);
+    await this.checkForConflicts(normalizedRoomId, start_time, end_time);
 
     const booking = this.bookingRepository.create({
       ...createBookingDto,
+      room_id: normalizedRoomId,
       user_id: currentUser.id,
       status: BookingStatus.ACTIVE,
     });
@@ -82,7 +88,13 @@ export class BookingsService {
     }
 
     if (roomId) {
-      query.andWhere('booking.room_id = :roomId', { roomId });
+      const normalizedRoomId = this.normalizeRoomId(roomId);
+
+      if (!normalizedRoomId) {
+        throw new BadRequestException('roomId must not be empty');
+      }
+
+      query.andWhere('booking.room_id = :roomId', { roomId: normalizedRoomId });
     }
 
     if (startDate) {
@@ -134,22 +146,45 @@ export class BookingsService {
       }
     }
 
+    const normalizedUpdateRoomId = updateBookingDto.room_id
+      ? this.normalizeRoomId(updateBookingDto.room_id)
+      : undefined;
+
+    if (updateBookingDto.room_id && !normalizedUpdateRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
+
     if (updateBookingDto.room_id || updateBookingDto.start_time || updateBookingDto.end_time) {
-      const roomId = updateBookingDto.room_id ?? booking.room_id;
+      const candidateRoomId =
+        normalizedUpdateRoomId ?? booking.room_id ?? booking.room?.room_id;
+
+      const normalizedTargetRoomId = this.normalizeRoomId(candidateRoomId);
+
+      if (!normalizedTargetRoomId) {
+        throw new BadRequestException('Room ID must not be empty');
+      }
+
       const startTime = updateBookingDto.start_time ?? booking.start_time;
       const endTime = updateBookingDto.end_time ?? booking.end_time;
 
-      await this.checkForConflicts(roomId, startTime, endTime, id);
+      await this.checkForConflicts(normalizedTargetRoomId, startTime, endTime, id);
+
+      if (!normalizedUpdateRoomId && !booking.room_id) {
+        booking.room_id = normalizedTargetRoomId;
+      }
     }
 
-    if (updateBookingDto.room_id) {
-      const room = await this.roomRepository.findOne({ where: { id: updateBookingDto.room_id } });
+    if (normalizedUpdateRoomId) {
+      const room = await this.roomRepository.findOne({ where: { room_id: normalizedUpdateRoomId } });
       if (!room) {
         throw new NotFoundException('Room not found');
       }
     }
 
-    Object.assign(booking, updateBookingDto);
+    Object.assign(booking, {
+      ...updateBookingDto,
+      ...(normalizedUpdateRoomId ? { room_id: normalizedUpdateRoomId } : {}),
+    });
     const savedBooking = await this.bookingRepository.save(booking);
     return this.toResponseDto(savedBooking);
   }
@@ -180,8 +215,14 @@ export class BookingsService {
     endTime: Date,
     excludeBookingId?: string,
   ): Promise<void> {
+    const normalizedRoomId = this.normalizeRoomId(roomId);
+
+    if (!normalizedRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
+
     const query = this.bookingRepository.createQueryBuilder('booking')
-      .where('booking.room_id = :roomId', { roomId })
+      .where('booking.room_id = :roomId', { roomId: normalizedRoomId })
       .andWhere('booking.status = :status', { status: BookingStatus.ACTIVE })
       .andWhere(
         '(booking.start_time < :endTime AND booking.end_time > :startTime)',
@@ -200,13 +241,18 @@ export class BookingsService {
   }
 
   async createSeries(createSeriesDto: CreateBookingSeriesDto, userId: string): Promise<BookingResponseDto[]> {
-    const { room_id, start_time, end_time, recurrence, recurrence_count } = createSeriesDto;
+    const { start_time, end_time, recurrence, recurrence_count } = createSeriesDto;
+    const normalizedRoomId = this.normalizeRoomId(createSeriesDto.room_id);
+
+    if (!normalizedRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
 
     if (new Date(start_time) >= new Date(end_time)) {
       throw new BadRequestException('Start time must be before end time');
     }
 
-    const room = await this.roomRepository.findOne({ where: { id: room_id } });
+    const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
     if (!room) {
       throw new NotFoundException('Room not found');
     }
@@ -220,7 +266,7 @@ export class BookingsService {
     // Create the booking series record
     const bookingSeries = this.bookingSeriesRepository.create({
       user_id: userId,
-      room_id,
+      room_id: normalizedRoomId,
       start_time,
       end_time,
       series_end_date: seriesEndDate,
@@ -240,11 +286,11 @@ export class BookingsService {
       }
 
       // Check for conflicts for this occurrence
-      await this.checkForConflicts(room_id, bookingStartTime, bookingEndTime);
+      await this.checkForConflicts(normalizedRoomId, bookingStartTime, bookingEndTime);
 
       const booking = this.bookingRepository.create({
         user_id: userId,
-        room_id,
+        room_id: normalizedRoomId,
         start_time: bookingStartTime,
         end_time: bookingEndTime,
         status: BookingStatus.ACTIVE,
@@ -276,6 +322,14 @@ export class BookingsService {
 
     // Update each booking in the series
     for (const booking of bookings) {
+      const normalizedUpdateRoomId = updateDto.room_id
+        ? this.normalizeRoomId(updateDto.room_id)
+        : undefined;
+
+      if (updateDto.room_id && !normalizedUpdateRoomId) {
+        throw new BadRequestException('Room ID must not be empty');
+      }
+
       if (updateDto.start_time && updateDto.end_time) {
         if (new Date(updateDto.start_time) >= new Date(updateDto.end_time)) {
           throw new BadRequestException('Start time must be before end time');
@@ -283,14 +337,29 @@ export class BookingsService {
       }
 
       if (updateDto.room_id || updateDto.start_time || updateDto.end_time) {
-        const roomId = updateDto.room_id ?? booking.room_id;
+        const candidateRoomId =
+          normalizedUpdateRoomId ?? booking.room_id ?? booking.room?.room_id;
+
+        const normalizedTargetRoomId = this.normalizeRoomId(candidateRoomId);
+
+        if (!normalizedTargetRoomId) {
+          throw new BadRequestException('Room ID must not be empty');
+        }
+
         const startTime = updateDto.start_time ?? booking.start_time;
         const endTime = updateDto.end_time ?? booking.end_time;
 
-        await this.checkForConflicts(roomId, startTime, endTime, booking.id);
+        await this.checkForConflicts(normalizedTargetRoomId, startTime, endTime, booking.id);
+
+        if (!normalizedUpdateRoomId && !booking.room_id) {
+          booking.room_id = normalizedTargetRoomId;
+        }
       }
 
-      Object.assign(booking, updateDto);
+      Object.assign(booking, {
+        ...updateDto,
+        ...(normalizedUpdateRoomId ? { room_id: normalizedUpdateRoomId } : {}),
+      });
       await this.bookingRepository.save(booking);
     }
   }
@@ -312,6 +381,15 @@ export class BookingsService {
 
     // Delete the series (cascade will delete associated bookings)
     await this.bookingSeriesRepository.remove(series);
+  }
+
+  private normalizeRoomId(value?: string): string | undefined {
+    if (typeof value !== 'string') {
+      return undefined;
+    }
+
+    const trimmed = value.trim();
+    return trimmed ? trimmed.toUpperCase() : undefined;
   }
 
   private validateNotInPast(startTime: Date, userRole: UserRole): void {

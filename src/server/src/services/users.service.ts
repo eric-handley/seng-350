@@ -14,8 +14,10 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto, requester: AuthenticatedUser): Promise<UserResponseDto> {
+    const normalizedEmail = this.normalizeEmail(createUserDto.email);
+
     const existingUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -32,6 +34,7 @@ export class UsersService {
 
     const user = this.userRepository.create({
       ...createUserDto,
+      email: normalizedEmail,
       password_hash: hashedPassword,
     });
 
@@ -55,7 +58,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({ where: { email: this.normalizeEmail(email) } });
   }
 
   async update(id: string, requester: AuthenticatedUser, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
@@ -86,14 +89,20 @@ export class UsersService {
       }
     }
 
-    if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.userRepository.findOne({
-        where: { email: updateUserDto.email },
-      });
+    if (updateUserDto.email) {
+      const normalizedEmail = this.normalizeEmail(updateUserDto.email);
 
-      if (existingUser) {
-        throw new ConflictException('User with this email already exists');
+      if (normalizedEmail !== user.email) {
+        const existingUser = await this.userRepository.findOne({
+          where: { email: normalizedEmail },
+        });
+
+        if (existingUser) {
+          throw new ConflictException('User with this email already exists');
+        }
       }
+
+      updateUserDto.email = normalizedEmail;
     }
 
     if (updateUserDto.password) {
@@ -130,5 +139,9 @@ export class UsersService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password_hash, ...userResponse } = user;
     return userResponse;
+  }
+
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
   }
 }

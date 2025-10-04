@@ -37,7 +37,7 @@ describe('BookingsService', () => {
     id: mockUUID,
     user_id: mockUUID,
     user: TestDataFactory.createUser({ id: mockUUID }),
-    room: TestDataFactory.createRoom(undefined, { id: mockUUID }),
+    room: TestDataFactory.createRoom(undefined, { room_id: mockUUID }),
     start_time: generateMockDate(9),
     end_time: generateMockDate(10),
     status: BookingStatus.ACTIVE,
@@ -103,7 +103,7 @@ describe('BookingsService', () => {
     };
 
     it('should create a booking successfully', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
       
@@ -120,7 +120,7 @@ describe('BookingsService', () => {
 
       const result = await service.create(createBookingDto, mockUser);
 
-      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
+      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { room_id: mockUUID } });
       expect(bookingRepository.save).toHaveBeenCalled();
       expect(result).toBeDefined();
     });
@@ -130,7 +130,7 @@ describe('BookingsService', () => {
       mockRoomRepository.findOne.mockResolvedValue(null);
 
       await expect(service.create(createBookingDto, mockUser)).rejects.toThrow(NotFoundException);
-      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { id: mockUUID } });
+      expect(roomRepository.findOne).toHaveBeenCalledWith({ where: { room_id: mockUUID } });
     });
 
     it('should throw BadRequestException when start time is after end time', async () => {
@@ -144,7 +144,7 @@ describe('BookingsService', () => {
     });
 
     it('should throw ConflictException when room is already booked', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const conflictingBooking = { id: 'conflict-id' };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
@@ -171,7 +171,7 @@ describe('BookingsService', () => {
     });
 
     it('should allow ADMIN to create bookings in the past', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const pastBookingDto = {
         ...createBookingDto,
         start_time: new Date('2020-01-01T09:00:00Z'),
@@ -197,7 +197,7 @@ describe('BookingsService', () => {
     });
 
     it('should allow REGISTRAR to create bookings in the past', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockRegistrarUser: AuthenticatedUser = {
         id: 'registrar-uuid',
         email: 'registrar@uvic.ca',
@@ -240,7 +240,7 @@ describe('BookingsService', () => {
     });
 
     it('should accept bookings exactly 15 minutes long', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const minBookingDto = {
         ...createBookingDto,
         start_time: generateMockDate(9, 0),
@@ -276,7 +276,7 @@ describe('BookingsService', () => {
     });
 
     it('should accept bookings exactly 8 hours long', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const maxBookingDto = {
         ...createBookingDto,
         start_time: generateMockDate(9, 0),
@@ -316,7 +316,7 @@ describe('BookingsService', () => {
     });
 
     it('should allow STAFF to book exactly 3 months in advance', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const now = new Date();
       const threeMonthsAhead = new Date(now);
       threeMonthsAhead.setMonth(threeMonthsAhead.getMonth() + 3);
@@ -346,7 +346,7 @@ describe('BookingsService', () => {
     });
 
     it('should allow ADMIN to book more than 3 months in advance', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const now = new Date();
       const sixMonthsAhead = new Date(now);
       sixMonthsAhead.setMonth(sixMonthsAhead.getMonth() + 6);
@@ -376,7 +376,7 @@ describe('BookingsService', () => {
     });
 
     it('should allow REGISTRAR to book more than 3 months in advance', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockRegistrarUser: AuthenticatedUser = {
         id: 'registrar-uuid',
         email: 'registrar@uvic.ca',
@@ -601,7 +601,7 @@ describe('BookingsService', () => {
 
   describe('booking series', () => {
     it('should create a series of recurring bookings', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockSeries = { id: 'series-uuid' };
       const seriesDto = {
         room_id: mockUUID,
@@ -720,7 +720,7 @@ describe('BookingsService', () => {
     });
 
     it('should detect conflicts when creating booking series', async () => {
-      const mockRoom = TestDataFactory.createRoom(undefined, { id: mockUUID });
+      const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockSeries = { id: 'series-uuid' };
       const seriesDto = {
         room_id: mockUUID,
