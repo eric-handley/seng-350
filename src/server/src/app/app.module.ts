@@ -21,6 +21,7 @@ import { BookingsController } from '../api/bookings.controller';
 import { RoomsController } from '../api/rooms.controller';
 import { BuildingsController } from '../api/buildings.controller';
 import { EquipmentController } from '../api/equipment.controller';
+import { ScheduleController } from '../api/schedule.controller';
 
 // Import services
 import { UsersService } from '../services/users.service';
@@ -70,6 +71,7 @@ import { EquipmentService } from '../services/equipment.service';
     RoomsController,
     BuildingsController,
     EquipmentController,
+    ScheduleController,
   ],
   providers: [
     AppService,

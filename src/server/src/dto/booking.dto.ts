@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsUUID, IsString, IsInt, Min } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
 import { BookingStatus } from '../database/entities/booking.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -19,10 +19,10 @@ export class CreateBookingDto {
   @IsDate()
   end_time!: Date;
 
-  @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
-  @IsOptional()
-  @IsUUID()
-  booking_series_id?: string;
+  // @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
+  // @IsOptional()
+  // @IsUUID()
+  // booking_series_id?: string;
 }
 
 export class UpdateBookingDto extends PartialType(CreateBookingDto) {
