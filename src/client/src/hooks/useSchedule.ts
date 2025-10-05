@@ -22,7 +22,7 @@ export function useSchedule(q: ScheduleQuery) {
       setError(null);
       try {
         const resp = await fetchSchedule(q);
-        if (cancelled) return;
+        if (cancelled) {return;}
 
         const flat: FlatRoom[] = resp.buildings.flatMap((b: ApiBuilding) =>
           b.rooms.map((r: ApiRoom) => ({
@@ -35,9 +35,9 @@ export function useSchedule(q: ScheduleQuery) {
 
         setData(flat);
       } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? 'Unknown error');
+        if (!cancelled) {setError(e?.message ?? 'Unknown error');}
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {setLoading(false);}
       }
     };
 

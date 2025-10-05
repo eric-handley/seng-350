@@ -4,7 +4,7 @@ import './styles/app.css'
 import './styles/admin.css'
 
 import { TabKey, Room } from './types'
-import type { Booking as UiBooking } from './types'
+import type { UiBooking } from './types'
 
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
@@ -52,8 +52,8 @@ function splitRoomId(roomId: string) {
 // Map backend booking -> UI booking (enriched for BookingCard)
 // We attach extra display fields most cards use.
 function mapApiBookingToUi(b: ApiBooking): UiBooking {
-  const { building, roomNumber, roomName } = splitRoomId(b.room_id || '')
-  const ui: any = {
+  const { building, roomNumber, roomName } = splitRoomId(b.room_id ?? '')
+  const ui: Partial<UiBooking> = {
     id: b.id,
     roomId: b.room_id, 
     start: isoOrHmsToHms(b.start_time),
@@ -78,8 +78,8 @@ function reconcileTemp(prev: ApiBooking[], tempId: string, real?: ApiBooking) {
 
 function mergeBookings(optimistic: ApiBooking[], server: ApiBooking[]) {
   const byId = new Map<string, ApiBooking>()
-  for (const b of optimistic) byId.set(b.id, b)
-  for (const b of server) byId.set(b.id, b)
+  for (const b of optimistic) {byId.set(b.id, b)}
+  for (const b of server) {byId.set(b.id, b)}
   return Array.from(byId.values())
 }
 
@@ -145,12 +145,12 @@ const HomeComponent: React.FC = () => {
   const [lastAction, setLastAction] = useState<string>('')
 
   useEffect(() => {
-    if (activeUser.role === 'staff' && tab === 'schedule') setTab('book')
+    if (activeUser.role === 'staff' && tab === 'schedule') {setTab('book')}
   }, [activeUser.role, tab])
 
   // Fetch "my" bookings when opening History
   useEffect(() => {
-    if (tab !== 'history') return
+    if (tab !== 'history') {return}
     let cancelled = false
     ;(async () => {
       try {
@@ -158,11 +158,11 @@ const HomeComponent: React.FC = () => {
         setHistoryError(null)
         setLastAction('GET /bookings (me)')
         const data = await fetchUserBookings()
-        if (!cancelled) setServerHistory(data)
+        if (!cancelled) {setServerHistory(data)}
       } catch (e: any) {
-        if (!cancelled) setHistoryError(e?.message ?? 'Failed to load history')
+        if (!cancelled) {setHistoryError(e?.message ?? 'Failed to load history')}
       } finally {
-        if (!cancelled) setHistoryLoading(false)
+        if (!cancelled) {setHistoryLoading(false)}
       }
     })()
     return () => { cancelled = true }

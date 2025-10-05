@@ -20,7 +20,7 @@ function toQueryString(q: ScheduleQuery) {
   const params = new URLSearchParams();
   (Object.keys(q) as (keyof ScheduleQuery)[]).forEach((k) => {
     const v = q[k];
-    if (v !== undefined && v !== '') params.append(k, String(v));
+    if (v !== undefined && v !== '') {params.append(k, String(v));}
   });
   return params.toString();
 }

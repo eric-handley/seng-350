@@ -23,7 +23,7 @@ const ctx = await context({
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     'process.env.API_BASE': JSON.stringify(process.env.API_BASE || 'http://localhost:3000'),
-    'process.env.USE_CREDENTIALS': JSON.stringify(process.env.USE_CREDENTIALS || 'true'), // <-- add
+    'process.env.USE_CREDENTIALS': JSON.stringify(process.env.USE_CREDENTIALS || 'true'),
   }
 })
 

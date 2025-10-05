@@ -1,8 +1,8 @@
 // "HH-MM-SS" -> "hh-mm-ss"
 export function toApiTime(t?: string) {
-  if (!t) return undefined;
+  if (!t) {return undefined;}
   let s = t.trim();
-  if (!s) return undefined;
+  if (!s) {return undefined;}
 
   s = s.replace(/\./g, ':').replace(/-/g, ':');
 
@@ -20,7 +20,7 @@ export function toApiTime(t?: string) {
 
 
 export function fromApiTime(t?: string) {
-  if (!t) return '';
+  if (!t) {return '';}
   return t.replace(/-/g, ':'); // "hh-mm-ss" -> "hh:mm:ss"
 }
 
