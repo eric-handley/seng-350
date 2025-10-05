@@ -26,13 +26,28 @@ import { fromApiTime } from './utils/time'
 function mapApiBookingToUi(b: ApiBooking): UiBooking {
   return {
     id: b.id,
-    roomId: b.room_id,                    // camelCase for UI
-    start: fromApiTime(b.start_time),     // "hh-mm-ss" -> "hh:mm:ss"
-    end: fromApiTime(b.end_time),
-    user: b.user_id,                      // UI requires 'user' (string)
-    cancelled: (b as any).status === 'cancelled' ? true : undefined // tweak if your API has a flag
+    roomId: b.room_id,
+    start: isoToHms(b.start_time),   // server now returns ISO
+    end: isoToHms(b.end_time),
+    user: b.user_id,
+    cancelled: (b as any).status === 'cancelled' ? true : undefined,
   }
 }
+
+// Build ISO datetime from date (YYYY-MM-DD) + sanitized hms ("hh-mm-ss" or "hh:mm:ss")
+function toIsoDateTime(dateYYYYMMDD: string, timeHms: string) {
+  const hms = timeHms.replace(/-/g, ':')            // "hh-mm-ss" -> "hh:mm:ss"
+  return `${dateYYYYMMDD}T${hms}`                   // e.g., "2025-10-05T10:00:00"
+}
+
+// Turn an ISO datetime into "hh:mm:ss" for UI History cards
+function isoToHms(iso: string) {
+  // handles "YYYY-MM-DDThh:mm:ss[.sss][Z]"
+  const afterT = iso.split('T')[1] || iso
+  const trimmed = afterT.replace('Z','')
+  return trimmed.slice(0, 8)                        // "hh:mm:ss"
+}
+
 // Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
@@ -107,7 +122,7 @@ const HomeComponent: React.FC = () => {
       try {
         setHistoryLoading(true)
         setHistoryError(null)
-        const data = await fetchUserBookings(activeUser.id)
+        const data = await fetchUserBookings()
         if (!cancelled) setUserHistoryApi(data)
       } catch (e: any) {
         if (!cancelled) setHistoryError(e?.message ?? 'Failed to load history')
@@ -122,16 +137,14 @@ const HomeComponent: React.FC = () => {
   const handleBook = async (room: Room) => {
     try {
       await createBooking({
-        user_id: activeUser.id,
         room_id: room.id,
-        date,
-        start_time: toApiTime(start)!, // produces hh-mm-ss
-        end_time: toApiTime(end)!,
+        start_time: toIsoDateTime(date, toApiTime(start)!), // "YYYY-MM-DDThh:mm:ss"
+        end_time: toIsoDateTime(date, toApiTime(end)!),
       })
       setTab('history')
       // eager refresh
       setHistoryLoading(true)
-      const fresh = await fetchUserBookings(activeUser.id)
+      const fresh = await fetchUserBookings()
       setUserHistoryApi(fresh)
       setHistoryLoading(false)
     } catch (err: any) {

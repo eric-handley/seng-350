@@ -26,3 +26,14 @@ export function fromApiTime(t?: string) {
   if (!t) return '';
   return t.replace(/-/g, ':'); // "hh-mm-ss" -> "hh:mm:ss"
 }
+
+// already have toApiTime() which returns "hh-mm-ss".
+// Add this:
+export function toIsoDateTime(dateYYYYMMDD: string, apiTimeHHMMSS: string) {
+  // turn "hh-mm-ss" -> "hh:mm:ss"
+  const hms = apiTimeHHMMSS.replace(/-/g, ':');
+  // build a local ISO-like string; many Nest setups with class-transformer
+  // accept this and cast to Date
+  // If your backend needs 'Z', use `${dateYYYYMMDD}T${hms}Z` instead.
+  return `${dateYYYYMMDD}T${hms}`;
+}
