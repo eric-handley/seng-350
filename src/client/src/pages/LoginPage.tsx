@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
-import { User } from "../types";
+import { User, UserRole } from "../types";
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
@@ -34,12 +34,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         throw new Error(errorData?.message ?? `Login failed: ${response.status}`);
       }
 
-      const user: User = await response.json(); // backend should return the user object
-      const role = user.role.toLowerCase();
+      const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
-      // Navigate based on rsole (assuming `user.role` exists)
-      if (role === 'admin') {
+      if (user.role === UserRole.ADMIN) {
         navigate('/admin-panel');
       } else {
         navigate('/home');
@@ -50,16 +48,34 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     //console.warn("Logging in with:", { email, password });
   };
 
-  const handleDevLogin = (role: 'staff' | 'admin' | 'registrar') => {
-    const devUsers = {
-      staff: { id: '2', name: 'Bob Smith', role: 'staff' as const, email: 'staff@uvic.ca' },
-      admin: { id: '1', name: 'Alice Johnson', role: 'admin' as const, email: 'admin@uvic.ca' },
-      registrar: { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'registrar@uvic.ca' }
+  const handleDevLogin = (role: UserRole) => {
+    const devUsers: Record<UserRole, User> = {
+      [UserRole.STAFF]: {
+        id: '2',
+        email: 'staff@uvic.ca',
+        first_name: 'Bob',
+        last_name: 'Smith',
+        role: UserRole.STAFF,
+      },
+      [UserRole.ADMIN]: {
+        id: '1',
+        email: 'admin@uvic.ca',
+        first_name: 'Alice',
+        last_name: 'Johnson',
+        role: UserRole.ADMIN,
+      },
+      [UserRole.REGISTRAR]: {
+        id: '3',
+        email: 'registrar@uvic.ca',
+        first_name: 'Charlie',
+        last_name: 'Doe',
+        role: UserRole.REGISTRAR,
+      },
     };
+
     onLogin(devUsers[role]);
 
-    // Navigate based on role
-    if (role === 'admin') {
+    if (role === UserRole.ADMIN) {
       navigate('/admin-panel');
     } else {
       navigate('/home');
@@ -104,21 +120,21 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <button
               type="button"
-              onClick={() => handleDevLogin('staff')}
+              onClick={() => handleDevLogin(UserRole.STAFF)}
               style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
             >
               Continue as Staff
             </button>
             <button
               type="button"
-              onClick={() => handleDevLogin('admin')}
+              onClick={() => handleDevLogin(UserRole.ADMIN)}
               style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
             >
               Continue as Admin
             </button>
             <button
               type="button"
-              onClick={() => handleDevLogin('registrar')}
+              onClick={() => handleDevLogin(UserRole.REGISTRAR)}
               style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
             >
               Continue as Registrar

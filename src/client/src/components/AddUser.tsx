@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User } from "../types"
+import { User, UserRole } from "../types"
 
 type AddUserProps = {
   user: User;
@@ -9,24 +9,30 @@ type AddUserProps = {
 
 export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
     const [formData, setFormData] = useState<User>(user)
-    const [errors, setErrors] = useState<{name?: string; email?: string}>({});
+    const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-        // Clear error when user starts typing
-        if (errors[name as keyof typeof errors]) {
-          setErrors({ ...errors, [name]: undefined })
+
+        if (name === 'role') {
+          setFormData(prev => ({ ...prev, role: value as UserRole }));
+        } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
+          setFormData(prev => ({ ...prev, [name]: value }));
+          setErrors(prev => ({ ...prev, [name]: undefined }));
         }
     };
 
     const validateForm = (): boolean => {
-        const newErrors: {name?: string; email?: string} = {};
+        const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
 
-        if (!formData.name.trim()) {
-          newErrors.name = "Name is required";
+        if (!formData.first_name.trim()) {
+          newErrors.first_name = "First name is required";
+        }
+
+        if (!formData.last_name.trim()) {
+          newErrors.last_name = "Last name is required";
         }
 
         if (!formData.email.trim()) {
@@ -50,21 +56,40 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
         <form className="panel" onSubmit={handleSubmit}>
             <h2>Add User</h2>
 
-            <label htmlFor="add-user-name">
-                Name:
+            <label htmlFor="add-user-first_name">
+                First Name:
                 <input
-                    id="add-user-name"
+                    id="add-user-first_name"
                     className="input"
-                    name="name"
-                    value={formData.name}
+                    name="first_name"
+                    value={formData.first_name}
                     onChange={handleChange}
                     required
-                    aria-invalid={!!errors.name}
-                    aria-describedby={errors.name ? "add-user-name-error" : undefined}
+                    aria-invalid={!!errors.first_name}
+                    aria-describedby={errors.first_name ? "add-user-first-error" : undefined}
                 />
-                {errors.name && (
-                  <span id="add-user-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
-                    {errors.name}
+                {errors.first_name && (
+                  <span id="add-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+                    {errors.first_name}
+                  </span>
+                )}
+            </label>
+
+            <label htmlFor="add-user-last_name">
+                Last Name:
+                <input
+                    id="add-user-last_name"
+                    className="input"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    required
+                    aria-invalid={!!errors.last_name}
+                    aria-describedby={errors.last_name ? "add-user-last-error" : undefined}
+                />
+                {errors.last_name && (
+                  <span id="add-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+                    {errors.last_name}
                   </span>
                 )}
             </label>
@@ -99,9 +124,9 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
           onChange={handleChange}
           required
         >
-          <option value="admin">Admin</option>
-          <option value="staff">Staff</option>
-          <option value="registrar">Registrar</option>
+          <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
+          <option value={UserRole.STAFF}>{UserRole.STAFF}</option>
+          <option value={UserRole.REGISTRAR}>{UserRole.REGISTRAR}</option>
         </select>
       </label>
 

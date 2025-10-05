@@ -1,5 +1,5 @@
 import React from 'react'
-import { Booking, User } from '../types'
+import { Booking, User, UserRole } from '../types'
 import { BookingCard } from '../components/BookingCard'
 
 interface HistoryPageProps {
@@ -34,7 +34,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           </div>
         )}
       </section>
-      {currentUser?.role === 'registrar' && allBookings && (
+      {currentUser?.role === UserRole.REGISTRAR && allBookings && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All Bookings</h2>
           {allBookings.length === 0 ? (

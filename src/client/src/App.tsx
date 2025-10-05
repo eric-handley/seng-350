@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
-import { TabKey, Room } from './types'
+import { TabKey, Room, UserRole } from './types'
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
 import { useRoomFiltering } from './hooks/useRoomFiltering'
@@ -78,7 +78,14 @@ const HomeComponent: React.FC = () => {
   // }
 
   // TODO: TEMPORARY FIX - Mock user for testing without auth
-  const activeUser = currentUser ?? { id: 'temp', name: 'Guest', email: 'guest@example.com', role: 'staff' as const, isBlocked: false }
+  const activeUser =
+    currentUser || {
+      id: 'temp',
+      email: 'guest@example.com',
+      first_name: 'Guest',
+      last_name: 'User',
+      role: UserRole.STAFF,
+    }
 
   return (
     <div className="app-shell">
@@ -123,7 +130,7 @@ const HomeComponent: React.FC = () => {
       {tab === 'history' && (
         <HistoryPage
           userHistory={userHistory}
-          allBookings={activeUser.role === 'registrar' ? bookings : undefined}
+          allBookings={activeUser.role === UserRole.REGISTRAR ? bookings : undefined}
           currentUser={activeUser}
           onCancel={cancelBooking}
         />
@@ -160,7 +167,7 @@ const AppRouter: React.FC = () => {
         element={
           // TODO: TEMPORARY FIX - Auth disabled for /home route
           // Remove this fix and uncomment ProtectedRoute once auth is properly configured
-          // <ProtectedRoute allowedRoles={['staff', 'registrar']}>
+          // <ProtectedRoute allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR]}>
             <HomeComponent />
           // </ProtectedRoute>
         }
@@ -168,7 +175,7 @@ const AppRouter: React.FC = () => {
       <Route
         path="/admin-panel"
         element={
-          // <ProtectedRoute allowedRoles={['admin']}>
+          // <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
             <AdminConsole />
           // </ProtectedRoute>
         }
