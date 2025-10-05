@@ -252,30 +252,6 @@ const HomeComponent: React.FC = () => {
     [mergedApiHistory]
   )
 
-  // Debug strip
-  const DebugStrip = () => (
-    <div style={{fontSize:12, marginBottom:12, padding:'8px 12px', background:'#1113', borderRadius:8}}>
-      <div><strong>Debug</strong></div>
-      <div>lastAction: {lastAction || '—'}</div>
-      <div>historyLoading: {String(historyLoading)} | serverHistory: {serverHistory ? serverHistory.length : 'null'} | optimistic: {optimisticHistory.length}</div>
-      {lastPostError && <div style={{color:'#ff8080'}}>lastPostError: {lastPostError}</div>}
-      {serverHistory && serverHistory.length > 0 && (
-        <details style={{marginTop:6}}>
-          <summary>first 3 server rows</summary>
-          <pre style={{whiteSpace:'pre-wrap', margin:0}}>
-            {JSON.stringify(serverHistory.slice(0,3), null, 2)}
-          </pre>
-        </details>
-      )}
-      <details style={{marginTop:6}}>
-        <summary>first 3 UI rows (after mapping)</summary>
-        <pre style={{whiteSpace:'pre-wrap', margin:0}}>
-          {JSON.stringify(historyForUi.slice(0,3), null, 2)}
-        </pre>
-      </details>
-    </div>
-  )
-
   return (
     <div className="app-shell">
       <div className="header">
@@ -318,10 +294,6 @@ const HomeComponent: React.FC = () => {
 
       {tab === 'history' && (
         <>
-          <section className="panel" aria-labelledby="history-debug">
-            <DebugStrip />
-          </section>
-
           {historyError && (
             <section className="panel" aria-labelledby="history-error">
               <div className="empty">Couldn’t refresh from server: {historyError}</div>

@@ -68,21 +68,10 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
   onCancel
 }) => {
-  const Debug = () => (
-    <details style={{fontSize:12, marginBottom:12}}>
-      <summary>Debug: userHistory length = {userHistory.length}</summary>
-      <pre style={{whiteSpace:'pre-wrap', margin:0}}>
-        {JSON.stringify(userHistory.slice(0, 3), null, 2)}
-      </pre>
-    </details>
-  )
-
   return (
     <div>
       <section className="panel" aria-labelledby="history-label">
         <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
-
-        <Debug />
 
         {userHistory.length === 0 ? (
           <div className="empty">You have no bookings yet.</div>
