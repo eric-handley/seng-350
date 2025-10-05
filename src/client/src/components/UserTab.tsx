@@ -1,10 +1,10 @@
 import React from "react"
-import { User } from "../types"
+import { User, getUserDisplayName } from "../types"
 
 type UsersTabProps = {
   users: User[]
   handleEditUser: (user: User) => void
-  handleAddUser: (user: User) => void
+  handleAddUser: () => void
   handleBlockUser: (user: User) => void
 };
 
@@ -29,7 +29,7 @@ export default function UsersTab({ users, handleEditUser, handleAddUser, handleB
             <tbody>
               {users.map((u) => (
                 <tr key={u.id}>
-                  <td>{u.name}</td>
+                  <td>{getUserDisplayName(u)}</td>
                   <td>{u.role}</td>
                   <td>{u.email}</td>
                   <td>
@@ -57,11 +57,11 @@ export default function UsersTab({ users, handleEditUser, handleAddUser, handleB
         <h3 id="add-users-label" style={{ marginTop: 0 }}>Add New User</h3>
           <button
             className="btn primary"
-            onClick={() => handleAddUser({ id: '', name: '', role: 'staff', email: '' })}
+            onClick={handleAddUser}
           >
           Add User
           </button>
-        
+
       </section>
     </div>
   );

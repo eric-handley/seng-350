@@ -18,9 +18,8 @@
     "build:client": "npm run build -w client",
     "build:server": "npm run build -w server",
     "lint": "eslint . --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test": "jest --runInBand",
+    "test:coverage": "jest  --runInBand --coverage"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.7.0",

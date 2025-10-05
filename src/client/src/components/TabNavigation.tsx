@@ -1,5 +1,5 @@
 import React from 'react'
-import { TabKey, User } from '../types'
+import { TabKey, User, UserRole } from '../types'
 
 interface TabNavigationProps {
   currentTab: TabKey
@@ -44,7 +44,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setTab
         My Bookings &amp; History
       </button>
 
-      {(currentUser.role === 'admin' || currentUser.role === 'registrar') && (
+      {(currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
         <button
           type="button"
           className={currentTab === 'users' ? 'tab active' : 'tab'}
