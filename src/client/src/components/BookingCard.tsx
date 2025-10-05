@@ -1,7 +1,5 @@
-// src/components/BookingCard.tsx
 import React from 'react'
 
-// Keep the prop names your HistoryPage uses
 type Props = {
   booking: any
   onCancel: (id: string) => void
@@ -9,7 +7,7 @@ type Props = {
 }
 
 export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = false }) => {
-  // --- tolerant field mapping (no hard assumptions) ---
+  // Tolerant field mapping (no hard assumptions such that we avoid having nothing render)
   const roomId: string =
     booking.roomId || booking.room_id || booking.room?.id || ''
 
@@ -20,7 +18,7 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
     roomId ||
     'Room'
 
-  // derive building/roomNumber if missing
+  // If room number is missing
   const [derivedBuilding = '', derivedRoomNumber = ''] = String(roomId).split('-')
 
   const building: string = booking.building ?? derivedBuilding
@@ -54,7 +52,6 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
     (typeof booking.user_id === 'string' && booking.user_id) ||
     undefined
 
-  // --- render ---
   return (
     <article className="card">
       <div className="card-title" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

@@ -1,4 +1,3 @@
-// src/api/bookings.ts
 const API_BASE = process.env.API_BASE || 'http://localhost:3000';
 
 export type CreateBookingReq = {
@@ -46,7 +45,6 @@ export async function fetchUserBookings(): Promise<Booking[]> {
   }
   return res.json() as Promise<Booking[]>;
 }
-
 
 export async function cancelBooking(id: string): Promise<void> {
   const res = await fetch(`${API_BASE}/bookings/${encodeURIComponent(id)}`, {

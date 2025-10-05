@@ -3,7 +3,7 @@ import { fetchSchedule, ScheduleQuery } from '../api/schedule';
 import type { ApiBuilding, ApiRoom } from '../types/schedule';
 
 export type FlatRoom = ApiRoom & {
-  id: string; // alias for your existing RoomCard key
+  id: string;
   building_short_name: string;
   building_name: string;
 };
@@ -13,7 +13,6 @@ export function useSchedule(q: ScheduleQuery) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounce to avoid spamming while user types
   const depsKey = useMemo(() => JSON.stringify(q), [q]);
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export function useSchedule(q: ScheduleQuery) {
         const resp = await fetchSchedule(q);
         if (cancelled) return;
 
-        // Flatten buildings -> rooms and attach building info
         const flat: FlatRoom[] = resp.buildings.flatMap((b: ApiBuilding) =>
           b.rooms.map((r: ApiRoom) => ({
             ...r,
@@ -43,9 +41,9 @@ export function useSchedule(q: ScheduleQuery) {
       }
     };
 
-    const t = setTimeout(run, 250); // simple debounce
+    const t = setTimeout(run, 250);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [depsKey]); // run when any query parameter changes
+  }, [depsKey]); // Run when any query parameter changes
 
   return { rooms: data, loading, error };
 }

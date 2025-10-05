@@ -1,12 +1,9 @@
 import type { ScheduleResponse } from '../types/schedule';
 
 const API_BASE =
-  // compile-time replacement via esbuild.define (preferred)
   (typeof process !== 'undefined' && (process as any).env?.API_BASE) ||
-  // optional runtime override if you set window.__API_BASE__ in index.html
   (typeof window !== 'undefined' && (window as any).__API_BASE__) ||
   'http://localhost:3000';
-// const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000';
 
 export default API_BASE;
 
@@ -32,7 +29,7 @@ export async function fetchSchedule(q: ScheduleQuery): Promise<ScheduleResponse>
   const qs = toQueryString({ slot_type: 'available', ...q });
   const res = await fetch(`${API_BASE}/schedule?${qs}`, {
     method: 'GET',
-    credentials: 'include', // cookies-based auth from your server
+    credentials: 'include', // cookies-based auth from server
     headers: { 'Accept': 'application/json' },
   });
   if (!res.ok) {

@@ -1,4 +1,3 @@
-// src/components/FilterPanel.tsx
 import React from 'react'
 
 interface FilterPanelProps {
@@ -30,7 +29,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   showTimeFilters = true,
   showRoomFilter = true,
 }) => {
-  // Equal box size, shrinkable; tweak MIN_FIELD_WIDTH to taste.
+  // Equal box size
   const MIN_FIELD_WIDTH = 140
 
   const rowStyle: React.CSSProperties = {
@@ -46,7 +45,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     display: 'flex',
     flexDirection: 'column',
     gap: 6,
-    minWidth: 0,             // <- critical so inputs can shrink
+    minWidth: 0,             // So inputs can shrink
   }
 
   const labelStyle: React.CSSProperties = {
@@ -56,12 +55,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    minWidth: 0,             // <- also helps in some browsers
+    minWidth: 0, 
     boxSizing: 'border-box',
   }
 
   const helperStyle: React.CSSProperties = {
-    gridColumn: '1 / -1',    // full-width row for helper text
+    gridColumn: '1 / -1',
     marginTop: 2,
     fontSize: 12,
     opacity: 0.8,
