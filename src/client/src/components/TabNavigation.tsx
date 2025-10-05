@@ -8,8 +8,11 @@ interface TabNavigationProps {
 }
 
 export const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setTab, currentUser }) => {
+  const isStaff = currentUser.role === 'staff'
+  
   return (
     <div className="tabs" role="tablist" aria-label="Sections">
+      {(!isStaff) && (
       <button 
         className="tab" 
         role="tab" 
@@ -18,6 +21,8 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setTab
       >
         Schedule
       </button>
+      )}
+
       <button 
         className="tab" 
         role="tab" 
