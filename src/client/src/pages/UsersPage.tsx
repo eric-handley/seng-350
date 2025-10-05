@@ -39,6 +39,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
     <>
       <UsersTab
         users={users}
+        currentUser={currentUser}
         handleEditUser={onEditUser}
         handleAddUser={onAddUser}
         handleBlockUser={onBlockUser}

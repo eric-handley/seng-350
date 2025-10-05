@@ -8,66 +8,86 @@ type AddUserProps = {
 }
 
 export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
-    const [formData, setFormData] = useState<User>(user)
-    const [errors, setErrors] = useState<{name?: string; email?: string}>({});
+  const [formData, setFormData] = useState<User>(user)
+  const [errors, setErrors] = useState<{first_name?: string; last_name?: string; email?: string}>({});
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-        // Clear error when user starts typing
-        if (errors[name as keyof typeof errors]) {
-          setErrors({ ...errors, [name]: undefined })
-        }
-    };
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (errors[name as keyof typeof errors]) {
+      setErrors({ ...errors, [name]: undefined })
+    }
+  };
 
-    const validateForm = (): boolean => {
-        const newErrors: {name?: string; email?: string} = {};
+  const validateForm = (): boolean => {
+    const newErrors: {first_name?: string; last_name?: string; email?: string} = {};
 
-        if (!formData.name.trim()) {
-          newErrors.name = "Name is required";
-        }
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
+    }
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email must be valid";
+    }
 
-        if (!formData.email.trim()) {
-          newErrors.email = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-          newErrors.email = "Email must be valid";
-        }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSave(formData);
+    }
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (validateForm()) {
-          onSave(formData);
-        }
-    };
+  return (
+    <form className="panel" onSubmit={handleSubmit}>
+      <h2>Add User</h2>
 
-    return (
-        <form className="panel" onSubmit={handleSubmit}>
-            <h2>Add User</h2>
+      <label htmlFor="add-user-first-name">
+        First Name:
+        <input
+          id="add-user-first-name"
+          className="input"
+          name="first_name"
+          value={formData.first_name}
+          onChange={handleChange}
+          required
+          aria-invalid={!!errors.first_name}
+          aria-describedby={errors.first_name ? "add-user-first-name-error" : undefined}
+        />
+        {errors.first_name && (
+          <span id="add-user-first-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.first_name}
+          </span>
+        )}
+      </label>
 
-            <label htmlFor="add-user-name">
-                Name:
-                <input
-                    id="add-user-name"
-                    className="input"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    aria-invalid={!!errors.name}
-                    aria-describedby={errors.name ? "add-user-name-error" : undefined}
-                />
-                {errors.name && (
-                  <span id="add-user-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
-                    {errors.name}
-                  </span>
-                )}
-            </label>
+      <label htmlFor="add-user-last-name">
+        Last Name:
+        <input
+          id="add-user-last-name"
+          className="input"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          required
+          aria-invalid={!!errors.last_name}
+          aria-describedby={errors.last_name ? "add-user-last-name-error" : undefined}
+        />
+        {errors.last_name && (
+          <span id="add-user-last-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.last_name}
+          </span>
+        )}
+      </label>
 
       <label htmlFor="add-user-email">
         Email:
@@ -115,5 +135,4 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
       </div>
     </form>
   );
-
 }

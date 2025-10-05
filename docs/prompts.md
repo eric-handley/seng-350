@@ -54,7 +54,12 @@ Branch `feature-7/registrar`
     );
     setAddingUser(null);
   };
-  - 
+  - fix the initial_users code: export const INITIAL_USERS = [
+  { id: '1',  email: 'alicejohnson@uvic.ca', pasname: 'Alice Johnson', role: 'admin' as const,},
+  { id: '2', name: 'Bob Smith', role: 'staff' as const, email: 'bobsmith@uvic.ca'},
+  { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'charliedoe@uvic.ca'},
+]
+- how can i create a confimation page for blocking a user?
 
 **Design-I**
 

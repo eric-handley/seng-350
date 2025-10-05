@@ -78,7 +78,15 @@ const HomeComponent: React.FC = () => {
   // }
 
   // TODO: TEMPORARY FIX - Mock user for testing without auth
-  const activeUser = currentUser ?? { id: 'temp', name: 'Guest', email: 'guest@example.com', role: 'staff' as const, isBlocked: false }
+  const activeUser = currentUser ?? {
+    id: 'temp',
+    name: 'Guest',
+    email: 'guest@example.com',
+    role: 'registrar' as const,
+    isBlocked: false,
+    first_name: 'Guest',
+    last_name: 'User'
+  }
 
   return (
     <div className="app-shell">
@@ -139,7 +147,7 @@ const HomeComponent: React.FC = () => {
           onSaveUser={handleSaveUser}
           onAddUser={handleAddUser}
           onSaveNewUser={handleSaveNewUser}
-          onBlockUser={handleBlockUser}
+          onBlockUser={(user) => handleBlockUser(user.id)}
           onCancelEdit={() => setEditingUser(null)}
           onCancelAdd={() => setAddingUser(null)}
         />

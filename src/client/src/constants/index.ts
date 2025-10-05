@@ -53,9 +53,30 @@ export const INITIAL_BOOKINGS: Booking[] = [
 ]
 
 export const INITIAL_USERS = [
-  { id: '1', name: 'Alice Johnson', role: 'admin' as const, email: 'alicejohnson@uvic.ca'},
-  { id: '2', name: 'Bob Smith', role: 'staff' as const, email: 'bobsmith@uvic.ca'},
-  { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'charliedoe@uvic.ca'},
+  {
+    id: '1',
+    email: 'alicejohnson@uvic.ca',
+    first_name: 'Alice',
+    last_name: 'Johnson',
+    role: 'admin' as const,
+    isBlocked: false,
+  },
+  {
+    id: '2',
+    email: 'bobsmith@uvic.ca',
+    first_name: 'Bob',
+    last_name: 'Smith',
+    role: 'staff' as const,
+    isBlocked: false,
+  },
+  {
+    id: '3',
+    email: 'charliedoe@uvic.ca',
+    first_name: 'Charlie',
+    last_name: 'Doe',
+    role: 'registrar' as const,
+    isBlocked: false,
+  },
 ]
 
 export const INITIAL_DATE = initialDate

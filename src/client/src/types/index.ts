@@ -16,9 +16,14 @@ export type Booking = {
 
 export type User = {
   id: string
-  name: string
-  role: 'staff' | 'admin' | 'registrar'
   email: string
+  password_hash?: string
+  first_name: string
+  last_name: string
+  role: 'staff' | 'registrar' | 'admin'
+  isBlocked?: boolean
+  created_at?: string
+  updated_at?: string
 }
 
 export type TabKey = 'schedule' | 'book' | 'history' | 'users'

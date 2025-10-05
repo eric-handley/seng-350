@@ -11,29 +11,80 @@ export const useUsers = () => {
     setEditingUser(user)
   }
 
-  const handleSaveUser = (updatedUser: User) => {
-    setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u))
-    setEditingUser(null)
+  const handleSaveUser = async (updatedUser: User) => {
+    try {
+      const response = await fetch(`/users/${updatedUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: updatedUser.email,
+          first_name: updatedUser.first_name,
+          last_name: updatedUser.last_name,
+          role: updatedUser.role,
+          isBlocked: updatedUser.isBlocked ?? false,
+        }),
+      })
+      if (response.ok) {
+        const savedUser = await response.json()
+        setUsers(prev => prev.map(u => u.id === savedUser.id ? savedUser : u))
+        setEditingUser(null)
+      } else {
+        console.error('Failed to save user')
+      }
+    } catch (error) {
+      console.error('Error saving user:', error)
+    }
   }
 
   const handleAddUser = () => {
     setAddingUser({
       id: '',
-      name: '',
+      first_name: '',
+      last_name: '',
       email: '',
       role: 'staff',
-    })
+      isBlocked: false,
+    } as User)
   }
 
-  const handleSaveNewUser = (newUser: User) => {
-    const userWithId = { ...newUser, id: `usr-${Math.random().toString(36).slice(2, 8)}` }
-    setUsers(prev => [...prev, userWithId])
-    setAddingUser(null)
+  const handleSaveNewUser = async (newUser: User) => {
+    try {
+      const response = await fetch('/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
+      })
+      if (response.ok) {
+        const createdUser = await response.json()
+        setUsers(prev => [...prev, createdUser])
+        setAddingUser(null)
+      } else {
+        console.error('Failed to add user')
+      }
+    } catch (error) {
+      console.error('Error adding user:', error)
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleBlockUser = (_userId: string) => {
-    // ???
+  const handleBlockUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isBlocked: true }),
+      })
+      if (response.ok) {
+        setUsers(prev =>
+          prev.map(u =>
+            u.id === userId ? { ...u, isBlocked: true } : u
+          )
+        )
+      } else {
+        console.error('Failed to block user')
+      }
+    } catch (error) {
+      console.error('Error blocking user:', error)
+    }
   }
 
   return {

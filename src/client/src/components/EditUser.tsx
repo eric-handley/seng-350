@@ -9,24 +9,25 @@ type EditUserProps = {
 
 export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
   const [formData, setFormData] = useState<User>(user);
-  const [errors, setErrors] = useState<{name?: string; email?: string}>({});
+  const [errors, setErrors] = useState<{first_name?: string; last_name?: string; email?: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors({ ...errors, [name]: undefined })
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: {name?: string; email?: string} = {};
+    const newErrors: {first_name?: string; last_name?: string; email?: string} = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
     }
-
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -48,21 +49,40 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
     <form className="panel" onSubmit={handleSubmit}>
       <h2>Edit User</h2>
 
-      <label htmlFor="edit-user-name">
-        Name:
+      <label htmlFor="edit-user-first-name">
+        First Name:
         <input
-          id="edit-user-name"
+          id="edit-user-first-name"
           className="input"
-          name="name"
-          value={formData.name}
+          name="first_name"
+          value={formData.first_name}
           onChange={handleChange}
           required
-          aria-invalid={!!errors.name}
-          aria-describedby={errors.name ? "edit-user-name-error" : undefined}
+          aria-invalid={!!errors.first_name}
+          aria-describedby={errors.first_name ? "edit-user-first-name-error" : undefined}
         />
-        {errors.name && (
-          <span id="edit-user-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
-            {errors.name}
+        {errors.first_name && (
+          <span id="edit-user-first-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.first_name}
+          </span>
+        )}
+      </label>
+
+      <label htmlFor="edit-user-last-name">
+        Last Name:
+        <input
+          id="edit-user-last-name"
+          className="input"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          required
+          aria-invalid={!!errors.last_name}
+          aria-describedby={errors.last_name ? "edit-user-last-name-error" : undefined}
+        />
+        {errors.last_name && (
+          <span id="edit-user-last-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.last_name}
           </span>
         )}
       </label>
