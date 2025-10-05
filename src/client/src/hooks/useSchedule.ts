@@ -18,7 +18,10 @@ export function useSchedule(q: ScheduleQuery) {
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      setLoading(true);
+      // Only show loading state on initial load (when there's no data yet)
+      if (data.length === 0) {
+        setLoading(true);
+      }
       setError(null);
       try {
         const resp = await fetchSchedule(q);

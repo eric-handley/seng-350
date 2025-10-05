@@ -6,7 +6,6 @@ import { useBookingHistory } from '../hooks/useBookingHistory'
 
 interface HistoryPageProps {
   currentUser: User
-  allBookings?: Booking[]
 }
 
 type CardBoundaryProps = {
@@ -62,7 +61,6 @@ const GuardedBookingCard: React.FC<{
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
-  allBookings,
 }) => {
   const { history: userHistory, loading, error, fetchHistory, cancelBooking } = useBookingHistory(currentUser.id)
 
@@ -109,25 +107,6 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           </div>
         )}
       </section>
-      {currentUser?.role === UserRole.REGISTRAR && allBookings && (
-        <section className="panel" aria-labelledby="global-label">
-          <h2 id="global-label" style={{marginTop:0}}>All Bookings</h2>
-          {allBookings.length === 0 ? (
-            <div className="empty">There are no bookings yet.</div>
-          ) : (
-            <div className="grid">
-              {allBookings.map(booking => (
-                <GuardedBookingCard
-                  key={booking.id}
-                  booking={booking}
-                  onCancel={handleCancel}
-                  showUser={true}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
     </div>
   )
 }

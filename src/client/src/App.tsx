@@ -5,10 +5,9 @@ import './styles/admin.css'
 
 import { TabKey, UserRole } from './types'
 
-import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
-import { useRoomFiltering } from './hooks/useRoomFiltering'
 import { useAuth, AuthProvider } from './contexts/AuthContext'
+import { getCurrentDate } from './utils/dateHelpers'
 
 import { TabNavigation } from './components/TabNavigation'
 import { BookingPage } from './pages/BookingPage'
@@ -37,12 +36,6 @@ const HomeComponent: React.FC = () => {
     return null
   }
 
-  const {
-    bookings,
-    getUnavailableRoomIds,
-    getScheduleForDay
-  } = useBookings()
-
   const canManageUsers = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.REGISTRAR
   const {
     users,
@@ -57,23 +50,12 @@ const HomeComponent: React.FC = () => {
     setAddingUser,
   } = useUsers({ autoLoad: !!canManageUsers })
 
-  const {
-    building,
-    setBuilding,
-    roomQuery,
-    setRoomQuery,
-    date,
-    setDate,
-    start,
-    setStart,
-    end,
-    setEnd,
-    requestedStart,
-    requestedEnd,
-    getAvailableRooms,
-  } = useRoomFiltering()
-
-  const scheduleForDay = getScheduleForDay(date)
+  // Room filtering state
+  const [building, setBuilding] = useState<string>('')
+  const [roomQuery, setRoomQuery] = useState<string>('')
+  const [date, setDate] = useState<string>(getCurrentDate())
+  const [start, setStart] = useState<string>('10:00')
+  const [end, setEnd] = useState<string>('11:00')
 
   useEffect(() => {
     if (currentUser.role === 'staff' && tab === 'schedule') {
@@ -124,14 +106,12 @@ const HomeComponent: React.FC = () => {
           setDate={setDate}
           building={building}
           setBuilding={setBuilding}
-          scheduleForDay={scheduleForDay}
         />
       )}
 
       {tab === 'history' && (
         <HistoryPage
           currentUser={currentUser}
-          allBookings={currentUser.role === 'registrar' ? bookings : undefined}
         />
       )}
 

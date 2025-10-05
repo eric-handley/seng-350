@@ -72,7 +72,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         <label style={labelStyle}>BUILDING</label>
         <input
           className="input"
-          placeholder="e.g., CLE, ECS"
+          placeholder="e.g., CLE, Engineering, Clearihue"
           value={building}
           onChange={(e) => setBuilding(e.target.value)}
           style={inputStyle}
