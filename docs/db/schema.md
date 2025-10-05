@@ -71,7 +71,7 @@ erDiagram
         uuid id PK
         uuid user_id FK
         string action
-        enum entity_type
+        string route
         string entity_id
         timestamp created_at
         timestamp updated_at

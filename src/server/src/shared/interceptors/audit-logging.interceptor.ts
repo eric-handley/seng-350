@@ -3,12 +3,12 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  HttpException,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Request, Response } from 'express';
 import { AuditLogsService } from '../../services/audit-logs.service';
-import { EntityType } from '../../database/entities/audit-log.entity';
 import { AuthenticatedUser } from '../../auth/auth.service';
 
 interface RequestWithUser extends Request {
@@ -23,10 +23,11 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<RequestWithUser>();
     const response = context.switchToHttp().getResponse<Response>();
 
-    // Skip audit logging for certain routes
+    // Skip audit logging for certain routes (these are logged explicitly in their controllers)
     const skipRoutes = [
       '/api/auth/session',
-      '/api/audit-logs',
+      '/api/auth/login',
+      '/api/auth/logout',
       '/api-docs',
     ];
 
@@ -35,18 +36,28 @@ export class AuditLoggingInterceptor implements NestInterceptor {
       return next.handle();
     }
 
+    const user = request.user;
+
     return next.handle().pipe(
       tap(() => {
-        // Only log successful requests (2xx status codes)
+        // Log successful requests (2xx status codes)
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          const user = request.user;
           this.createAuditLog(request, user);
         }
+      }),
+      catchError((error: Error) => {
+        // Log error requests
+        const statusCode = error instanceof HttpException ? error.getStatus() : 500;
+        console.log('[AuditLogging] Error caught:', error.constructor.name, statusCode);
+        this.auditLogsService.logApiError(request, statusCode).catch(err => {
+          console.error('[AuditLogging] Failed to log error:', err);
+        });
+        return throwError(() => error);
       }),
     );
   }
 
-  private createAuditLog(request: RequestWithUser, user: AuthenticatedUser | undefined): void {
+  private createAuditLog(request: RequestWithUser, user: AuthenticatedUser | undefined, statusCode?: number): void {
     const method = request.method;
     const path = request.route?.path ?? request.url;
 
@@ -58,87 +69,63 @@ export class AuditLoggingInterceptor implements NestInterceptor {
       PATCH: 'UPDATE',
       DELETE: 'DELETE',
     };
-    const action = actionMap[method] ?? method;
+    const baseAction = actionMap[method] ?? method;
 
-    // Extract entity type and ID from route
-    const { entityType, entityId } = this.extractEntityInfo(path, request);
+    // Add error status to action if this is an error
+    const action = statusCode ? `${baseAction}_ERROR_${statusCode}` : baseAction;
 
-    if (entityType && entityId) {
-      // Use a special user ID for unauthenticated requests
-      const userId = user?.id ?? '00000000-0000-0000-0000-000000000000';
+    // Extract route and entity ID from path
+    const { route, entityId } = this.extractRouteInfo(path, request);
 
-      // Async fire-and-forget - don't wait for audit log to complete
-      this.auditLogsService
-        .createAuditLog(userId, action, entityType, entityId)
-        .catch(err => {
-          console.error('Failed to create audit log:', err);
-        });
-    }
+    // Use null for unauthenticated requests
+    const userId = user?.id ?? null;
+
+    console.log('[AuditLogging] Creating log:', { userId, action, route, entityId, statusCode });
+
+    // Async fire-and-forget - don't wait for audit log to complete
+    this.auditLogsService
+      .createAuditLog(userId, action, route, entityId)
+      .then(() => {
+        console.log('[AuditLogging] Log created successfully');
+      })
+      .catch(err => {
+        console.error('[AuditLogging] Failed to create audit log:', err);
+      });
   }
 
-  private extractEntityInfo(
+  private extractRouteInfo(
     path: string,
     request: RequestWithUser,
-  ): { entityType: EntityType | null; entityId: string | null } {
-    // Route pattern matching
-    const patterns: Array<{
-      regex: RegExp;
-      entityType: EntityType;
-      idExtractor: (match: RegExpMatchArray, request: RequestWithUser) => string | null;
-    }> = [
-      {
-        regex: /\/users\/([^\/]+)/,
-        entityType: EntityType.USER,
-        idExtractor: (match) => match[1],
-      },
-      {
-        regex: /\/users$/,
-        entityType: EntityType.USER,
-        idExtractor: (_, req) => req.body?.id ?? req.body?.email ?? 'unknown',
-      },
-      {
-        regex: /\/bookings\/([^\/]+)/,
-        entityType: EntityType.BOOKING,
-        idExtractor: (match) => match[1],
-      },
-      {
-        regex: /\/bookings$/,
-        entityType: EntityType.BOOKING,
-        idExtractor: (_, req) => req.body?.id ?? 'new',
-      },
-      {
-        regex: /\/rooms\/([^\/]+)/,
-        entityType: EntityType.ROOM,
-        idExtractor: (match) => match[1],
-      },
-      {
-        regex: /\/buildings\/([^\/]+)/,
-        entityType: EntityType.BUILDING,
-        idExtractor: (match) => match[1],
-      },
-      {
-        regex: /\/equipment\/([^\/]+)/,
-        entityType: EntityType.EQUIPMENT,
-        idExtractor: (match) => match[1],
-      },
-      {
-        regex: /\/equipment$/,
-        entityType: EntityType.EQUIPMENT,
-        idExtractor: (_, req) => req.body?.id ?? 'new',
-      },
-    ];
+  ): { route: string; entityId: string } {
+    // Extract the base route (e.g., /users, /buildings, /bookings)
+    // Remove leading /api if present
+    const cleanPath = path.replace(/^\/api/, '');
 
-    for (const pattern of patterns) {
-      const match = path.match(pattern.regex);
-      if (match) {
-        const entityId = pattern.idExtractor(match, request);
-        return {
-          entityType: pattern.entityType,
-          entityId: entityId ?? 'unknown',
-        };
-      }
+    // Extract route name and ID
+    const pathParts = cleanPath.split('/').filter(p => p);
+
+    if (pathParts.length === 0) {
+      return { route: 'root', entityId: '/' };
     }
 
-    return { entityType: null, entityId: null };
+    const baseRoute = `/${pathParts[0]}`;
+
+    // If there's an ID in the path (second part), use it
+    if (pathParts.length > 1) {
+      return { route: baseRoute, entityId: pathParts[1] };
+    }
+
+    // For POST (create), check if body has an ID, otherwise mark as 'new'
+    if (request.method === 'POST') {
+      return { route: baseRoute, entityId: request.body?.id ?? 'new' };
+    }
+
+    // For GET on collection endpoints
+    if (request.method === 'GET') {
+      return { route: baseRoute, entityId: 'collection' };
+    }
+
+    // Fallback
+    return { route: baseRoute, entityId: 'unknown' };
   }
 }

@@ -5,7 +5,6 @@ import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
 import { Session } from 'express-session';
 import { AuditLogsService } from '../services/audit-logs.service';
-import { EntityType } from '../database/entities/audit-log.entity';
 
 interface RequestWithUser extends Request {
   user?: AuthenticatedUser;
@@ -62,7 +61,7 @@ export class AuthController {
     await this.auditLogsService.createAuditLog(
       user.id,
       'LOGIN',
-      EntityType.USER,
+      '/auth',
       user.id,
     );
 
@@ -85,7 +84,7 @@ export class AuthController {
         ? this.auditLogsService.createAuditLog(
             user.id,
             'LOGOUT',
-            EntityType.USER,
+            '/auth',
             user.id,
           )
         : Promise.resolve();

@@ -1,18 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EntityType } from '../database/entities/audit-log.entity';
 
 export class AuditLogResponseDto {
   @ApiProperty({ example: 'uuid-string', description: 'Audit log unique identifier' })
   id!: string;
 
-  @ApiProperty({ example: 'uuid-string', description: 'User ID who performed the action' })
-  user_id!: string;
-
   @ApiProperty({ example: 'CREATE', description: 'Action performed' })
   action!: string;
 
-  @ApiProperty({ enum: EntityType, example: EntityType.BOOKING, description: 'Type of entity affected' })
-  entity_type!: EntityType;
+  @ApiProperty({ example: '/buildings', description: 'API route/endpoint that was accessed' })
+  route!: string;
 
   @ApiProperty({ example: 'uuid-or-composite-id', description: 'ID of the affected entity' })
   entity_id!: string;
@@ -25,12 +21,13 @@ export class AuditLogResponseDto {
 
   @ApiProperty({
     example: { id: 'uuid', email: 'user@uvic.ca', first_name: 'John', last_name: 'Doe' },
-    description: 'User who performed the action'
+    description: 'User who performed the action',
+    nullable: true
   })
   user!: {
     id: string;
     email: string;
     first_name: string;
     last_name: string;
-  };
+  } | null;
 }

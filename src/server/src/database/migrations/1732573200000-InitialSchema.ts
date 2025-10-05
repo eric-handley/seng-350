@@ -10,7 +10,6 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`CREATE TYPE "public"."user_role_enum" AS ENUM('Staff', 'Registrar', 'Admin')`);
         await queryRunner.query(`CREATE TYPE "public"."room_type_enum" AS ENUM('Classroom', 'Lecture theatre', 'Multi-access classroom', 'Flury Hall', 'Unknown', 'David Lam Auditorium')`);
         await queryRunner.query(`CREATE TYPE "public"."booking_status_enum" AS ENUM('Active', 'Cancelled')`);
-        await queryRunner.query(`CREATE TYPE "public"."entity_type_enum" AS ENUM('User', 'Building', 'Room', 'Equipment', 'RoomEquipment', 'Booking', 'BookingSeries')`);
 
         // Create users table
         await queryRunner.query(`
@@ -131,10 +130,10 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE "audit_logs" (
                 "id" uuid NOT NULL DEFAULT gen_random_uuid(),
-                "user_id" uuid NOT NULL,
+                "user_id" uuid,
                 "action" character varying NOT NULL,
-                "entity_type" "public"."entity_type_enum" NOT NULL,
-                "entity_id" uuid NOT NULL,
+                "route" character varying NOT NULL,
+                "entity_id" character varying NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "PK_audit_logs_id" PRIMARY KEY ("id")
@@ -150,12 +149,10 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "bookings" ADD CONSTRAINT "FK_bookings_booking_series_id" FOREIGN KEY ("booking_series_id") REFERENCES "booking_series"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "audit_logs" ADD CONSTRAINT "FK_audit_logs_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop foreign key constraints
-        await queryRunner.query(`ALTER TABLE "audit_logs" DROP CONSTRAINT "FK_audit_logs_user_id"`);
         await queryRunner.query(`ALTER TABLE "bookings" DROP CONSTRAINT "FK_bookings_booking_series_id"`);
         await queryRunner.query(`ALTER TABLE "bookings" DROP CONSTRAINT "FK_bookings_room_id"`);
         await queryRunner.query(`ALTER TABLE "bookings" DROP CONSTRAINT "FK_bookings_user_id"`);
@@ -180,7 +177,6 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "users"`);
 
         // Drop enum types
-        await queryRunner.query(`DROP TYPE "public"."entity_type_enum"`);
         await queryRunner.query(`DROP TYPE "public"."booking_status_enum"`);
         await queryRunner.query(`DROP TYPE "public"."room_type_enum"`);
         await queryRunner.query(`DROP TYPE "public"."user_role_enum"`);
