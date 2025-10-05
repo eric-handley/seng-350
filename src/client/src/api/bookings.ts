@@ -26,8 +26,9 @@ export async function createBooking(body: CreateBookingReq): Promise<Booking> {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`POST /bookings failed: ${res.status} ${res.statusText} ${text}`);
+    const errorData = await res.json().catch(() => null);
+    const message = errorData?.message ?? `Booking failed: ${res.status} ${res.statusText}`;
+    throw new Error(message);
   }
   return res.json() as Promise<Booking>;
 }

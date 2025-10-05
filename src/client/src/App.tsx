@@ -88,6 +88,19 @@ const HomeComponent: React.FC = () => {
   const navigate = useNavigate()
   const [tab, setTab] = useState<TabKey>('book')
 
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
+  }
+
+  if (isLoading) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
+  }
+
+  if (!currentUser) {
+    return null
+  }
+
   const {
     bookings,
     getUnavailableRoomIds,
@@ -208,6 +221,8 @@ const HomeComponent: React.FC = () => {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create booking'
       setHistoryError(msg)
+      // Remove the optimistic booking since it failed
+      setOptimisticHistory(prev => prev.filter(b => b.id !== tempId))
     }
   }
 
@@ -290,7 +305,7 @@ const HomeComponent: React.FC = () => {
           )}
           {historyError && (
             <section className="panel" aria-labelledby="history-error">
-              <div className="empty">Couldn’t refresh from server: {historyError}</div>
+              <div className="empty">Error: {historyError}</div>
             </section>
           )}
 

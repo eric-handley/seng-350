@@ -42,6 +42,7 @@ services:
       - PGDATABASE=postgres
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - SESSION_SECRET=dev-session-secret-change-in-production
       - NEXTAUTH_SECRET=dev-secret-key-change-in-production
     depends_on:
       deps:
