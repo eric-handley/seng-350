@@ -34,10 +34,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     <div className="filters">
       <div className="col-span-2">
         <label>Building{!showTimeFilters ? ' (optional)' : ''}</label>
-        <select className="select" value={building} onChange={e => setBuilding(e.target.value)}>
-          <option value="">Any</option>
-          {BUILDINGS.map(b => <option key={b} value={b}>{b}</option>)}
-        </select>
+        <input
+          className="input"
+          placeholder="e.g., CLE, ECS, BWC"
+          value={building}
+          onChange={e => setBuilding(e.target.value)}
+        />
       </div>
       {showRoomFilter && (
         <div className="col-span-2">
