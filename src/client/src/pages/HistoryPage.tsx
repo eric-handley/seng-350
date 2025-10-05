@@ -7,14 +7,36 @@ interface HistoryPageProps {
   allBookings?: Booking[]
   currentUser?: User
   onCancel: (id: string) => void
+  refreshBookings?: () => Promise<void> // <-- async for backend fetch
 }
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   userHistory,
   allBookings,
   currentUser,
-  onCancel
+  onCancel,
+  refreshBookings
 }) => {
+  const handleRebook = async (id: string) => {
+    const booking = allBookings?.find(b => b.id === id)
+    if (!booking) return
+    // Create a new booking with the same details, but ensure cancelled is false
+    const response = await fetch('/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        roomId: booking.roomId,
+        start: booking.start,
+        end: booking.end,
+        user: booking.user,
+        cancelled: false,
+      }),
+    })
+    if (response.ok && refreshBookings) {
+      await refreshBookings()
+    }
+  }
+
   return (
     <div>
       <section className="panel" aria-labelledby="history-label">
@@ -28,13 +50,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 key={booking.id}
                 booking={booking}
                 onCancel={onCancel}
+                onRebook={handleRebook}
                 showUser={false}
               />
             ))}
           </div>
         )}
       </section>
-      {currentUser?.role === UserRole.REGISTRAR && allBookings && (
+      {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && allBookings && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All Bookings</h2>
           {allBookings.length === 0 ? (
@@ -46,6 +69,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                   key={booking.id}
                   booking={booking}
                   onCancel={onCancel}
+                  onRebook={handleRebook}
                   showUser={true}
                 />
               ))}

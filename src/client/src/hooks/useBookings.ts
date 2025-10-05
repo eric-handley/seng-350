@@ -67,6 +67,20 @@ export const useBookings = () => {
       .sort((a, b) => +new Date(a.start) - +new Date(b.start))
   }
 
+  const refreshBookings = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
+      if (response.ok) {
+        const data: Booking[] = await response.json()
+        setBookings(data)
+      } else {
+        console.error('Failed to fetch bookings')
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error)
+    }
+  }
+
   return {
     bookings,
     addBooking,
@@ -74,5 +88,6 @@ export const useBookings = () => {
     getUnavailableRoomIds,
     getUserHistory,
     getScheduleForDay,
+    refreshBookings,
   }
 }

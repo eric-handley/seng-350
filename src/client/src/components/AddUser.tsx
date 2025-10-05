@@ -95,44 +95,6 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           </span>
         )}
       </label>
-            <label htmlFor="add-user-first_name">
-                First Name:
-                <input
-                    id="add-user-first_name"
-                    className="input"
-                    name="first_name"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    required
-                    aria-invalid={!!errors.first_name}
-                    aria-describedby={errors.first_name ? "add-user-first-error" : undefined}
-                />
-                {errors.first_name && (
-                  <span id="add-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
-                    {errors.first_name}
-                  </span>
-                )}
-            </label>
-
-            <label htmlFor="add-user-last_name">
-                Last Name:
-                <input
-                    id="add-user-last_name"
-                    className="input"
-                    name="last_name"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    required
-                    aria-invalid={!!errors.last_name}
-                    aria-describedby={errors.last_name ? "add-user-last-error" : undefined}
-                />
-                {errors.last_name && (
-                  <span id="add-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
-                    {errors.last_name}
-                  </span>
-                )}
-            </label>
-
       <label htmlFor="add-user-email">
         Email:
         <input
@@ -163,11 +125,11 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           onChange={handleChange}
           required
         >
-          <option value="Staff">Staff</option>
+          <option value={UserRole.STAFF}>Staff</option>
           {currentUser.role === "Admin" && (
             <>
-              <option value="Registrar">Registrar</option>
-              <option value="Admin">Admin</option>
+              <option value={UserRole.REGISTRAR}>Registrar</option>
+              <option value={UserRole.ADMIN}>Admin</option>
             </>
           )}
         </select>

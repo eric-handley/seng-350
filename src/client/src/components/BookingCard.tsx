@@ -6,6 +6,7 @@ interface BookingCardProps {
   booking: Booking
   room?: Room
   onCancel: (id: string) => void
+  onRebook?: (id: string) => void
   showUser?: boolean
 }
 
@@ -13,6 +14,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   room: providedRoom,
   onCancel,
+  onRebook,
   showUser = false
 }) => {
   const room = providedRoom ?? ROOMS.find(r => r.id === booking.roomId)
@@ -42,7 +44,12 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         {!booking.cancelled ? (
           <button className="btn danger" onClick={() => onCancel(booking.id)}>Cancel</button>
         ) : (
-          <button className="btn ghost" onClick={() => console.error('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
+          <button
+            className="btn ghost"
+            onClick={() => onRebook && onRebook(booking.id)}
+          >
+            Rebook
+          </button>
         )}
       </div>
     </article>

@@ -32,7 +32,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ currentTab, setTab
         aria-selected={currentTab === 'history'} 
         onClick={() => setTab('history')}
       >
-        My Bookings & History
+        Bookings & History
       </button>
       {(currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
         <button 
