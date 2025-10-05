@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'

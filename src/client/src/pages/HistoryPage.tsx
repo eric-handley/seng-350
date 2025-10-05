@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Booking, User, UserRole } from '../types'
+import { User } from '../types'
 import { BookingCard } from '../components/BookingCard'
 import type { UiBooking } from '../types'
 import { useBookingHistory } from '../hooks/useBookingHistory'
@@ -66,7 +66,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
 
   useEffect(() => {
     void fetchHistory()
-  }, [])
+  }, [fetchHistory])
 
   const handleCancel = async (id: string) => {
     try {

@@ -23,19 +23,6 @@ const HomeComponent: React.FC = () => {
   const navigate = useNavigate()
   const [tab, setTab] = useState<TabKey>('book')
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login', { replace: true })
-  }
-
-  if (isLoading) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
-  }
-
-  if (!currentUser) {
-    return null
-  }
-
   const canManageUsers = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.REGISTRAR
   const {
     users,
@@ -58,10 +45,23 @@ const HomeComponent: React.FC = () => {
   const [end, setEnd] = useState<string>('11:00')
 
   useEffect(() => {
-    if (currentUser.role === 'staff' && tab === 'schedule') {
+    if (currentUser && currentUser.role === 'staff' && tab === 'schedule') {
       setTab('book')
     }
-  }, [currentUser.role, tab])
+  }, [currentUser, tab])
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
+  }
+
+  if (isLoading) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
+  }
+
+  if (!currentUser) {
+    return null
+  }
 
   return (
     <div className="app-shell">

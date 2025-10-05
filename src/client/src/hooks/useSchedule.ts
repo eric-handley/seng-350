@@ -47,7 +47,8 @@ export function useSchedule(q: ScheduleQuery) {
 
     const t = setTimeout(run, 250);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [depsKey]); // Run when any query parameter changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depsKey]); // Run when any query parameter changes (q is tracked via depsKey, data.length intentionally excluded)
 
   return { rooms: data, loading, error };
 }
