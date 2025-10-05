@@ -160,7 +160,7 @@ function filterAudits(
   );
 }
 
-function AuditTable({ rows }: { rows: AuditRow[] }) {
+export const AuditTable = ({ rows = SAMPLE_AUDITS }: { rows?: AuditRow[] }) => {
   const [query, setQuery] = useState("");
   const [sev, setSev] = useState<"all" | "low" | "medium" | "high">("all");
   const [page, setPage] = useState(1);
@@ -177,7 +177,7 @@ function AuditTable({ rows }: { rows: AuditRow[] }) {
   function exportCSV() {
     const headers = [
       "id",
-      "time", 
+      "time",
       "actor",
       "action",
       "target",
@@ -210,7 +210,9 @@ function AuditTable({ rows }: { rows: AuditRow[] }) {
           <select
             className="select"
             value={sev}
-            onChange={(e) => setSev(e.target.value as "all" | "low" | "medium" | "high")}
+            onChange={(e) =>
+              setSev(e.target.value as "all" | "low" | "medium" | "high")
+            }
           >
             <option value="all">All severities</option>
             <option value="low">Low</option>
@@ -292,9 +294,9 @@ function AuditTable({ rows }: { rows: AuditRow[] }) {
       </div>
     </div>
   );
-}
+};
 
-function SystemHealth() {
+export const SystemHealth = () => {
   const { services, infra } = HEALTH;
   const okCount = services.filter((s) => s.status === "ok").length;
   const degraded = services.filter((s) => s.status !== "ok").length;
@@ -373,7 +375,7 @@ function SystemHealth() {
       </div>
     </div>
   );
-}
+};
 
 type AdminConsoleProps = {
   onLogout?: () => void;
@@ -416,7 +418,11 @@ export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
             {dark ? "☾" : "☼"}
           </button>
           {onLogout && (
-            <button className="btn" style={{ marginLeft: '0.75rem' }} onClick={onLogout}>
+            <button
+              className="btn"
+              style={{ marginLeft: "0.75rem" }}
+              onClick={onLogout}
+            >
               Log out
             </button>
           )}

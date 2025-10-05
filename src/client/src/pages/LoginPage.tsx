@@ -31,17 +31,15 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? `Login failed: ${response.status}`);
+        throw new Error(
+          errorData?.message ?? `Login failed: ${response.status}`
+        );
       }
 
       const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
-      if (user.role === UserRole.ADMIN) {
-        navigate('/admin-panel');
-      } else {
-        navigate('/home');
-      }
+      navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     }
@@ -50,12 +48,16 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const handleDevLogin = (role: UserRole) => {
     const credentials: Record<UserRole, { email: string; password: string }> = {
-      [UserRole.STAFF]: { email: 'staff@uvic.ca', password: 'staff' },
-      [UserRole.ADMIN]: { email: 'admin@uvic.ca', password: 'admin' },
-      [UserRole.REGISTRAR]: { email: 'registrar@uvic.ca', password: 'registrar' },
+      [UserRole.STAFF]: { email: "staff@uvic.ca", password: "staff" },
+      [UserRole.ADMIN]: { email: "admin@uvic.ca", password: "admin" },
+      [UserRole.REGISTRAR]: {
+        email: "registrar@uvic.ca",
+        password: "registrar",
+      },
     };
 
-    const { email: prefillEmail, password: prefillPassword } = credentials[role];
+    const { email: prefillEmail, password: prefillPassword } =
+      credentials[role];
     setEmail(prefillEmail);
     setPassword(prefillPassword);
     setError(null);
@@ -92,29 +94,53 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {error && <p className="error">{error}</p>}
         </form>
 
-        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
-          <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+        <div
+          style={{
+            marginTop: "20px",
+            paddingTop: "20px",
+            borderTop: "1px solid #ddd",
+          }}
+        >
+          <p style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>
             Development Login Options:
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <button
               type="button"
               onClick={() => handleDevLogin(UserRole.STAFF)}
-              style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#f0f0f0",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
             >
               Continue as Staff
             </button>
             <button
               type="button"
               onClick={() => handleDevLogin(UserRole.ADMIN)}
-              style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#f0f0f0",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
             >
               Continue as Admin
             </button>
             <button
               type="button"
               onClick={() => handleDevLogin(UserRole.REGISTRAR)}
-              style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#f0f0f0",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
             >
               Continue as Registrar
             </button>

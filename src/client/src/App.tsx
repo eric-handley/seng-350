@@ -1,26 +1,35 @@
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import './styles/app.css'
-import './styles/admin.css'
-import { TabKey, Room, UserRole } from './types'
-import { useBookings } from './hooks/useBookings'
-import { useUsers } from './hooks/useUsers'
-import { useRoomFiltering } from './hooks/useRoomFiltering'
-import { useAuth, AuthProvider } from './contexts/AuthContext'
-import { TabNavigation } from './components/TabNavigation'
-import { BookingPage } from './pages/BookingPage'
-import { SchedulePage } from './pages/SchedulePage'
-import { HistoryPage } from './pages/HistoryPage'
-import { UsersPage } from './pages/UsersPage'
-import LoginPage from './pages/LoginPage'
-import AdminConsole from './components/AdminConsole'
-import { ProtectedRoute } from './components/ProtectedRoute'
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import "./styles/app.css";
+import "./styles/admin.css";
+import { TabKey, Room, UserRole } from "./types";
+import { useBookings } from "./hooks/useBookings";
+import { useUsers } from "./hooks/useUsers";
+import { useRoomFiltering } from "./hooks/useRoomFiltering";
+import { useAuth, AuthProvider } from "./contexts/AuthContext";
+import { TabNavigation } from "./components/TabNavigation";
+import { BookingPage } from "./pages/BookingPage";
+import { SchedulePage } from "./pages/SchedulePage";
+import { HistoryPage } from "./pages/HistoryPage";
+import { UsersPage } from "./pages/UsersPage";
+import LoginPage from "./pages/LoginPage";
+import AdminConsole, {
+  AuditTable,
+  SystemHealth,
+} from "./components/admin/AdminConsole";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {
-  const { currentUser, isLoading, logout } = useAuth()
-  const navigate = useNavigate()
-  const [tab, setTab] = useState<TabKey>('book')
+  const { currentUser, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<TabKey>("book");
 
   const {
     bookings,
@@ -28,10 +37,12 @@ const HomeComponent: React.FC = () => {
     cancelBooking,
     getUnavailableRoomIds,
     getUserHistory,
-    getScheduleForDay
-  } = useBookings()
+    getScheduleForDay,
+  } = useBookings();
 
-  const canManageUsers = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.REGISTRAR
+  const canManageUsers =
+    currentUser?.role === UserRole.ADMIN ||
+    currentUser?.role === UserRole.REGISTRAR;
   const {
     users,
     editingUser,
@@ -43,7 +54,7 @@ const HomeComponent: React.FC = () => {
     handleBlockUser,
     setEditingUser,
     setAddingUser,
-  } = useUsers({ autoLoad: !!canManageUsers })
+  } = useUsers({ autoLoad: !!canManageUsers });
 
   const {
     building,
@@ -59,32 +70,35 @@ const HomeComponent: React.FC = () => {
     requestedStart,
     requestedEnd,
     getAvailableRooms,
-  } = useRoomFiltering()
+  } = useRoomFiltering();
 
-  const unavailableRoomIds = getUnavailableRoomIds(requestedStart, requestedEnd)
-  const availableRooms = getAvailableRooms(unavailableRoomIds)
-  const userHistory = getUserHistory()
-  const scheduleForDay = getScheduleForDay(date)
+  const unavailableRoomIds = getUnavailableRoomIds(
+    requestedStart,
+    requestedEnd
+  );
+  const availableRooms = getAvailableRooms(unavailableRoomIds);
+  const userHistory = getUserHistory();
+  const scheduleForDay = getScheduleForDay(date);
 
   const handleBook = (room: Room) => {
-    const success = addBooking(room, date, start, end)
+    const success = addBooking(room, date, start, end);
     if (success) {
-      setTab('history')
+      setTab("history");
     }
-  }
+  };
 
   if (isLoading) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
   }
 
   if (!currentUser) {
-    return null
+    return null;
   }
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login', { replace: true })
-  }
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="app-shell">
@@ -106,7 +120,7 @@ const HomeComponent: React.FC = () => {
         currentUser={currentUser}
       />
 
-      {tab === 'book' && (
+      {tab === "book" && (
         <BookingPage
           building={building}
           setBuilding={setBuilding}
@@ -123,7 +137,7 @@ const HomeComponent: React.FC = () => {
         />
       )}
 
-      {tab === 'schedule' && (
+      {tab === "schedule" && (
         <SchedulePage
           date={date}
           setDate={setDate}
@@ -133,16 +147,18 @@ const HomeComponent: React.FC = () => {
         />
       )}
 
-      {tab === 'history' && (
+      {tab === "history" && (
         <HistoryPage
           userHistory={userHistory}
-          allBookings={currentUser.role === UserRole.REGISTRAR ? bookings : undefined}
+          allBookings={
+            currentUser.role === UserRole.REGISTRAR ? bookings : undefined
+          }
           currentUser={currentUser}
           onCancel={cancelBooking}
         />
       )}
 
-      {tab === 'users' && (
+      {tab === "users" && (
         <UsersPage
           users={users}
           currentUser={currentUser}
@@ -157,13 +173,17 @@ const HomeComponent: React.FC = () => {
           onCancelAdd={() => setAddingUser(null)}
         />
       )}
+      {tab === "audit" && currentUser.role === UserRole.ADMIN && <AuditTable />}
+      {tab === "health" && currentUser.role === UserRole.ADMIN && (
+        <SystemHealth />
+      )}
     </div>
-  )
-}
+  );
+};
 
 // App Router component that has access to hooks
 const AppRouter: React.FC = () => {
-  const { login } = useAuth()
+  const { login } = useAuth();
 
   return (
     <Routes>
@@ -171,44 +191,46 @@ const AppRouter: React.FC = () => {
       <Route
         path="/home"
         element={
-          <ProtectedRoute allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR]}>
+          <ProtectedRoute
+            allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR, UserRole.ADMIN]}
+          >
             <HomeComponent />
           </ProtectedRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/admin-panel"
         element={
           <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
             <AdminPage />
           </ProtectedRoute>
         }
-      />
+      /> */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  )
-}
+  );
+};
 
-const AdminPage: React.FC = () => {
-  const { currentUser, isLoading, logout } = useAuth()
-  const navigate = useNavigate()
+// const AdminPage: React.FC = () => {
+//   const { currentUser, isLoading, logout } = useAuth();
+//   const navigate = useNavigate();
 
-  if (isLoading) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
-  }
+//   if (isLoading) {
+//     return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
+//   }
 
-  if (!currentUser) {
-    return null
-  }
+//   if (!currentUser) {
+//     return null;
+//   }
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login', { replace: true })
-  }
+//   const handleLogout = async () => {
+//     await logout();
+//     navigate("/login", { replace: true });
+//   };
 
-  return <AdminConsole onLogout={handleLogout} />
-}
+//   return <AdminConsole onLogout={handleLogout} />;
+// };
 
 export default function App() {
   return (
@@ -217,5 +239,5 @@ export default function App() {
         <AppRouter />
       </Router>
     </AuthProvider>
-  )
+  );
 }

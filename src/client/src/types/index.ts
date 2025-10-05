@@ -1,7 +1,7 @@
 export enum UserRole {
-  ADMIN = 'Admin',
-  REGISTRAR = 'Registrar',
-  STAFF = 'Staff',
+  ADMIN = "Admin",
+  REGISTRAR = "Registrar",
+  STAFF = "Staff",
 }
 
 export type Room = {
@@ -15,7 +15,7 @@ export type Booking = {
   id: string;
   roomId: string;
   start: string; // ISO
-  end: string;   // ISO
+  end: string; // ISO
   user: string;
   cancelled?: boolean;
 };
@@ -28,8 +28,16 @@ export type User = {
   role: UserRole;
 };
 
-export type TabKey = 'schedule' | 'book' | 'history' | 'users';
+export type TabKey =
+  | "schedule"
+  | "book"
+  | "history"
+  | "users"
+  | "audit"
+  | "health";
 
-export const getUserDisplayName = (user: Pick<User, 'first_name' | 'last_name'>): string => {
+export const getUserDisplayName = (
+  user: Pick<User, "first_name" | "last_name">
+): string => {
   return `${user.first_name} ${user.last_name}`.trim();
 };
