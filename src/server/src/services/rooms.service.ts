@@ -36,9 +36,7 @@ export class RoomsService {
     } = queryDto;
 
     const normalizedRoomId = this.normalizeIdentifier(room_id);
-    const normalizedBuildingShortName = this.normalizeIdentifier(
-      building_short_name,
-    );
+    const buildingSearch = building_short_name?.trim();
 
     const roomQuery = this.roomRepository
       .createQueryBuilder('room')
@@ -51,10 +49,12 @@ export class RoomsService {
         room_id: normalizedRoomId,
       });
     }
-    if (normalizedBuildingShortName) {
-      roomQuery.andWhere('room.building_short_name = :building_short_name', {
-        building_short_name: normalizedBuildingShortName,
-      });
+    if (buildingSearch) {
+      // Search both short name and full name (case-insensitive partial match)
+      roomQuery.andWhere(
+        '(LOWER(building.short_name) LIKE LOWER(:buildingSearch) OR LOWER(building.name) LIKE LOWER(:buildingSearch))',
+        { buildingSearch: `%${buildingSearch}%` },
+      );
     }
 
     const rooms = await roomQuery.getMany();

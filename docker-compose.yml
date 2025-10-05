@@ -42,6 +42,7 @@ services:
       - PGDATABASE=postgres
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - SESSION_SECRET=dev-session-secret-change-in-production
       - NEXTAUTH_SECRET=dev-secret-key-change-in-production
     depends_on:
       deps:
@@ -53,9 +54,9 @@ services:
     command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api-docs | grep -q 'Swagger'"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 30
 
   db:
     image: postgres:16
