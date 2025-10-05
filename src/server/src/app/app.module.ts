@@ -23,6 +23,7 @@ import { RoomsController } from '../api/rooms.controller';
 import { BuildingsController } from '../api/buildings.controller';
 import { EquipmentController } from '../api/equipment.controller';
 import { ScheduleController } from '../api/schedule.controller';
+import { AuditLogsController } from '../api/audit-logs.controller';
 
 // Import services
 import { UsersService } from '../services/users.service';
@@ -30,6 +31,7 @@ import { BookingsService } from '../services/bookings.service';
 import { RoomsService } from '../services/rooms.service';
 import { BuildingsService } from '../services/buildings.service';
 import { EquipmentService } from '../services/equipment.service';
+import { AuditLogsService } from '../services/audit-logs.service';
 
 @Module({
   imports: [
@@ -55,6 +57,7 @@ import { EquipmentService } from '../services/equipment.service';
     BuildingsController,
     EquipmentController,
     ScheduleController,
+    AuditLogsController,
   ],
   providers: [
     AppService,
@@ -63,6 +66,7 @@ import { EquipmentService } from '../services/equipment.service';
     RoomsService,
     BuildingsService,
     EquipmentService,
+    AuditLogsService,
   ],
 })
 export class AppModule {}
