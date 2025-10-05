@@ -41,7 +41,7 @@ const HomeComponent: React.FC = () => {
     handleBlockUser,
     setEditingUser,
     setAddingUser,
-  } = useUsers()
+  } = useUsers(currentUser!)
 
   const {
     building,
@@ -143,6 +143,7 @@ const HomeComponent: React.FC = () => {
           currentUser={activeUser}
           editingUser={editingUser}
           addingUser={addingUser}
+          error={null}
           onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
           onAddUser={handleAddUser}

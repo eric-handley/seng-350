@@ -1,15 +1,20 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { User } from "../types"
 
 type AddUserProps = {
   user: User;
+  currentUser: User;
   onSave: (user: User) => void;
   onCancel: () => void;
 }
 
-export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
+export default function AddUser({ user, currentUser, onSave, onCancel }: AddUserProps) {
   const [formData, setFormData] = useState<User>(user)
   const [errors, setErrors] = useState<{first_name?: string; last_name?: string; email?: string}>({});
+
+  useEffect(() => {
+    setFormData(user);
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -23,14 +28,13 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
 
   const validateForm = (): boolean => {
     const newErrors: {first_name?: string; last_name?: string; email?: string} = {};
-
-    if (!formData.first_name.trim()) {
+    if (!formData.first_name?.trim()) {
       newErrors.first_name = "First name is required";
     }
-    if (!formData.last_name.trim()) {
+    if (!formData.last_name?.trim()) {
       newErrors.last_name = "Last name is required";
     }
-    if (!formData.email.trim()) {
+    if (!formData.email?.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email must be valid";
@@ -53,11 +57,12 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
 
       <label htmlFor="add-user-first-name">
         First Name:
+        {/* Use empty string as a fallback for value to avoid uncontrolled component warning */}
         <input
           id="add-user-first-name"
           className="input"
           name="first_name"
-          value={formData.first_name}
+          value={formData.first_name || ''}
           onChange={handleChange}
           required
           aria-invalid={!!errors.first_name}
@@ -76,7 +81,7 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
           id="add-user-last-name"
           className="input"
           name="last_name"
-          value={formData.last_name}
+          value={formData.last_name || ''}
           onChange={handleChange}
           required
           aria-invalid={!!errors.last_name}
@@ -96,7 +101,7 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
           className="input"
           name="email"
           type="email"
-          value={formData.email}
+          value={formData.email || ''}
           onChange={handleChange}
           required
           aria-invalid={!!errors.email}
@@ -119,14 +124,19 @@ export default function AddUser({ user, onSave, onCancel }: AddUserProps) {
           onChange={handleChange}
           required
         >
-          <option value="admin">Admin</option>
           <option value="staff">Staff</option>
-          <option value="registrar">Registrar</option>
+          {currentUser.role === "admin" && (
+            <>
+              <option value="registrar">Registrar</option>
+              <option value="admin">Admin</option>
+            </>
+          )}
         </select>
       </label>
 
       <div style={{ marginTop: "1rem" }}>
-        <button type="submit" className="btn primary">
+        <button type="submit" className="btn primary"
+        style={{ marginRight: '10px' }}>
           Save
         </button>
         <button type="button" className="btn" onClick={onCancel}>

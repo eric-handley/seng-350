@@ -112,3 +112,10 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
   min-width: 300px;
   text-align: center;
 }
+
+.toast {
+  background: red;
+  color: white;
+  padding: 10px;
+  margin: 10px 0;
+}

@@ -3,7 +3,8 @@ import { User } from "../types"
 
 type UsersTabProps = {
   users: User[]
-  currentUser: User // <-- Add currentUser prop
+  currentUser: User
+  error: string | null
   handleEditUser: (user: User) => void
   handleAddUser: (user: User) => void
   handleBlockUser: (user: User) => void
@@ -12,6 +13,7 @@ type UsersTabProps = {
 export default function UsersTab({
   users,
   currentUser,
+  error,
   handleEditUser,
   handleAddUser,
   handleBlockUser,
@@ -26,6 +28,13 @@ export default function UsersTab({
 
   return (
     <div>
+      <div>
+        {error && (
+          <div className="toast">
+            {error}
+          </div>
+        )}
+      </div>
       <section className="panel" aria-labelledby="users-label">
         <h2 id="users-label" style={{ marginTop: 0 }}>All Users</h2>
         {visibleUsers.length === 0 ? (
@@ -46,6 +55,10 @@ export default function UsersTab({
                 const canEditOrBlock =
                   (currentUser.role === "admin") ||
                   (currentUser.role === "registrar" && u.role === "staff");
+
+                const canAddUser =
+                  (currentUser.role === "admin") ||
+                  (currentUser.role === "registrar" && u.role === "staff")
 
                 return (
                   <tr key={u.id}>
@@ -98,5 +111,6 @@ export default function UsersTab({
         </div>
       )}
     </div>
+    
   )
 }

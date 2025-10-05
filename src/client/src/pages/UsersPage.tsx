@@ -3,12 +3,14 @@ import { User } from '../types'
 import UsersTab from '../components/UserTab'
 import EditUser from '../components/EditUser'
 import AddUser from '../components/AddUser'
+import { error } from 'console'
 
 interface UsersPageProps {
   users: User[]
   currentUser: User
   editingUser: User | null
   addingUser: User | null
+  error: string | null
   onEditUser: (user: User) => void
   onSaveUser: (user: User) => void
   onAddUser: (user: User) => void
@@ -23,6 +25,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   currentUser,
   editingUser,
   addingUser,
+  error,
   onEditUser,
   onSaveUser,
   onAddUser,
@@ -40,6 +43,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       <UsersTab
         users={users}
         currentUser={currentUser}
+        error={error}
         handleEditUser={onEditUser}
         handleAddUser={onAddUser}
         handleBlockUser={onBlockUser}
@@ -54,6 +58,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {addingUser && (
         <AddUser
           user={addingUser}
+          currentUser={currentUser} // <-- this must be present!
           onSave={onSaveNewUser}
           onCancel={onCancelAdd}
         />
