@@ -172,9 +172,14 @@ const HomeComponent: React.FC = () => {
   const handleBook = async (room: Room) => {
     setLastPostError(null)
 
+    if (!start || !end) {return;}
+    const startApi = toApiTime(start);
+    const endApi   = toApiTime(end);
+    if (!startApi || !endApi) {return;}
+    
     const tempId = `temp-${Date.now()}`
-    const startIso = toIsoDateTimeUTC(date, toApiTime(start)!)
-    const endIso = toIsoDateTimeUTC(date, toApiTime(end)!)
+    const startIso = toIsoDateTimeUTC(date, startApi);
+    const endIso   = toIsoDateTimeUTC(date, endApi);
     const nowIso = new Date().toISOString()
 
     const temp: ApiBooking = {
