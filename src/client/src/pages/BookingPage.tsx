@@ -6,18 +6,18 @@ import { useSchedule } from '../hooks/useSchedule';
 import { toApiTime } from '../utils/time';
 
 interface BookingPageProps {
-  building: string;
-  setBuilding: (building: string) => void;
-  roomQuery: string;  // interpreted as room_id here
-  setRoomQuery: (query: string) => void;
-  date: string;       // YYYY-MM-DD
-  setDate: (date: string) => void;
-  start: string;      // HH:MM:SS
-  setStart: (start: string) => void;
-  end: string;        // HH:MM:SS
-  setEnd: (end: string) => void;
-  availableRooms: Room[]; // no longer used; safe to remove later
-  onBook: (room: Room) => void;
+  building: string
+  setBuilding: (building: string) => void
+  roomQuery: string
+  setRoomQuery: (query: string) => void
+  date: string
+  setDate: (date: string) => void
+  start: string
+  setStart: (start: string) => void
+  end: string
+  setEnd: (end: string) => void
+  availableRooms: Room[]
+  onBook: (room: Room) => void
 }
 
 export const BookingPage: React.FC<BookingPageProps> = ({
@@ -32,9 +32,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   const { rooms, loading, error } = useSchedule({
     building_short_name: building || undefined,
     room_id: roomQuery || undefined,
-    date: date || undefined,                    // YYYY-MM-DD is fine
-    start_time: toApiTime(start),               // <-- normalize here
-    end_time: toApiTime(end),                   // <-- and here
+    date: date || undefined,
+    start_time: toApiTime(start),
+    end_time: toApiTime(end),
     slot_type: 'available',
   });
 

@@ -1,4 +1,3 @@
-// src/pages/HistoryPage.tsx
 import React from 'react'
 import { Booking, User } from '../types'
 import { BookingCard } from '../components/BookingCard'
@@ -10,7 +9,6 @@ interface HistoryPageProps {
   onCancel: (id: string) => void
 }
 
-// ---- helpers: guard + fallback ----
 type CardBoundaryProps = {
   fallback: React.ReactNode
   children?: React.ReactNode

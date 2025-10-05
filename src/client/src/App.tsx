@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useEffect, useMemo, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
@@ -26,7 +25,6 @@ import type { Booking as ApiBooking } from './api/bookings'
 import { cancelBooking as cancelBookingApi } from './api/bookings'
 import { toApiTime } from './utils/time'
 
-// ---------- helpers ----------
 
 // Build UTC ISO to match your API ("...Z")
 function toIsoDateTimeUTC(dateYYYYMMDD: string, timeHms: string) {
@@ -57,7 +55,7 @@ function mapApiBookingToUi(b: ApiBooking): UiBooking {
   const { building, roomNumber, roomName } = splitRoomId(b.room_id || '')
   const ui: any = {
     id: b.id,
-    roomId: b.room_id,                         // "CLE-A308"
+    roomId: b.room_id, 
     start: isoOrHmsToHms(b.start_time),
     end: isoOrHmsToHms(b.end_time),
     user: b.user_id,
@@ -65,22 +63,19 @@ function mapApiBookingToUi(b: ApiBooking): UiBooking {
       typeof b.status === 'string' && b.status.toLowerCase() !== 'active'
         ? true
         : undefined,
-    // ---- enriched display fields ----
-    name: roomName,                             // some cards read booking.name
-    building,                                   // some cards read booking.building
-    roomNumber,                                 // some read booking.roomNumber
-    room: { id: b.room_id, name: roomName },    // some read booking.room.name
-    date: (b.start_time ?? '').split('T')[0],   // "YYYY-MM-DD"
+    name: roomName,  
+    building,                      
+    roomNumber,                              
+    room: { id: b.room_id, name: roomName },    
+    date: (b.start_time ?? '').split('T')[0],  
   }
   return ui as UiBooking
 }
 
-// Replace optimistic temp booking with server booking, else keep temp
 function reconcileTemp(prev: ApiBooking[], tempId: string, real?: ApiBooking) {
   return prev.map(b => (b.id === tempId && real ? real : b))
 }
 
-// Merge (dedupe by id). Server data wins where ids collide.
 function mergeBookings(optimistic: ApiBooking[], server: ApiBooking[]) {
   const byId = new Map<string, ApiBooking>()
   for (const b of optimistic) byId.set(b.id, b)
@@ -88,13 +83,10 @@ function mergeBookings(optimistic: ApiBooking[], server: ApiBooking[]) {
   return Array.from(byId.values())
 }
 
-// ---------- main ----------
-
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
 
-  // legacy/local hooks (schedule + registrar view)
   const {
     bookings,
     cancelBooking,
@@ -144,22 +136,19 @@ const HomeComponent: React.FC = () => {
     isBlocked: false
   }
 
-  // History state
   const [serverHistory, setServerHistory] = useState<ApiBooking[] | null>(null)
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyError, setHistoryError] = useState<string | null>(null)
 
-  // debug surface
   const [lastPostError, setLastPostError] = useState<string | null>(null)
   const [lastAction, setLastAction] = useState<string>('')
 
-  // keep staff off schedule tab
   useEffect(() => {
     if (activeUser.role === 'staff' && tab === 'schedule') setTab('book')
   }, [activeUser.role, tab])
 
-  // Fetch "my" bookings when opening History. Do not wipe optimistic items.
+  // Fetch "my" bookings when opening History
   useEffect(() => {
     if (tab !== 'history') return
     let cancelled = false
@@ -179,7 +168,6 @@ const HomeComponent: React.FC = () => {
     return () => { cancelled = true }
   }, [tab])
 
-  // Book → synthetic optimistic row → POST → reconcile
   const handleBook = async (room: Room) => {
     setLastPostError(null)
 
@@ -188,13 +176,12 @@ const HomeComponent: React.FC = () => {
     const endIso = toIsoDateTimeUTC(date, toApiTime(end)!)
     const nowIso = new Date().toISOString()
 
-    // optimistic row: same shape as ApiBooking so our merge works
     const temp: ApiBooking = {
       id: tempId,
-      user_id: activeUser.id,      // local display; backend derives user
-      room_id: room.id,            // e.g., "CLE-A308"
-      start_time: startIso,        // ISO with Z
-      end_time: endIso,            // ISO with Z
+      user_id: activeUser.id,     
+      room_id: room.id,            
+      start_time: startIso,      
+      end_time: endIso,      
       status: 'Active',
       booking_series_id: tempId,
       created_at: nowIso,
@@ -228,11 +215,9 @@ const HomeComponent: React.FC = () => {
 
   const handleCancel = async (id: string) => {
     try {
-      await cancelBookingApi(id)               // call backend (expects 204)
-      // remove locally for instant UI feedback
+      await cancelBookingApi(id)  
       setOptimisticHistory(prev => prev.filter(b => b.id !== id))
       setServerHistory(prev => (prev ? prev.filter(b => b.id !== id) : prev))
-      // reconcile with server
       const fresh = await fetchUserBookings()
       setServerHistory(fresh)
     } catch (err: any) {
@@ -240,13 +225,11 @@ const HomeComponent: React.FC = () => {
     }
   }
 
-  // Merge optimistic + server (server wins on same id)
   const mergedApiHistory: ApiBooking[] = useMemo(
     () => mergeBookings(optimisticHistory, serverHistory ?? []),
     [optimisticHistory, serverHistory]
   )
 
-  // Enrich for UI/BookingCard
   const historyForUi: UiBooking[] = useMemo(
     () => mergedApiHistory.map(mapApiBookingToUi),
     [mergedApiHistory]
