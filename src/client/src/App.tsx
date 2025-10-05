@@ -29,7 +29,6 @@ const HomeComponent: React.FC = () => {
     getUnavailableRoomIds,
     getUserHistory,
     getScheduleForDay,
-    refreshBookings,
   } = useBookings()
 
   const canManageUsers = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.REGISTRAR
@@ -72,7 +71,6 @@ const HomeComponent: React.FC = () => {
     const success = addBooking(room, date, start, end)
     if (success) {
       setTab('history')
-      refreshBookings()
     }
   }
 
@@ -146,7 +144,6 @@ const HomeComponent: React.FC = () => {
           }
           currentUser={currentUser}
           onCancel={cancelBooking}
-          refreshBookings={refreshBookings}
         />
       )}
 

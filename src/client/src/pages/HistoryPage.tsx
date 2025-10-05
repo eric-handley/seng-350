@@ -7,7 +7,7 @@ interface HistoryPageProps {
   allBookings?: Booking[]
   currentUser?: User
   onCancel: (id: string) => void
-  refreshBookings?: () => Promise<void> // <-- async for backend fetch
+  //refreshBookings?: () => Promise<void>
 }
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
@@ -15,7 +15,6 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   allBookings,
   currentUser,
   onCancel,
-  refreshBookings
 }) => {
   const handleRebook = async (id: string) => {
     const booking = allBookings?.find(b => b.id === id)
@@ -31,8 +30,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
         end_time: booking.end,
       }),
     })
-    if (response.ok && refreshBookings) {
-      await refreshBookings()
+    if (response.ok) {
+      alert('Rebooking successful!')
     }
   }
 
