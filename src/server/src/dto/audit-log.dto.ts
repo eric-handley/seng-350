@@ -27,7 +27,7 @@ export class AuditLogResponseDto {
     description: 'Combined request data (query params and body)',
     nullable: true
   })
-  request!: { query?: Record<string, any> | null; body?: unknown } | null;
+  request!: { query?: Record<string, unknown> | null; body?: unknown } | null;
 
   @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'When the action was performed' })
   created_at!: Date;

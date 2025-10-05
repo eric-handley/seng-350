@@ -82,7 +82,7 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     // Parse URL into path params and query params
     // Example: /api/bookings/abc-123?force=true -> { id: 'abc-123', force: 'true' }
     const url = new URL(actualUrl, 'http://localhost');
-    const queryParams: Record<string, any> = {};
+    const queryParams: Record<string, unknown> = {};
 
     // Add query string params
     url.searchParams.forEach((value, key) => {
@@ -106,14 +106,9 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     // Use null for unauthenticated requests
     const userId = user?.id ?? null;
 
-    console.log('[AuditLogging] Creating log:', { userId, action, route, query, statusCode });
-
     // Async fire-and-forget - don't wait for audit log to complete
     this.auditLogsService
       .createAuditLog(userId, action, route, query, request.body)
-      .then(() => {
-        console.log('[AuditLogging] Log created successfully');
-      })
       .catch(err => {
         console.error('[AuditLogging] Failed to create audit log:', err);
       });

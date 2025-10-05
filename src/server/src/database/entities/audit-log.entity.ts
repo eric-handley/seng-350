@@ -16,7 +16,7 @@ export class AuditLog {
   route!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  query!: Record<string, any> | null;
+  query!: Record<string, unknown> | null;
 
   @Column({ type: 'jsonb', nullable: true })
   body!: unknown;

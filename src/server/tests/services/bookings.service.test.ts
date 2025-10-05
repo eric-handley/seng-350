@@ -604,13 +604,6 @@ describe('BookingsService', () => {
     it.skip('should create a series of recurring bookings', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockSeries = { id: 'series-uuid' };
-      const seriesDto = {
-        room_id: mockUUID,
-        start_time: generateMockDate(9, 0),
-        end_time: generateMockDate(10, 0),
-        recurrence: 'weekly',
-        recurrence_count: 4,
-      };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
       mockBookingSeriesRepository.create.mockReturnValue(mockSeries);
@@ -723,13 +716,6 @@ describe('BookingsService', () => {
     it.skip('should detect conflicts when creating booking series', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockSeries = { id: 'series-uuid' };
-      const seriesDto = {
-        room_id: mockUUID,
-        start_time: generateMockDate(9, 0),
-        end_time: generateMockDate(10, 0),
-        recurrence: 'weekly',
-        recurrence_count: 4,
-      };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
       mockBookingSeriesRepository.create.mockReturnValue(mockSeries);

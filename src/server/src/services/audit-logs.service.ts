@@ -78,7 +78,7 @@ export class AuditLogsService {
     userId: string | null,
     action: string,
     route: string,
-    query?: Record<string, any> | null,
+    query?: Record<string, unknown> | null,
     body?: unknown,
   ): Promise<AuditLog> {
     const auditLog = this.auditLogRepository.create({
@@ -122,7 +122,7 @@ export class AuditLogsService {
 
     // Parse URL into path params and query params
     const url = new URL(request.url, 'http://localhost');
-    const queryParams: Record<string, any> = {};
+    const queryParams: Record<string, unknown> = {};
 
     // Add query string params
     url.searchParams.forEach((value, key) => {
