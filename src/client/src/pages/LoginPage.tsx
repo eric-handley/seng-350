@@ -49,37 +49,16 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   const handleDevLogin = (role: UserRole) => {
-    const devUsers: Record<UserRole, User> = {
-      [UserRole.STAFF]: {
-        id: '2',
-        email: 'staff@uvic.ca',
-        first_name: 'Bob',
-        last_name: 'Smith',
-        role: UserRole.STAFF,
-      },
-      [UserRole.ADMIN]: {
-        id: '1',
-        email: 'admin@uvic.ca',
-        first_name: 'Alice',
-        last_name: 'Johnson',
-        role: UserRole.ADMIN,
-      },
-      [UserRole.REGISTRAR]: {
-        id: '3',
-        email: 'registrar@uvic.ca',
-        first_name: 'Charlie',
-        last_name: 'Doe',
-        role: UserRole.REGISTRAR,
-      },
+    const credentials: Record<UserRole, { email: string; password: string }> = {
+      [UserRole.STAFF]: { email: 'staff@uvic.ca', password: 'staff' },
+      [UserRole.ADMIN]: { email: 'admin@uvic.ca', password: 'admin' },
+      [UserRole.REGISTRAR]: { email: 'registrar@uvic.ca', password: 'registrar' },
     };
 
-    onLogin(devUsers[role]);
-
-    if (role === UserRole.ADMIN) {
-      navigate('/admin-panel');
-    } else {
-      navigate('/home');
-    }
+    const { email: prefillEmail, password: prefillPassword } = credentials[role];
+    setEmail(prefillEmail);
+    setPassword(prefillPassword);
+    setError(null);
   };
 
   return (

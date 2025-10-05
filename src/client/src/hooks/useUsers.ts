@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { User, UserRole } from '../types'
 
-export const useUsers = () => {
+interface UseUsersOptions {
+  autoLoad?: boolean
+}
+
+export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
   const [users, setUsers] = useState<User[]>([])
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [addingUser, setAddingUser] = useState<User | null>(null)
@@ -27,8 +31,10 @@ export const useUsers = () => {
   }, [])
 
   useEffect(() => {
-    void fetchUsers()
-  }, [fetchUsers])
+    if (autoLoad) {
+      void fetchUsers()
+    }
+  }, [autoLoad, fetchUsers])
 
   const handleEditUser = (user: User) => {
     setEditingUser(user)
