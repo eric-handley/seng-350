@@ -89,7 +89,6 @@ const HomeComponent: React.FC = () => {
 
   const {
     bookings,
-    cancelBooking,
     getUnavailableRoomIds,
     getScheduleForDay
   } = useBookings()
@@ -141,9 +140,6 @@ const HomeComponent: React.FC = () => {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyError, setHistoryError] = useState<string | null>(null)
 
-  const [lastPostError, setLastPostError] = useState<string | null>(null)
-  const [lastAction, setLastAction] = useState<string>('')
-
   useEffect(() => {
     if (activeUser.role === 'staff' && tab === 'schedule') {setTab('book')}
   }, [activeUser.role, tab])
@@ -156,7 +152,6 @@ const HomeComponent: React.FC = () => {
       try {
         setHistoryLoading(true)
         setHistoryError(null)
-        setLastAction('GET /bookings (me)')
         const data = await fetchUserBookings()
         if (!cancelled) {setServerHistory(data)}
       } catch (e: unknown) {
@@ -170,8 +165,6 @@ const HomeComponent: React.FC = () => {
   }, [tab])
 
   const handleBook = async (room: Room) => {
-    setLastPostError(null)
-
     if (!start || !end) {return;}
     const startApi = toApiTime(start);
     const endApi   = toApiTime(end);
@@ -198,7 +191,6 @@ const HomeComponent: React.FC = () => {
     setTab('history')
 
     try {
-      setLastAction('POST /bookings')
       const created = await createBooking({
         room_id: room.id,
         start_time: startIso,
@@ -206,7 +198,6 @@ const HomeComponent: React.FC = () => {
       })
       setOptimisticHistory(prev => reconcileTemp(prev, tempId, created))
       try {
-        setLastAction('GET /bookings (me) after POST')
         const fresh = await fetchUserBookings()
         setServerHistory(fresh)
       } catch {
@@ -214,8 +205,7 @@ const HomeComponent: React.FC = () => {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create booking'
-      setLastPostError(msg)
-      alert(msg)
+      setHistoryError(msg)
     }
   }
 
@@ -228,7 +218,7 @@ const HomeComponent: React.FC = () => {
       setServerHistory(fresh)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create booking'
-      setLastPostError(msg)
+      setHistoryError(msg)
     }
   }
 
@@ -284,6 +274,11 @@ const HomeComponent: React.FC = () => {
 
       {tab === 'history' && (
         <>
+          {historyLoading && (
+            <section className="panel" aria-labelledby="history-loading">
+              <div className="empty">Loading your bookings…</div>
+            </section>
+          )}
           {historyError && (
             <section className="panel" aria-labelledby="history-error">
               <div className="empty">Couldn’t refresh from server: {historyError}</div>

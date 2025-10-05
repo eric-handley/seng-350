@@ -19,12 +19,6 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
     roomId ??
     'Room'
 
-  // If room number is missing
-  const [derivedBuilding = '', derivedRoomNumber = ''] = String(roomId).split('-')
-
-  const building: string = booking.building ?? derivedBuilding
-  const roomNumber: string = booking.roomNumber ?? derivedRoomNumber
-
   // date, start, end (accept UI fields or ISO fields)
   const date: string =
     booking.date ??
