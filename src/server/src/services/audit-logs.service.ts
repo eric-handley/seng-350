@@ -12,85 +12,43 @@ export class AuditLogsService {
   ) {}
 
   async findAll(): Promise<AuditLogResponseDto[]> {
-    // Return placeholder data for now
-    const placeholderLogs: AuditLogResponseDto[] = [
-      {
-        id: '550e8400-e29b-41d4-a716-446655440001',
-        user_id: '550e8400-e29b-41d4-a716-446655440010',
-        action: 'CREATE',
-        entity_type: EntityType.BOOKING,
-        entity_id: '550e8400-e29b-41d4-a716-446655440020',
-        created_at: new Date('2024-01-15T10:30:00Z'),
-        updated_at: new Date('2024-01-15T10:30:00Z'),
-        user: {
-          id: '550e8400-e29b-41d4-a716-446655440010',
-          email: 'admin@uvic.ca',
-          first_name: 'Admin',
-          last_name: 'User',
-        },
+    const logs = await this.auditLogRepository.find({
+      relations: ['user'],
+      order: {
+        created_at: 'DESC',
       },
-      {
-        id: '550e8400-e29b-41d4-a716-446655440002',
-        user_id: '550e8400-e29b-41d4-a716-446655440011',
-        action: 'UPDATE',
-        entity_type: EntityType.ROOM,
-        entity_id: 'ECS-116',
-        created_at: new Date('2024-01-15T11:45:00Z'),
-        updated_at: new Date('2024-01-15T11:45:00Z'),
-        user: {
-          id: '550e8400-e29b-41d4-a716-446655440011',
-          email: 'registrar@uvic.ca',
-          first_name: 'Registrar',
-          last_name: 'User',
-        },
-      },
-      {
-        id: '550e8400-e29b-41d4-a716-446655440003',
-        user_id: '550e8400-e29b-41d4-a716-446655440010',
-        action: 'DELETE',
-        entity_type: EntityType.BOOKING,
-        entity_id: '550e8400-e29b-41d4-a716-446655440021',
-        created_at: new Date('2024-01-15T14:20:00Z'),
-        updated_at: new Date('2024-01-15T14:20:00Z'),
-        user: {
-          id: '550e8400-e29b-41d4-a716-446655440010',
-          email: 'admin@uvic.ca',
-          first_name: 'Admin',
-          last_name: 'User',
-        },
-      },
-      {
-        id: '550e8400-e29b-41d4-a716-446655440004',
-        user_id: '550e8400-e29b-41d4-a716-446655440012',
-        action: 'CREATE',
-        entity_type: EntityType.USER,
-        entity_id: '550e8400-e29b-41d4-a716-446655440013',
-        created_at: new Date('2024-01-16T09:15:00Z'),
-        updated_at: new Date('2024-01-16T09:15:00Z'),
-        user: {
-          id: '550e8400-e29b-41d4-a716-446655440012',
-          email: 'admin2@uvic.ca',
-          first_name: 'Second',
-          last_name: 'Admin',
-        },
-      },
-      {
-        id: '550e8400-e29b-41d4-a716-446655440005',
-        user_id: '550e8400-e29b-41d4-a716-446655440011',
-        action: 'UPDATE',
-        entity_type: EntityType.EQUIPMENT,
-        entity_id: '550e8400-e29b-41d4-a716-446655440030',
-        created_at: new Date('2024-01-16T13:00:00Z'),
-        updated_at: new Date('2024-01-16T13:00:00Z'),
-        user: {
-          id: '550e8400-e29b-41d4-a716-446655440011',
-          email: 'registrar@uvic.ca',
-          first_name: 'Registrar',
-          last_name: 'User',
-        },
-      },
-    ];
+    });
 
-    return placeholderLogs;
+    return logs.map(log => ({
+      id: log.id,
+      user_id: log.user_id,
+      action: log.action,
+      entity_type: log.entity_type,
+      entity_id: log.entity_id,
+      created_at: log.created_at,
+      updated_at: log.updated_at,
+      user: {
+        id: log.user.id,
+        email: log.user.email,
+        first_name: log.user.first_name,
+        last_name: log.user.last_name,
+      },
+    }));
+  }
+
+  async createAuditLog(
+    userId: string,
+    action: string,
+    entityType: EntityType,
+    entityId: string,
+  ): Promise<AuditLog> {
+    const auditLog = this.auditLogRepository.create({
+      user_id: userId,
+      action,
+      entity_type: entityType,
+      entity_id: entityId,
+    });
+
+    return this.auditLogRepository.save(auditLog);
   }
 }
