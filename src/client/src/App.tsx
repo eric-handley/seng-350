@@ -23,6 +23,7 @@ import AdminConsole from './components/AdminConsole'
 
 import { createBooking, fetchUserBookings } from './api/bookings'
 import type { Booking as ApiBooking } from './api/bookings'
+import { cancelBooking as cancelBookingApi } from './api/bookings'
 import { toApiTime } from './utils/time'
 
 // ---------- helpers ----------
@@ -225,6 +226,20 @@ const HomeComponent: React.FC = () => {
     }
   }
 
+  const handleCancel = async (id: string) => {
+    try {
+      await cancelBookingApi(id)               // call backend (expects 204)
+      // remove locally for instant UI feedback
+      setOptimisticHistory(prev => prev.filter(b => b.id !== id))
+      setServerHistory(prev => (prev ? prev.filter(b => b.id !== id) : prev))
+      // reconcile with server
+      const fresh = await fetchUserBookings()
+      setServerHistory(fresh)
+    } catch (err: any) {
+      alert(err?.message ?? 'Failed to cancel booking')
+    }
+  }
+
   // Merge optimistic + server (server wins on same id)
   const mergedApiHistory: ApiBooking[] = useMemo(
     () => mergeBookings(optimisticHistory, serverHistory ?? []),
@@ -317,7 +332,7 @@ const HomeComponent: React.FC = () => {
             userHistory={historyForUi}
             allBookings={activeUser.role === 'registrar' ? bookings : undefined}
             currentUser={activeUser}
-            onCancel={cancelBooking}
+            onCancel={handleCancel} 
           />
         </>
       )}

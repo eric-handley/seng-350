@@ -11,14 +11,29 @@ interface HistoryPageProps {
 }
 
 // ---- helpers: guard + fallback ----
-class CardBoundary extends React.Component<{ fallback: React.ReactNode }, { hasError: boolean }> {
-  constructor(props: any) { super(props); this.state = { hasError: false } }
+type CardBoundaryProps = {
+  fallback: React.ReactNode
+  children?: React.ReactNode
+}
+type CardBoundaryState = { hasError: boolean }
+
+class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState> {
+  constructor(props: CardBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
   static getDerivedStateFromError() { return { hasError: true } }
   componentDidCatch() { /* swallow */ }
-  render() { return this.state.hasError ? this.props.fallback : this.props.children }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children
+  }
 }
 
-const FallbackTile: React.FC<{ booking: any, onCancel: (id: string)=>void, showUser?: boolean }> = ({ booking }) => {
+const FallbackTile: React.FC<{
+  booking: any
+  onCancel: (id: string)=>void
+  showUser?: boolean
+}> = ({ booking }) => {
   return (
     <div className="card" style={{padding:'12px'}}>
       <div className="card-title" style={{fontWeight:600}}>
@@ -40,7 +55,9 @@ const GuardedBookingCard: React.FC<{
   onCancel: (id: string) => void
   showUser: boolean
 }> = ({ booking, onCancel, showUser }) => (
-  <CardBoundary fallback={<FallbackTile booking={booking} onCancel={onCancel} showUser={showUser} />}>
+  <CardBoundary
+    fallback={<FallbackTile booking={booking} onCancel={onCancel} showUser={showUser} />}
+  >
     <BookingCard booking={booking} onCancel={onCancel} showUser={showUser} />
   </CardBoundary>
 )
@@ -51,8 +68,6 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
   onCancel
 }) => {
-  // quick debug to verify what the component actually receives
-  // (expandable, so it won’t clutter the UI)
   const Debug = () => (
     <details style={{fontSize:12, marginBottom:12}}>
       <summary>Debug: userHistory length = {userHistory.length}</summary>

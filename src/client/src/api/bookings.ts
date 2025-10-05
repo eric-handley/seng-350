@@ -46,3 +46,17 @@ export async function fetchUserBookings(): Promise<Booking[]> {
   }
   return res.json() as Promise<Booking[]>;
 }
+
+
+export async function cancelBooking(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/bookings/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Accept': 'application/json' },
+  })
+  // Swagger shows 204 No Content on success
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(`DELETE /bookings/${id} failed: ${res.status} ${res.statusText} ${text}`)
+  }
+}
