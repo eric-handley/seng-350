@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react'
+// src/App.tsx
+import React, { useEffect, useMemo, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
+
 import { TabKey, Room } from './types'
+import type { Booking as UiBooking } from './types'
+
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
 import { useRoomFiltering } from './hooks/useRoomFiltering'
 import { useAuth, AuthProvider } from './contexts/AuthContext'
+
 import { TabNavigation } from './components/TabNavigation'
 import { BookingPage } from './pages/BookingPage'
 import { SchedulePage } from './pages/SchedulePage'
@@ -17,48 +22,82 @@ import AdminConsole from './components/AdminConsole'
 // import { ProtectedRoute } from './components/ProtectedRoute'
 
 import { createBooking, fetchUserBookings } from './api/bookings'
+import type { Booking as ApiBooking } from './api/bookings'
 import { toApiTime } from './utils/time'
 
-import type { Booking as UiBooking } from './types'
-import type { Booking as ApiBooking } from './api/bookings'
-import { fromApiTime } from './utils/time'
+// ---------- helpers ----------
 
-function mapApiBookingToUi(b: ApiBooking): UiBooking {
-  return {
-    id: b.id,
-    roomId: b.room_id,
-    start: isoToHms(b.start_time),   // server now returns ISO
-    end: isoToHms(b.end_time),
-    user: b.user_id,
-    cancelled: (b as any).status === 'cancelled' ? true : undefined,
+// Build UTC ISO to match your API ("...Z")
+function toIsoDateTimeUTC(dateYYYYMMDD: string, timeHms: string) {
+  const hms = timeHms.replace(/-/g, ':')
+  return `${dateYYYYMMDD}T${hms}Z`
+}
+
+// ISO or "hh-mm-ss"/"hh:mm:ss" -> "hh:mm:ss"
+function isoOrHmsToHms(s: string) {
+  if (s.includes('T')) {
+    const afterT = s.split('T')[1] || s
+    const trimmed = afterT.replace('Z', '')
+    return trimmed.slice(0, 8)
   }
+  return s.replace(/-/g, ':').slice(0, 8)
 }
 
-// Build ISO datetime from date (YYYY-MM-DD) + sanitized hms ("hh-mm-ss" or "hh:mm:ss")
-function toIsoDateTime(dateYYYYMMDD: string, timeHms: string) {
-  const hms = timeHms.replace(/-/g, ':')            // "hh-mm-ss" -> "hh:mm:ss"
-  return `${dateYYYYMMDD}T${hms}`                   // e.g., "2025-10-05T10:00:00"
+// Parse "CLE-A308" -> { building: "CLE", roomNumber: "A308", roomName: "CLE A308" }
+function splitRoomId(roomId: string) {
+  const [building = '', roomNumber = ''] = (roomId || '').split('-')
+  const roomName = [building, roomNumber].filter(Boolean).join(' ')
+  return { building, roomNumber, roomName }
 }
 
-// Turn an ISO datetime into "hh:mm:ss" for UI History cards
-function isoToHms(iso: string) {
-  // handles "YYYY-MM-DDThh:mm:ss[.sss][Z]"
-  const afterT = iso.split('T')[1] || iso
-  const trimmed = afterT.replace('Z','')
-  return trimmed.slice(0, 8)                        // "hh:mm:ss"
+// Map backend booking -> UI booking (enriched for BookingCard)
+// We attach extra display fields most cards use.
+function mapApiBookingToUi(b: ApiBooking): UiBooking {
+  const { building, roomNumber, roomName } = splitRoomId(b.room_id || '')
+  const ui: any = {
+    id: b.id,
+    roomId: b.room_id,                         // "CLE-A308"
+    start: isoOrHmsToHms(b.start_time),
+    end: isoOrHmsToHms(b.end_time),
+    user: b.user_id,
+    cancelled:
+      typeof b.status === 'string' && b.status.toLowerCase() !== 'active'
+        ? true
+        : undefined,
+    // ---- enriched display fields ----
+    name: roomName,                             // some cards read booking.name
+    building,                                   // some cards read booking.building
+    roomNumber,                                 // some read booking.roomNumber
+    room: { id: b.room_id, name: roomName },    // some read booking.room.name
+    date: (b.start_time ?? '').split('T')[0],   // "YYYY-MM-DD"
+  }
+  return ui as UiBooking
 }
 
-// Component for the home page (staff/registrar)
+// Replace optimistic temp booking with server booking, else keep temp
+function reconcileTemp(prev: ApiBooking[], tempId: string, real?: ApiBooking) {
+  return prev.map(b => (b.id === tempId && real ? real : b))
+}
+
+// Merge (dedupe by id). Server data wins where ids collide.
+function mergeBookings(optimistic: ApiBooking[], server: ApiBooking[]) {
+  const byId = new Map<string, ApiBooking>()
+  for (const b of optimistic) byId.set(b.id, b)
+  for (const b of server) byId.set(b.id, b)
+  return Array.from(byId.values())
+}
+
+// ---------- main ----------
+
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
 
-  // legacy/local hooks (you can prune later)
+  // legacy/local hooks (schedule + registrar view)
   const {
     bookings,
     cancelBooking,
     getUnavailableRoomIds,
-    getUserHistory,      // fallback if API isn’t available yet
     getScheduleForDay
   } = useBookings()
 
@@ -95,7 +134,7 @@ const HomeComponent: React.FC = () => {
   const availableRooms = getAvailableRooms(unavailableRoomIds)
   const scheduleForDay = getScheduleForDay(date)
 
-  // Mock while auth is bypassed
+  // TEMP mock while UI auth is bypassed
   const activeUser = currentUser ?? {
     id: 'temp',
     name: 'Guest',
@@ -104,17 +143,22 @@ const HomeComponent: React.FC = () => {
     isBlocked: false
   }
 
-  // NEW: API-backed user history state
-  const [userHistoryApi, setUserHistoryApi] = useState<ApiBooking[] | null>(null)
+  // History state
+  const [serverHistory, setServerHistory] = useState<ApiBooking[] | null>(null)
+  const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyError, setHistoryError] = useState<string | null>(null)
 
-  // Guard: staff can’t land on hidden schedule tab
+  // debug surface
+  const [lastPostError, setLastPostError] = useState<string | null>(null)
+  const [lastAction, setLastAction] = useState<string>('')
+
+  // keep staff off schedule tab
   useEffect(() => {
     if (activeUser.role === 'staff' && tab === 'schedule') setTab('book')
   }, [activeUser.role, tab])
 
-  // Load history from API when switching to History tab
+  // Fetch "my" bookings when opening History. Do not wipe optimistic items.
   useEffect(() => {
     if (tab !== 'history') return
     let cancelled = false
@@ -122,8 +166,9 @@ const HomeComponent: React.FC = () => {
       try {
         setHistoryLoading(true)
         setHistoryError(null)
+        setLastAction('GET /bookings (me)')
         const data = await fetchUserBookings()
-        if (!cancelled) setUserHistoryApi(data)
+        if (!cancelled) setServerHistory(data)
       } catch (e: any) {
         if (!cancelled) setHistoryError(e?.message ?? 'Failed to load history')
       } finally {
@@ -131,26 +176,90 @@ const HomeComponent: React.FC = () => {
       }
     })()
     return () => { cancelled = true }
-  }, [tab, activeUser.id])
+  }, [tab])
 
-  // Book via backend, then jump to History and refresh
+  // Book → synthetic optimistic row → POST → reconcile
   const handleBook = async (room: Room) => {
+    setLastPostError(null)
+
+    const tempId = `temp-${Date.now()}`
+    const startIso = toIsoDateTimeUTC(date, toApiTime(start)!)
+    const endIso = toIsoDateTimeUTC(date, toApiTime(end)!)
+    const nowIso = new Date().toISOString()
+
+    // optimistic row: same shape as ApiBooking so our merge works
+    const temp: ApiBooking = {
+      id: tempId,
+      user_id: activeUser.id,      // local display; backend derives user
+      room_id: room.id,            // e.g., "CLE-A308"
+      start_time: startIso,        // ISO with Z
+      end_time: endIso,            // ISO with Z
+      status: 'Active',
+      booking_series_id: tempId,
+      created_at: nowIso,
+      updated_at: nowIso,
+    }
+
+    setOptimisticHistory(prev => [temp, ...prev])
+    setTab('history')
+
     try {
-      await createBooking({
+      setLastAction('POST /bookings')
+      const created = await createBooking({
         room_id: room.id,
-        start_time: toIsoDateTime(date, toApiTime(start)!), // "YYYY-MM-DDThh:mm:ss"
-        end_time: toIsoDateTime(date, toApiTime(end)!),
+        start_time: startIso,
+        end_time: endIso,
       })
-      setTab('history')
-      // eager refresh
-      setHistoryLoading(true)
-      const fresh = await fetchUserBookings()
-      setUserHistoryApi(fresh)
-      setHistoryLoading(false)
+      setOptimisticHistory(prev => reconcileTemp(prev, tempId, created))
+      try {
+        setLastAction('GET /bookings (me) after POST')
+        const fresh = await fetchUserBookings()
+        setServerHistory(fresh)
+      } catch {
+        /* ignore */
+      }
     } catch (err: any) {
-      alert(err?.message ?? 'Failed to create booking')
+      const msg = err?.message ?? 'Failed to create booking'
+      setLastPostError(msg)
+      alert(msg)
     }
   }
+
+  // Merge optimistic + server (server wins on same id)
+  const mergedApiHistory: ApiBooking[] = useMemo(
+    () => mergeBookings(optimisticHistory, serverHistory ?? []),
+    [optimisticHistory, serverHistory]
+  )
+
+  // Enrich for UI/BookingCard
+  const historyForUi: UiBooking[] = useMemo(
+    () => mergedApiHistory.map(mapApiBookingToUi),
+    [mergedApiHistory]
+  )
+
+  // Debug strip
+  const DebugStrip = () => (
+    <div style={{fontSize:12, marginBottom:12, padding:'8px 12px', background:'#1113', borderRadius:8}}>
+      <div><strong>Debug</strong></div>
+      <div>lastAction: {lastAction || '—'}</div>
+      <div>historyLoading: {String(historyLoading)} | serverHistory: {serverHistory ? serverHistory.length : 'null'} | optimistic: {optimisticHistory.length}</div>
+      {lastPostError && <div style={{color:'#ff8080'}}>lastPostError: {lastPostError}</div>}
+      {serverHistory && serverHistory.length > 0 && (
+        <details style={{marginTop:6}}>
+          <summary>first 3 server rows</summary>
+          <pre style={{whiteSpace:'pre-wrap', margin:0}}>
+            {JSON.stringify(serverHistory.slice(0,3), null, 2)}
+          </pre>
+        </details>
+      )}
+      <details style={{marginTop:6}}>
+        <summary>first 3 UI rows (after mapping)</summary>
+        <pre style={{whiteSpace:'pre-wrap', margin:0}}>
+          {JSON.stringify(historyForUi.slice(0,3), null, 2)}
+        </pre>
+      </details>
+    </div>
+  )
 
   return (
     <div className="app-shell">
@@ -178,7 +287,7 @@ const HomeComponent: React.FC = () => {
           end={end}
           setEnd={setEnd}
           availableRooms={availableRooms}
-          onBook={handleBook}  // now calls backend
+          onBook={handleBook}
         />
       )}
 
@@ -193,16 +302,24 @@ const HomeComponent: React.FC = () => {
       )}
 
       {tab === 'history' && (
-        <HistoryPage
-          userHistory={
-            userHistoryApi
-              ? userHistoryApi.map(mapApiBookingToUi) // <-- convert here
-              : getUserHistory()                      // legacy local fallback
-          }
-          allBookings={activeUser.role === 'registrar' ? bookings : undefined}
-          currentUser={activeUser}
-          onCancel={cancelBooking}
-        />
+        <>
+          <section className="panel" aria-labelledby="history-debug">
+            <DebugStrip />
+          </section>
+
+          {historyError && (
+            <section className="panel" aria-labelledby="history-error">
+              <div className="empty">Couldn’t refresh from server: {historyError}</div>
+            </section>
+          )}
+
+          <HistoryPage
+            userHistory={historyForUi}
+            allBookings={activeUser.role === 'registrar' ? bookings : undefined}
+            currentUser={activeUser}
+            onCancel={cancelBooking}
+          />
+        </>
       )}
 
       {tab === 'users' && (
@@ -224,18 +341,14 @@ const HomeComponent: React.FC = () => {
   )
 }
 
-// App Router component that has access to hooks
 const AppRouter: React.FC = () => {
   const { login } = useAuth()
-
   return (
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={login} />} />
       <Route
         path="/home"
         element={
-          // TODO: TEMPORARY FIX - Auth disabled for /home route
-          // Remove this fix and uncomment ProtectedRoute once auth is properly configured
           // <ProtectedRoute allowedRoles={['staff', 'registrar']}>
             <HomeComponent />
           // </ProtectedRoute>
