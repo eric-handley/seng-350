@@ -15,7 +15,10 @@ await build({
   loader: { '.tsx': 'tsx' },
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
   jsx: 'automatic',
-  define: { 'process.env.NODE_ENV': JSON.stringify('production') },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.API_BASE': JSON.stringify(API_BASE), // <— add this line
+  },
   minify: true,
 })
 

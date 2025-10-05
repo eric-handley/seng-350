@@ -32,7 +32,7 @@ export const useUsers = () => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleBlockUser = (_userId: string) => {
+  const handleBlockUser = (_userId: User) => {
     // ???
   }
 
