@@ -7,6 +7,7 @@ export default {
       testEnvironment: 'jsdom',
       extensionsToTreatAsEsm: ['.ts', '.tsx'],
       moduleNameMapper: {
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         // Keep ESM paths without .js extension working
         '^(\\.{1,2}/.*)\\.js$': '$1',
         // Ensure a single React instance is used across the workspace

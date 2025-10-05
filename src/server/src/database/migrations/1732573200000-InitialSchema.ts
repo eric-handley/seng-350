@@ -4,6 +4,8 @@ export class InitialSchema1732573200000 implements MigrationInterface {
     name = 'InitialSchema1732573200000';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        // Ensure pgcrypto is available for gen_random_uuid()
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto"`);
         // Create enum types
         await queryRunner.query(`CREATE TYPE "public"."user_role_enum" AS ENUM('Staff', 'Registrar', 'Admin')`);
         await queryRunner.query(`CREATE TYPE "public"."room_type_enum" AS ENUM('Classroom', 'Lecture theatre', 'Multi-access classroom', 'Flury Hall', 'Unknown', 'David Lam Auditorium')`);
@@ -182,5 +184,6 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         await queryRunner.query(`DROP TYPE "public"."booking_status_enum"`);
         await queryRunner.query(`DROP TYPE "public"."room_type_enum"`);
         await queryRunner.query(`DROP TYPE "public"."user_role_enum"`);
+        await queryRunner.query(`DROP EXTENSION IF EXISTS "pgcrypto"`);
     }
 }
