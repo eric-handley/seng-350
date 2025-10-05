@@ -159,8 +159,9 @@ const HomeComponent: React.FC = () => {
         setLastAction('GET /bookings (me)')
         const data = await fetchUserBookings()
         if (!cancelled) {setServerHistory(data)}
-      } catch (e: any) {
-        if (!cancelled) {setHistoryError(e?.message ?? 'Failed to load history')}
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'Failed to load history'
+        if (!cancelled) { setHistoryError(msg) }
       } finally {
         if (!cancelled) {setHistoryLoading(false)}
       }
@@ -206,8 +207,8 @@ const HomeComponent: React.FC = () => {
       } catch {
         /* ignore */
       }
-    } catch (err: any) {
-      const msg = err?.message ?? 'Failed to create booking'
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to create booking'
       setLastPostError(msg)
       alert(msg)
     }
@@ -220,8 +221,9 @@ const HomeComponent: React.FC = () => {
       setServerHistory(prev => (prev ? prev.filter(b => b.id !== id) : prev))
       const fresh = await fetchUserBookings()
       setServerHistory(fresh)
-    } catch (err: any) {
-      alert(err?.message ?? 'Failed to cancel booking')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to create booking'
+      setLastPostError(msg)
     }
   }
 

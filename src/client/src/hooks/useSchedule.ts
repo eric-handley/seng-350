@@ -34,8 +34,9 @@ export function useSchedule(q: ScheduleQuery) {
         );
 
         setData(flat);
-      } catch (e: any) {
-        if (!cancelled) {setError(e?.message ?? 'Unknown error');}
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'Unknown error';
+        if (!cancelled) { setError(msg); }
       } finally {
         if (!cancelled) {setLoading(false);}
       }
@@ -43,7 +44,7 @@ export function useSchedule(q: ScheduleQuery) {
 
     const t = setTimeout(run, 250);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [depsKey]); // Run when any query parameter changes
+  }, [depsKey, q]); // Run when any query parameter changes
 
   return { rooms: data, loading, error };
 }

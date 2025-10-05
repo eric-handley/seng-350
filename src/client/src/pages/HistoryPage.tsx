@@ -1,6 +1,7 @@
 import React from 'react'
 import { Booking, User } from '../types'
 import { BookingCard } from '../components/BookingCard'
+import type { UiBooking } from '../types'
 
 interface HistoryPageProps {
   userHistory: Booking[]
@@ -28,14 +29,14 @@ class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState>
 }
 
 const FallbackTile: React.FC<{
-  booking: any
+  booking: UiBooking
   onCancel: (id: string)=>void
   showUser?: boolean
 }> = ({ booking }) => {
   return (
     <div className="card" style={{padding:'12px'}}>
       <div className="card-title" style={{fontWeight:600}}>
-        {booking.name ?? booking.roomName ?? booking.room?.name ?? booking.roomId}
+        {booking.name ?? booking.room?.name ?? booking.roomId}
       </div>
       <div className="card-sub" style={{opacity:.8}}>
         {(booking.building ? booking.building + ' ' : '') + (booking.roomNumber ?? '')}
@@ -49,7 +50,7 @@ const FallbackTile: React.FC<{
 }
 
 const GuardedBookingCard: React.FC<{
-  booking: any
+  booking: UiBooking
   onCancel: (id: string) => void
   showUser: boolean
 }> = ({ booking, onCancel, showUser }) => (
