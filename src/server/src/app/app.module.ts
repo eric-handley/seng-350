@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RedisCacheModule } from '../shared/cache/cache.module';
 import { AuthModule } from '../auth/auth.module';
+import { databaseConfig } from '../config/database.config';
 
 // Import entities
 import { User } from '../database/entities/user.entity';
@@ -32,25 +33,7 @@ import { EquipmentService } from '../services/equipment.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.PGHOST ?? 'db',
-      port: Number(process.env.PGPORT ?? 5432),
-      username: process.env.PGUSER ?? 'postgres',
-      password: process.env.PGPASSWORD ?? 'postgres',
-      database: process.env.PGDATABASE ?? 'postgres',
-      entities: [
-        User,
-        Building,
-        Room,
-        Equipment,
-        RoomEquipment,
-        Booking,
-        BookingSeries,
-        AuditLog,
-      ],
-      synchronize: process.env.NODE_ENV !== 'production',
-    }),
+    TypeOrmModule.forRoot(databaseConfig),
     TypeOrmModule.forFeature([
       User,
       Building,
