@@ -54,7 +54,20 @@ Branch `feature-7/registrar`
     );
     setAddingUser(null);
   };
-  - 
+Branch `feature/init-ui`
+- ChatGPT Conversation (involved some longer form prompt for debugging, etc.): 
+  https://chatgpt.com/share/68df2d60-12b4-8009-be76-51cd8625a89a
+
+Branch `feature/staff`
+- ChatGPT Conversation regarding database access (making correct calls for displaying available
+  times, adding to bookings, and viewing bookings):
+  https://chatgpt.com/share/68e20a39-eea4-8009-b473-9539a0b24bd0
+
+- ChatGPT Conversation about UI aesthetics:
+  https://chatgpt.com/share/68e2c58e-e0f4-8009-8baa-381fd8af4da5
+
+- ChatGPT Conversation to resolve linting issues:
+  https://chatgpt.com/share/68e2cfb7-4dcc-8009-b1ad-8f4efafed22c
 
 **Design-I**
 

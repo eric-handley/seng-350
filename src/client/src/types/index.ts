@@ -12,12 +12,20 @@ export type Room = {
 };
 
 export type Booking = {
-  id: string;
-  roomId: string;
-  start: string; // ISO
-  end: string;   // ISO
-  user: string;
-  cancelled?: boolean;
+  id: string
+  roomId: string
+  start: string // ISO
+  end: string   // ISO
+  user: string
+  cancelled?: boolean
+}
+
+export type UiBooking = Booking & {
+  name?: string;
+  building?: string;
+  roomNumber?: string;
+  room?: { id: string; name?: string };
+  date?: string; // "YYYY-MM-DD"
 };
 
 export type User = {

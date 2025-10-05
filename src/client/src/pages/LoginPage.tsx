@@ -7,6 +7,12 @@ interface LoginPageProps {
   onLogin: (user: User) => void;
 }
 
+function getErrorMessage(err: unknown, fallback = 'Something went wrong') {
+  if (err instanceof Error) {return err.message;}
+  if (typeof err === 'string') {return err;}
+  try { return JSON.stringify(err); } catch { return fallback; }
+}
+
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,8 +48,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       } else {
         navigate('/home');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Login failed'));
     }
     //console.warn("Logging in with:", { email, password });
   };

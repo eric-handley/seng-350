@@ -12,12 +12,9 @@ export class ScheduleQueryDto {
   )
   room_id?: string;
 
-  @ApiPropertyOptional({ description: "Filter by building (e.g., 'ECS')" })
+  @ApiPropertyOptional({ description: "Filter by building short name or full name (e.g., 'ECS', 'Engineering', 'Clearihue')" })
   @IsOptional()
   @IsString()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toUpperCase() : value,
-  )
   building_short_name?: string;
 
   @ApiPropertyOptional({ description: "Filter by date (YYYY-MM-DD). Defaults to today." })
