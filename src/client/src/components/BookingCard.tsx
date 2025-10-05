@@ -62,10 +62,6 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
         {cancelled && <span className="badge danger">Cancelled</span>}
       </div>
 
-      <div className="card-sub" style={{ opacity: 0.8 }}>
-        {[building, roomNumber].filter(Boolean).join(' ')}
-      </div>
-
       <div className="card-meta" style={{ marginTop: 6 }}>
         {date && <span>{date} · </span>}
         <span>{start} → {end}</span>
