@@ -9,13 +9,13 @@ type Props = {
 export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = false }) => {
   // Tolerant field mapping (no hard assumptions such that we avoid having nothing render)
   const roomId: string =
-    booking.roomId || booking.room_id || booking.room?.id || ''
+    booking.roomId ?? booking.room_id ?? booking.room?.id ?? ''
 
   const roomName: string =
-    booking.name ||
-    booking.roomName ||
-    booking.room?.name ||
-    roomId ||
+    booking.name ??
+    booking.roomName ??
+    booking.room?.name ??
+    roomId ??
     'Room'
 
   // If room number is missing
@@ -26,19 +26,19 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
 
   // date, start, end (accept UI fields or ISO fields)
   const date: string =
-    booking.date ||
+    booking.date ??
     (typeof booking.start_time === 'string' && booking.start_time.includes('T')
       ? booking.start_time.split('T')[0]
       : '')
 
   const start: string =
-    booking.start ||
+    booking.start ??
     (typeof booking.start_time === 'string' && booking.start_time.includes('T')
       ? booking.start_time.split('T')[1].slice(0, 8)
       : '')
 
   const end: string =
-    booking.end ||
+    booking.end ??
     (typeof booking.end_time === 'string' && booking.end_time.includes('T')
       ? booking.end_time.split('T')[1].slice(0, 8)
       : '')
@@ -48,8 +48,8 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
     (typeof booking.status === 'string' && booking.status.toLowerCase() !== 'active')
 
   const userLabel: string | undefined =
-    (typeof booking.user === 'string' && booking.user) ||
-    (typeof booking.user_id === 'string' && booking.user_id) ||
+    (typeof booking.user === 'string' && booking.user) ??
+    (typeof booking.user_id === 'string' && booking.user_id) ??
     undefined
 
   return (

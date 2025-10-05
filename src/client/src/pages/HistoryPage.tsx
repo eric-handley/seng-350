@@ -35,10 +35,10 @@ const FallbackTile: React.FC<{
   return (
     <div className="card" style={{padding:'12px'}}>
       <div className="card-title" style={{fontWeight:600}}>
-        {booking.name || booking.roomName || booking.room?.name || booking.roomId}
+        {booking.name ?? booking.roomName ?? booking.room?.name ?? booking.roomId}
       </div>
       <div className="card-sub" style={{opacity:.8}}>
-        {(booking.building ? booking.building + ' ' : '') + (booking.roomNumber || '')}
+        {(booking.building ? booking.building + ' ' : '') + (booking.roomNumber ?? '')}
       </div>
       <div className="card-meta" style={{marginTop:6}}>
         {booking.date ? booking.date + ' · ' : ''}{booking.start} → {booking.end}

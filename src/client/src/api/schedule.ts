@@ -1,8 +1,8 @@
 import type { ScheduleResponse } from '../types/schedule';
 
 const API_BASE =
-  (typeof process !== 'undefined' && (process as any).env?.API_BASE) ||
-  (typeof window !== 'undefined' && (window as any).__API_BASE__) ||
+  (typeof process !== 'undefined' && (process as any).env?.API_BASE) ??
+  (typeof window !== 'undefined' && (window as any).__API_BASE__) ??
   'http://localhost:3000';
 
 export default API_BASE;

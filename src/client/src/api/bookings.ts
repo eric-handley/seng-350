@@ -1,4 +1,4 @@
-const API_BASE = process.env.API_BASE || 'http://localhost:3000';
+const API_BASE = process.env.API_BASE ?? 'http://localhost:3000';
 
 export type CreateBookingReq = {
   room_id: string;

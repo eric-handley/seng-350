@@ -66,6 +66,9 @@ Branch `feature/staff`
 - ChatGPT Conversation about UI aesthetics:
   https://chatgpt.com/share/68e2c58e-e0f4-8009-8baa-381fd8af4da5
 
+- ChatGPT Conversation to resolve linting issues:
+  https://chatgpt.com/share/68e2cfb7-4dcc-8009-b1ad-8f4efafed22c
+
 **Design-I**
 
 1. "how can i link a gitlab milestone in a mrkdown file in the same project?" 
