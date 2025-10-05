@@ -149,7 +149,10 @@ const HomeComponent: React.FC = () => {
         <HistoryPage
           userHistory={userHistory}
           allBookings={
-            currentUser.role === UserRole.REGISTRAR ? bookings : undefined
+            currentUser.role === UserRole.REGISTRAR ||
+            currentUser.role === UserRole.ADMIN
+              ? bookings
+              : undefined
           }
           currentUser={currentUser}
           onCancel={cancelBooking}
