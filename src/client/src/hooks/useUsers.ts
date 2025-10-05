@@ -1,21 +1,45 @@
-import { useState, useEffect } from 'react'
-import { User } from '../types'
-import { INITIAL_USERS } from '../constants'
+import { useCallback, useEffect, useState } from 'react'
+import { User, UserRole } from '../types'
 
-export const useUsers = (currentUser: User) => {
-  const [users, setUsers] = useState<User[]>(INITIAL_USERS)
+interface UseUsersOptions {
+  autoLoad?: boolean
+}
+
+export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
+  const [users, setUsers] = useState<User[]>([])
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [addingUser, setAddingUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 3000)
-      return () => clearTimeout(timer)
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(true)
+    setLoadError(null)
+    try {
+      const response = await fetch('http://localhost:3000/users', { credentials: 'include' })
+      if (!response.ok) {
+        throw new Error(`Failed to load users (status ${response.status})`)
+      }
+      const data: User[] = await response.json()
+      setUsers(data)
+    } catch (error) {
+      console.error('Failed to fetch users', error)
+      setLoadError(error instanceof Error ? error.message : 'Failed to load users')
+    } finally {
+      setIsLoading(false)
     }
-  }, [error])
+  }, [])
 
-  const handleEditUser = (user: User) => setEditingUser(user)
+  useEffect(() => {
+    if (autoLoad) {
+      void fetchUsers()
+    }
+  }, [autoLoad, fetchUsers])
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user)
+  }
 
   const handleSaveUser = async (updatedUser: User) => {
     try {
@@ -27,7 +51,6 @@ export const useUsers = (currentUser: User) => {
           first_name: updatedUser.first_name,
           last_name: updatedUser.last_name,
           role: updatedUser.role,
-          isBlocked: updatedUser.isBlocked ?? false,
         }),
       })
       if (response.ok) {
@@ -43,56 +66,50 @@ export const useUsers = (currentUser: User) => {
     }
   }
 
-  const handleAddUser = () => {
-    const tempUser: User = {
-      id: crypto.randomUUID(),
+  const handleAddUser = (currentUser: User) => {
+    // Only allow admin to create registrar/admin, registrar can only create staff
+    setAddingUser({
+      id: '',
+      email: '',
       first_name: '',
       last_name: '',
-      email: '',
-      role: 'staff',
-      isBlocked: false,
-    }
-    setAddingUser(tempUser);
-  }
-
-const handleSaveNewUser = async (newUser: User) => {
-  try {
-    const response = await fetch('/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newUser),
+      role: UserRole.STAFF,
     })
-    if (response.ok) {
-      const createdUser = await response.json()
-      setUsers(prev => [...prev, createdUser])
-      setAddingUser(null)
-    } else {
-      setError('Failed to add user')
-    }
-  } catch (error) {
-    setError('Error adding user')
   }
-}
 
-  const handleBlockUser = async (userId: string) => {
+  const handleSaveNewUser = async (newUser: User) => {
     try {
-      const response = await fetch(`/users/${userId}`, {
-        method: 'PATCH',
+      const response = await fetch('/users', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isBlocked: true }),
+        body: JSON.stringify(newUser),
       })
       if (response.ok) {
-        setUsers(prev =>
-          prev.map(u =>
-            u.id === userId ? { ...u, isBlocked: true } : u
-          )
-        )
+        const createdUser = await response.json()
+        setUsers(prev => [...prev, createdUser])
+        setAddingUser(null)
         setError(null)
       } else {
-        setError('Failed to block user')
+        setError('Failed to add user')
       }
-    } catch (err) {
-      setError(`Error blocking user: ${String(err)}`)
+    } catch (error) {
+      setError('Error adding user')
+    }
+  }
+
+  const handleBlockUser = async (user: User) => {
+    try {
+      const response = await fetch(`/users/${user.id}`, {
+        method: 'DELETE',
+      })
+      if (response.ok) {
+        setUsers(prev => prev.filter(u => u.id !== user.id))
+        setError(null)
+      } else {
+        setLoadError('Failed to remove user')
+      }
+    } catch (error) {
+      setLoadError('Error removing user')
     }
   }
 
@@ -100,7 +117,10 @@ const handleSaveNewUser = async (newUser: User) => {
     users,
     editingUser,
     addingUser,
+    isLoading,
+    loadError,
     error,
+    refreshUsers: fetchUsers,
     handleEditUser,
     handleSaveUser,
     handleAddUser,

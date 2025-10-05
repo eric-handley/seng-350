@@ -51,6 +51,11 @@ services:
       redis:
         condition: service_healthy
     command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api-docs | grep -q 'Swagger'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   db:
     image: postgres:16

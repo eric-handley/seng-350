@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
-import { TabKey, Room } from './types'
+import { TabKey, Room, UserRole } from './types'
 import { useBookings } from './hooks/useBookings'
 import { useUsers } from './hooks/useUsers'
 import { useRoomFiltering } from './hooks/useRoomFiltering'
@@ -14,11 +14,12 @@ import { HistoryPage } from './pages/HistoryPage'
 import { UsersPage } from './pages/UsersPage'
 import LoginPage from './pages/LoginPage'
 import AdminConsole from './components/AdminConsole'
-// import { ProtectedRoute } from './components/ProtectedRoute'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {
-  const { currentUser } = useAuth()
+  const { currentUser, isLoading, logout } = useAuth()
+  const navigate = useNavigate()
   const [tab, setTab] = useState<TabKey>('book')
 
   const {
@@ -30,6 +31,7 @@ const HomeComponent: React.FC = () => {
     getScheduleForDay
   } = useBookings()
 
+  const canManageUsers = currentUser?.role === UserRole.ADMIN || currentUser?.role === UserRole.REGISTRAR
   const {
     users,
     editingUser,
@@ -41,7 +43,8 @@ const HomeComponent: React.FC = () => {
     handleBlockUser,
     setEditingUser,
     setAddingUser,
-  } = useUsers(currentUser!)
+    error,
+  } = useUsers({ autoLoad: !!canManageUsers })
 
   const {
     building,
@@ -71,34 +74,37 @@ const HomeComponent: React.FC = () => {
     }
   }
 
-  // TODO: TEMPORARY FIX - Disabled currentUser check while auth is bypassed
-  // Re-enable this check when ProtectedRoute is restored
-  // if (!currentUser) {
-  //   return null
-  // }
+  if (isLoading) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
+  }
 
-  // TODO: TEMPORARY FIX - Mock user for testing without auth
-  const activeUser = currentUser ?? {
-    id: 'temp',
-    name: 'Guest',
-    email: 'guest@example.com',
-    role: 'registrar' as const,
-    isBlocked: false,
-    first_name: 'Guest',
-    last_name: 'User'
+  if (!currentUser) {
+    return null
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
   }
 
   return (
     <div className="app-shell">
       <div className="header">
-        <span className="badge">{activeUser.role.toUpperCase()}</span>
-        <h1 className="title">Rooms & Scheduling</h1>
+        <div className="header-info">
+          <span className="badge">{currentUser.role.toUpperCase()}</span>
+          <h1 className="title">Rooms & Scheduling</h1>
+        </div>
+        <div className="header-actions">
+          <button className="btn ghost" onClick={handleLogout}>
+            Log out
+          </button>
+        </div>
       </div>
 
       <TabNavigation
         currentTab={tab}
         setTab={setTab}
-        currentUser={activeUser}
+        currentUser={currentUser}
       />
 
       {tab === 'book' && (
@@ -131,8 +137,8 @@ const HomeComponent: React.FC = () => {
       {tab === 'history' && (
         <HistoryPage
           userHistory={userHistory}
-          allBookings={activeUser.role === 'registrar' ? bookings : undefined}
-          currentUser={activeUser}
+          allBookings={currentUser.role === UserRole.REGISTRAR ? bookings : undefined}
+          currentUser={currentUser}
           onCancel={cancelBooking}
         />
       )}
@@ -140,15 +146,15 @@ const HomeComponent: React.FC = () => {
       {tab === 'users' && (
         <UsersPage
           users={users}
-          currentUser={activeUser}
+          currentUser={currentUser}
           editingUser={editingUser}
           addingUser={addingUser}
-          error={null}
+          error={error}
           onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
-          onAddUser={handleAddUser}
+          onAddUser={() => handleAddUser(currentUser)}
           onSaveNewUser={handleSaveNewUser}
-          onBlockUser={(user) => handleBlockUser(user.id)}
+          onBlockUser={handleBlockUser}
           onCancelEdit={() => setEditingUser(null)}
           onCancelAdd={() => setAddingUser(null)}
         />
@@ -167,25 +173,43 @@ const AppRouter: React.FC = () => {
       <Route
         path="/home"
         element={
-          // TODO: TEMPORARY FIX - Auth disabled for /home route
-          // Remove this fix and uncomment ProtectedRoute once auth is properly configured
-          // <ProtectedRoute allowedRoles={['staff', 'registrar']}>
+          <ProtectedRoute allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR]}>
             <HomeComponent />
-          // </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/admin-panel"
         element={
-          // <ProtectedRoute allowedRoles={['admin']}>
-            <AdminConsole />
-          // </ProtectedRoute>
+          <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+            <AdminPage />
+          </ProtectedRoute>
         }
       />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
+}
+
+const AdminPage: React.FC = () => {
+  const { currentUser, isLoading, logout } = useAuth()
+  const navigate = useNavigate()
+
+  if (isLoading) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>
+  }
+
+  if (!currentUser) {
+    return null
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
+  }
+
+  return <AdminConsole onLogout={handleLogout} />
 }
 
 export default function App() {

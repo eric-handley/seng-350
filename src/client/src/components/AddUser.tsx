@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { User } from "../types"
+import { User, UserRole } from "../types"
 
 type AddUserProps = {
   user: User;
@@ -9,36 +9,38 @@ type AddUserProps = {
 }
 
 export default function AddUser({ user, currentUser, onSave, onCancel }: AddUserProps) {
-  const [formData, setFormData] = useState<User>(user)
-  const [errors, setErrors] = useState<{first_name?: string; last_name?: string; email?: string}>({});
+    const [formData, setFormData] = useState<User>(user)
+    const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
 
-  useEffect(() => {
-    setFormData(user);
-  }, [user]);
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    if (errors[name as keyof typeof errors]) {
-      setErrors({ ...errors, [name]: undefined })
-    }
-  };
+        if (name === 'role') {
+          setFormData(prev => ({ ...prev, role: value as UserRole }));
+        } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
+          setFormData(prev => ({ ...prev, [name]: value }));
+          setErrors(prev => ({ ...prev, [name]: undefined }));
+        }
+    };
 
-  const validateForm = (): boolean => {
-    const newErrors: {first_name?: string; last_name?: string; email?: string} = {};
-    if (!formData.first_name?.trim()) {
-      newErrors.first_name = "First name is required";
-    }
-    if (!formData.last_name?.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-    if (!formData.email?.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email must be valid";
-    }
+    const validateForm = (): boolean => {
+        const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
+
+        if (!formData.first_name.trim()) {
+          newErrors.first_name = "First name is required";
+        }
+
+        if (!formData.last_name.trim()) {
+          newErrors.last_name = "Last name is required";
+        }
+
+        if (!formData.email.trim()) {
+          newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = "Email must be valid";
+        }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -93,6 +95,43 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           </span>
         )}
       </label>
+            <label htmlFor="add-user-first_name">
+                First Name:
+                <input
+                    id="add-user-first_name"
+                    className="input"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    required
+                    aria-invalid={!!errors.first_name}
+                    aria-describedby={errors.first_name ? "add-user-first-error" : undefined}
+                />
+                {errors.first_name && (
+                  <span id="add-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+                    {errors.first_name}
+                  </span>
+                )}
+            </label>
+
+            <label htmlFor="add-user-last_name">
+                Last Name:
+                <input
+                    id="add-user-last_name"
+                    className="input"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    required
+                    aria-invalid={!!errors.last_name}
+                    aria-describedby={errors.last_name ? "add-user-last-error" : undefined}
+                />
+                {errors.last_name && (
+                  <span id="add-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+                    {errors.last_name}
+                  </span>
+                )}
+            </label>
 
       <label htmlFor="add-user-email">
         Email:
@@ -124,11 +163,11 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           onChange={handleChange}
           required
         >
-          <option value="staff">Staff</option>
-          {currentUser.role === "admin" && (
+          <option value="Staff">Staff</option>
+          {currentUser.role === "Admin" && (
             <>
-              <option value="registrar">Registrar</option>
-              <option value="admin">Admin</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Admin">Admin</option>
             </>
           )}
         </select>

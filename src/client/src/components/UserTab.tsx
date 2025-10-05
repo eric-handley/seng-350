@@ -1,12 +1,12 @@
 import React, { useState } from "react"
-import { User } from "../types"
+import { User, getUserDisplayName } from "../types"
 
 type UsersTabProps = {
   users: User[]
   currentUser: User
   error: string | null
   handleEditUser: (user: User) => void
-  handleAddUser: (user: User) => void
+  handleAddUser: (currentUser: User) => void 
   handleBlockUser: (user: User) => void
 };
 
@@ -18,12 +18,12 @@ export default function UsersTab({
   handleAddUser,
   handleBlockUser,
 }: UsersTabProps) {
-  // Only show tab for registrar or admin
-  if (currentUser.role !== "registrar" && currentUser.role !== "admin") {
+
+  if (currentUser.role !== 'Registrar' && currentUser.role !== 'Admin') {
     return null
   }
 
-  const visibleUsers = users.filter(user => !user.isBlocked)
+  const visibleUsers = users
   const [userToBlock, setUserToBlock] = useState<User | null>(null)
 
   return (
@@ -53,12 +53,12 @@ export default function UsersTab({
               {visibleUsers.map((u) => {
                 // Only admin can edit/block registrar or admin users
                 const canEditOrBlock =
-                  (currentUser.role === "admin") ||
-                  (currentUser.role === "registrar" && u.role === "staff");
+                  currentUser.role === "Admin" ||
+                  (currentUser.role === "Registrar" && u.role === "Staff");
 
                 const canAddUser =
-                  (currentUser.role === "admin") ||
-                  (currentUser.role === "registrar" && u.role === "staff")
+                  (currentUser.role === "Admin") ||
+                  (currentUser.role === "Registrar" && u.role === "Staff")
 
                 return (
                   <tr key={u.id}>
@@ -91,10 +91,10 @@ export default function UsersTab({
       </section>
       <section className="panel" aria-labelledby="add-users-label">
         <h3 id="add-users-label" style={{ marginTop: 0 }}>Add New User</h3>
-        <button
-          className="btn primary"
-          onClick={() => handleAddUser({ id: '', first_name: '', last_name: '', role: 'staff', email: '' })}
-        >
+          <button
+            className="btn primary"
+            onClick={() => handleAddUser(currentUser)}
+          >
           Add User
         </button>
       </section>

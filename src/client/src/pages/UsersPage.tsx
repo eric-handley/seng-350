@@ -1,5 +1,5 @@
 import React from 'react'
-import { User } from '../types'
+import { User, UserRole } from '../types'
 import UsersTab from '../components/UserTab'
 import EditUser from '../components/EditUser'
 import AddUser from '../components/AddUser'
@@ -13,7 +13,7 @@ interface UsersPageProps {
   error: string | null
   onEditUser: (user: User) => void
   onSaveUser: (user: User) => void
-  onAddUser: (user: User) => void
+  onAddUser: () => void
   onSaveNewUser: (user: User) => void
   onBlockUser: (user: User) => void
   onCancelEdit: () => void
@@ -34,7 +34,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   onCancelEdit,
   onCancelAdd
 }) => {
-  if (currentUser.role !== 'admin' && currentUser.role !== 'registrar') {
+  if (currentUser.role !== UserRole.ADMIN && currentUser.role !== UserRole.REGISTRAR) {
     return null
   }
 
@@ -58,7 +58,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {addingUser && (
         <AddUser
           user={addingUser}
-          currentUser={currentUser} // <-- this must be present!
+          currentUser={currentUser}
           onSave={onSaveNewUser}
           onCancel={onCancelAdd}
         />

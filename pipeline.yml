@@ -48,7 +48,6 @@ jest-tests:
     - docker ps -aq | xargs docker stop || true
     - echo "Starting Docker services..."
     - npm restart
-    - echo "Waiting for db setup..."
     - echo "Running test suites..."
     - npm test
     # - npm run test:coverage - Will reenable later

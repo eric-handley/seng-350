@@ -375,7 +375,11 @@ function SystemHealth() {
   );
 }
 
-export default function AdminConsole() {
+type AdminConsoleProps = {
+  onLogout?: () => void;
+};
+
+export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
   const [dark, setDark] = useDarkModePref();
   const [tab, setTab] = useState<"audit" | "health">("audit");
 
@@ -411,6 +415,11 @@ export default function AdminConsole() {
           >
             {dark ? "☾" : "☼"}
           </button>
+          {onLogout && (
+            <button className="btn" style={{ marginLeft: '0.75rem' }} onClick={onLogout}>
+              Log out
+            </button>
+          )}
         </div>
       </header>
 

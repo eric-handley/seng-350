@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User } from "../types"
+import { User, UserRole } from "../types"
 
 type EditUserProps = {
   user: User;
@@ -9,21 +9,27 @@ type EditUserProps = {
 
 export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
   const [formData, setFormData] = useState<User>(user);
-  const [errors, setErrors] = useState<{first_name?: string; last_name?: string; email?: string}>({});
+  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-    if (errors[name as keyof typeof errors]) {
-      setErrors({ ...errors, [name]: undefined })
+    if (name === 'role') {
+      setFormData(prev => ({ ...prev, role: value as UserRole }))
+    } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
+      setFormData(prev => ({ ...prev, [name]: value }))
+      setErrors(prev => ({ ...prev, [name]: undefined }))
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: {first_name?: string; last_name?: string; email?: string} = {};
+    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
 
     if (!formData.first_name.trim()) {
       newErrors.first_name = "First name is required";
+    }
+
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
     }
     if (!formData.last_name.trim()) {
       newErrors.last_name = "Last name is required";
@@ -49,39 +55,39 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
     <form className="panel" onSubmit={handleSubmit}>
       <h2>Edit User</h2>
 
-      <label htmlFor="edit-user-first-name">
+      <label htmlFor="edit-user-first_name">
         First Name:
         <input
-          id="edit-user-first-name"
+          id="edit-user-first_name"
           className="input"
           name="first_name"
           value={formData.first_name}
           onChange={handleChange}
           required
           aria-invalid={!!errors.first_name}
-          aria-describedby={errors.first_name ? "edit-user-first-name-error" : undefined}
+          aria-describedby={errors.first_name ? "edit-user-first-error" : undefined}
         />
         {errors.first_name && (
-          <span id="edit-user-first-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span id="edit-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
             {errors.first_name}
           </span>
         )}
       </label>
 
-      <label htmlFor="edit-user-last-name">
+      <label htmlFor="edit-user-last_name">
         Last Name:
         <input
-          id="edit-user-last-name"
+          id="edit-user-last_name"
           className="input"
           name="last_name"
           value={formData.last_name}
           onChange={handleChange}
           required
           aria-invalid={!!errors.last_name}
-          aria-describedby={errors.last_name ? "edit-user-last-name-error" : undefined}
+          aria-describedby={errors.last_name ? "edit-user-last-error" : undefined}
         />
         {errors.last_name && (
-          <span id="edit-user-last-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span id="edit-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
             {errors.last_name}
           </span>
         )}
@@ -117,9 +123,9 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           onChange={handleChange}
           required
         >
-          <option value="staff">Staff</option>
-          <option value="registrar">Registrar</option>
-          <option value="admin">Admin</option>
+          <option value={UserRole.STAFF}>{UserRole.STAFF}</option>
+          <option value={UserRole.REGISTRAR}>{UserRole.REGISTRAR}</option>
+          <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
         </select>
       </label>
 

@@ -16,6 +16,7 @@ jest.mock('@auth/express', () => ({
 
 jest.setTimeout(30000);
 
+import { randomUUID } from 'crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -102,8 +103,10 @@ describe('Bookings Integration Tests', () => {
     bookingRepository = moduleFixture.get<Repository<Booking>>(getRepositoryToken(Booking));
 
     // Create test users
+    const emailSuffix = randomUUID();
+
     staffUser = await userRepository.save({
-      email: 'staff@uvic.ca',
+      email: `staff-${emailSuffix}@uvic.ca`,
       password_hash: 'hash',
       first_name: 'Staff',
       last_name: 'User',
@@ -111,7 +114,7 @@ describe('Bookings Integration Tests', () => {
     });
 
     adminUser = await userRepository.save({
-      email: 'admin@uvic.ca',
+      email: `admin-${emailSuffix}@uvic.ca`,
       password_hash: 'hash',
       first_name: 'Admin',
       last_name: 'User',
