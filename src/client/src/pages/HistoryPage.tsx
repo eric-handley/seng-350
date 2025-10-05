@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Booking, User, UserRole } from '../types'
 import { BookingCard } from '../components/BookingCard'
 import type { UiBooking } from '../types'
+import { useBookingHistory } from '../hooks/useBookingHistory'
 
 interface HistoryPageProps {
-  userHistory: Booking[]
+  currentUser: User
   allBookings?: Booking[]
-  currentUser?: User
-  onCancel: (id: string) => void
 }
 
 type CardBoundaryProps = {
@@ -62,13 +61,36 @@ const GuardedBookingCard: React.FC<{
 )
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
-  userHistory,
-  allBookings,
   currentUser,
-  onCancel
+  allBookings,
 }) => {
+  const { history: userHistory, loading, error, fetchHistory, cancelBooking } = useBookingHistory(currentUser.id)
+
+  useEffect(() => {
+    void fetchHistory()
+  }, [])
+
+  const handleCancel = async (id: string) => {
+    try {
+      await cancelBooking(id)
+    } catch {
+      // Error already set by hook
+    }
+  }
+
   return (
     <div>
+      {loading && (
+        <section className="panel" aria-labelledby="history-loading">
+          <div className="empty">Loading your bookings…</div>
+        </section>
+      )}
+      {error && (
+        <section className="panel" aria-labelledby="history-error">
+          <div className="empty">Error: {error}</div>
+        </section>
+      )}
+
       <section className="panel" aria-labelledby="history-label">
         <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
 
@@ -80,7 +102,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
               <GuardedBookingCard
                 key={booking.id}
                 booking={booking}
-                onCancel={onCancel}
+                onCancel={handleCancel}
                 showUser={false}
               />
             ))}
@@ -98,7 +120,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 <GuardedBookingCard
                   key={booking.id}
                   booking={booking}
-                  onCancel={onCancel}
+                  onCancel={handleCancel}
                   showUser={true}
                 />
               ))}

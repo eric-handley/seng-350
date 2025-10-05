@@ -4,8 +4,10 @@ import { RoomCard } from '../components/RoomCard';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
 import { toApiTime } from '../utils/time';
+import { useBookingHistory } from '../hooks/useBookingHistory';
 
 interface BookingPageProps {
+  currentUserId: string
   building: string
   setBuilding: (building: string) => void
   roomQuery: string
@@ -16,18 +18,17 @@ interface BookingPageProps {
   setStart: (start: string) => void
   end: string
   setEnd: (end: string) => void
-  availableRooms: Room[]
-  onBook: (room: Room) => void
+  onBookingCreated?: () => void
 }
 
 export const BookingPage: React.FC<BookingPageProps> = ({
+  currentUserId,
   building, setBuilding,
   roomQuery, setRoomQuery,
   date, setDate,
   start, setStart,
   end, setEnd,
-  availableRooms, // eslint-disable-line @typescript-eslint/no-unused-vars
-  onBook,
+  onBookingCreated,
 }) => {
   const { rooms, loading, error } = useSchedule({
     building_short_name: building || undefined,
@@ -37,6 +38,17 @@ export const BookingPage: React.FC<BookingPageProps> = ({
     end_time: toApiTime(end),
     slot_type: 'available',
   });
+
+  const { createBooking } = useBookingHistory(currentUserId);
+
+  const handleBook = async (room: Room) => {
+    try {
+      await createBooking(room.id, date, start, end);
+      onBookingCreated?.();
+    } catch {
+      // Error already handled by hook
+    }
+  };
 
   return (
     <section className="panel" aria-labelledby="book-label">
@@ -78,7 +90,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
               date={date}
               start={start}
               end={end}
-              onBook={onBook}
+              onBook={handleBook}
             />
           ))}
         </div>
