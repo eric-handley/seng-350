@@ -26,11 +26,11 @@ export class AuditLogsService {
       .orderBy('audit_log.created_at', 'DESC');
 
     if (filters?.action) {
-      queryBuilder.andWhere('audit_log.action LIKE :action', { action: `${filters.action}%` });
+      queryBuilder.andWhere('audit_log.action LIKE :action', { action: `%${filters.action}%` });
     }
 
     if (filters?.route) {
-      queryBuilder.andWhere('audit_log.route = :route', { route: filters.route });
+      queryBuilder.andWhere('audit_log.route LIKE :route', { route: `%${filters.route}%` });
     }
 
     if (filters?.userId) {
@@ -57,17 +57,20 @@ export class AuditLogsService {
 
     return logs.map(log => ({
       id: log.id,
-      action: log.action,
-      route: log.route,
-      entity_id: log.entity_id,
-      created_at: log.created_at,
-      updated_at: log.updated_at,
       user: log.user ? {
         id: log.user.id,
         email: log.user.email,
         first_name: log.user.first_name,
         last_name: log.user.last_name,
       } : null,
+      action: log.action,
+      route: log.route,
+      request: (log.query || log.body) ? {
+        query: log.query,
+        body: log.body,
+      } : null,
+      created_at: log.created_at,
+      updated_at: log.updated_at,
     }));
   }
 
@@ -75,13 +78,15 @@ export class AuditLogsService {
     userId: string | null,
     action: string,
     route: string,
-    entityId: string,
+    query?: Record<string, any> | null,
+    body?: unknown,
   ): Promise<AuditLog> {
     const auditLog = this.auditLogRepository.create({
       user_id: userId,
       action,
       route,
-      entity_id: entityId,
+      query: query ?? null,
+      body: body ?? null,
     });
 
     return this.auditLogRepository.save(auditLog);
@@ -110,58 +115,42 @@ export class AuditLogsService {
     const baseAction = actionMap[method] ?? method;
     const action = `${baseAction}_ERROR_${statusCode}`;
 
-    // Extract route and entity ID
-    const { route, entityId } = this.extractRouteInfo(path, request);
+    // Extract route from path
+    const cleanPath = path.replace(/^\/api/, '');
+    const pathParts = cleanPath.split('/').filter((p: string) => p);
+    const route = pathParts.length > 0 ? `/${pathParts[0]}` : '/';
+
+    // Parse URL into path params and query params
+    const url = new URL(request.url, 'http://localhost');
+    const queryParams: Record<string, any> = {};
+
+    // Add query string params
+    url.searchParams.forEach((value, key) => {
+      queryParams[key] = value;
+    });
+
+    // Add path params
+    const cleanActualUrl = request.url.split('?')[0].replace(/^\/api/, '');
+    const pathAfterRoute = cleanActualUrl.substring(route.length).split('/').filter((p: string) => p);
+
+    if (pathAfterRoute.length > 0) {
+      pathAfterRoute.forEach((segment, index) => {
+        const key = index === 0 ? 'id' : `id${index + 1}`;
+        queryParams[key] = segment;
+      });
+    }
+
+    const query = Object.keys(queryParams).length > 0 ? queryParams : null;
 
     // Use null for unauthenticated requests
     const userId = request.user?.id ?? null;
 
-    console.log('[AuditLogsService] Logging API error:', { userId, action, route, entityId, statusCode });
-
     // Create audit log
     try {
-      await this.createAuditLog(userId, action, route, entityId);
-      console.log('[AuditLogsService] Error logged successfully');
+      await this.createAuditLog(userId, action, route, query, request.body);
     } catch (err) {
       console.error('[AuditLogsService] Failed to log error:', err);
     }
   }
 
-  private extractRouteInfo(
-    path: string,
-    request: { method: string; body?: unknown },
-  ): { route: string; entityId: string } {
-    // Remove leading /api if present
-    const cleanPath = path.replace(/^\/api/, '');
-
-    // Extract route name and ID
-    const pathParts = cleanPath.split('/').filter(p => p);
-
-    if (pathParts.length === 0) {
-      return { route: 'root', entityId: '/' };
-    }
-
-    const baseRoute = `/${pathParts[0]}`;
-
-    // If there's an ID in the path (second part), use it
-    if (pathParts.length > 1) {
-      return { route: baseRoute, entityId: pathParts[1] };
-    }
-
-    // For POST (create), check if body has an ID, otherwise mark as 'new'
-    if (request.method === 'POST') {
-      if (typeof request.body === 'object' && request.body !== null && 'id' in request.body) {
-        return { route: baseRoute, entityId: request.body.id as string };
-      }
-      return { route: baseRoute, entityId: 'new' };
-    }
-
-    // For GET on collection endpoints
-    if (request.method === 'GET') {
-      return { route: baseRoute, entityId: 'collection' };
-    }
-
-    // Fallback
-    return { route: baseRoute, entityId: 'unknown' };
-  }
 }

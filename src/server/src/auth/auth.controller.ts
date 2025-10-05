@@ -62,7 +62,8 @@ export class AuthController {
       user.id,
       'LOGIN',
       '/auth',
-      user.id,
+      null,
+      { email: loginDto.email },
     );
 
     return user;
@@ -85,7 +86,8 @@ export class AuthController {
             user.id,
             'LOGOUT',
             '/auth',
-            user.id,
+            null,
+            null,
           )
         : Promise.resolve();
 

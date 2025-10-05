@@ -72,7 +72,8 @@ erDiagram
         uuid user_id FK
         string action
         string route
-        string entity_id
+        jsonb query "nullable"
+        jsonb body "nullable"
         timestamp created_at
         timestamp updated_at
     }

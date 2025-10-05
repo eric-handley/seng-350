@@ -30,7 +30,7 @@ export class AuditLogsController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get audit logs with optional filters (Admin only)' })
   @ApiQuery({ name: 'action', required: false, description: 'Filter by action (e.g., CREATE, READ, LOGIN)' })
-  @ApiQuery({ name: 'route', required: false, description: 'Filter by route (e.g., /bookings, /users)' })
+  @ApiQuery({ name: 'route', required: false, description: 'Filter by route (e.g., bookings, users)' })
   @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID' })
   @ApiQuery({ name: 'startTime', required: false, description: 'Filter logs created after this time (ISO 8601)' })
   @ApiQuery({ name: 'endTime', required: false, description: 'Filter logs created before this time (ISO 8601)' })

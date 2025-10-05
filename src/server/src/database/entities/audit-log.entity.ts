@@ -15,8 +15,11 @@ export class AuditLog {
   @Column()
   route!: string;
 
-  @Column()
-  entity_id!: string;
+  @Column({ type: 'jsonb', nullable: true })
+  query!: Record<string, any> | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  body!: unknown;
 
   @CreateDateColumn()
   created_at!: Date;

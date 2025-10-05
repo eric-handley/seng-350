@@ -48,7 +48,6 @@ export class AuditLoggingInterceptor implements NestInterceptor {
       catchError((error: Error) => {
         // Log error requests
         const statusCode = error instanceof HttpException ? error.getStatus() : 500;
-        console.log('[AuditLogging] Error caught:', error.constructor.name, statusCode);
         this.auditLogsService.logApiError(request, statusCode).catch(err => {
           console.error('[AuditLogging] Failed to log error:', err);
         });
@@ -59,7 +58,8 @@ export class AuditLoggingInterceptor implements NestInterceptor {
 
   private createAuditLog(request: RequestWithUser, user: AuthenticatedUser | undefined, statusCode?: number): void {
     const method = request.method;
-    const path = request.route?.path ?? request.url;
+    const routePath = request.route?.path ?? request.url;
+    const actualUrl = request.url;
 
     // Determine action from HTTP method
     const actionMap: Record<string, string> = {
@@ -74,17 +74,43 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     // Add error status to action if this is an error
     const action = statusCode ? `${baseAction}_ERROR_${statusCode}` : baseAction;
 
-    // Extract route and entity ID from path
-    const { route, entityId } = this.extractRouteInfo(path, request);
+    // Extract route from path (route template, e.g., /api/bookings)
+    const cleanPath = routePath.replace(/^\/api/, '');
+    const pathParts = cleanPath.split('/').filter((p: string) => p);
+    const route = pathParts.length > 0 ? `/${pathParts[0]}` : '/';
+
+    // Parse URL into path params and query params
+    // Example: /api/bookings/abc-123?force=true -> { id: 'abc-123', force: 'true' }
+    const url = new URL(actualUrl, 'http://localhost');
+    const queryParams: Record<string, any> = {};
+
+    // Add query string params
+    url.searchParams.forEach((value, key) => {
+      queryParams[key] = value;
+    });
+
+    // Add path params (everything between route and query string)
+    const cleanActualUrl = actualUrl.split('?')[0].replace(/^\/api/, '');
+    const pathAfterRoute = cleanActualUrl.substring(route.length).split('/').filter((p: string) => p);
+
+    // If there are path segments, add them with keys like id, id2, etc.
+    if (pathAfterRoute.length > 0) {
+      pathAfterRoute.forEach((segment, index) => {
+        const key = index === 0 ? 'id' : `id${index + 1}`;
+        queryParams[key] = segment;
+      });
+    }
+
+    const query = Object.keys(queryParams).length > 0 ? queryParams : null;
 
     // Use null for unauthenticated requests
     const userId = user?.id ?? null;
 
-    console.log('[AuditLogging] Creating log:', { userId, action, route, entityId, statusCode });
+    console.log('[AuditLogging] Creating log:', { userId, action, route, query, statusCode });
 
     // Async fire-and-forget - don't wait for audit log to complete
     this.auditLogsService
-      .createAuditLog(userId, action, route, entityId)
+      .createAuditLog(userId, action, route, query, request.body)
       .then(() => {
         console.log('[AuditLogging] Log created successfully');
       })
@@ -93,39 +119,4 @@ export class AuditLoggingInterceptor implements NestInterceptor {
       });
   }
 
-  private extractRouteInfo(
-    path: string,
-    request: RequestWithUser,
-  ): { route: string; entityId: string } {
-    // Extract the base route (e.g., /users, /buildings, /bookings)
-    // Remove leading /api if present
-    const cleanPath = path.replace(/^\/api/, '');
-
-    // Extract route name and ID
-    const pathParts = cleanPath.split('/').filter(p => p);
-
-    if (pathParts.length === 0) {
-      return { route: 'root', entityId: '/' };
-    }
-
-    const baseRoute = `/${pathParts[0]}`;
-
-    // If there's an ID in the path (second part), use it
-    if (pathParts.length > 1) {
-      return { route: baseRoute, entityId: pathParts[1] };
-    }
-
-    // For POST (create), check if body has an ID, otherwise mark as 'new'
-    if (request.method === 'POST') {
-      return { route: baseRoute, entityId: request.body?.id ?? 'new' };
-    }
-
-    // For GET on collection endpoints
-    if (request.method === 'GET') {
-      return { route: baseRoute, entityId: 'collection' };
-    }
-
-    // Fallback
-    return { route: baseRoute, entityId: 'unknown' };
-  }
 }

@@ -133,7 +133,8 @@ export class InitialSchema1732573200000 implements MigrationInterface {
                 "user_id" uuid,
                 "action" character varying NOT NULL,
                 "route" character varying NOT NULL,
-                "entity_id" character varying NOT NULL,
+                "query" jsonb,
+                "body" jsonb,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "PK_audit_logs_id" PRIMARY KEY ("id")
