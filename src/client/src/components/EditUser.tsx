@@ -1,28 +1,38 @@
-import React, { useState } from "react"
-import { User, UserRole } from "../types"
+import React, { useState } from "react";
+import { User, UserRole } from "../types";
 
 type EditUserProps = {
   user: User;
   onSave: (user: User) => void;
   onCancel: () => void;
-}
+};
 
 export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
   const [formData, setFormData] = useState<User>(user);
-  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<"first_name" | "last_name" | "email", string>>
+  >({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    if (name === 'role') {
-      setFormData(prev => ({ ...prev, role: value as UserRole }))
-    } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
-      setFormData(prev => ({ ...prev, [name]: value }))
-      setErrors(prev => ({ ...prev, [name]: undefined }))
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "role") {
+      setFormData((prev) => ({ ...prev, role: value as UserRole }));
+    } else if (
+      name === "first_name" ||
+      name === "last_name" ||
+      name === "email"
+    ) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
+    const newErrors: Partial<
+      Record<"first_name" | "last_name" | "email", string>
+    > = {};
 
     if (!formData.first_name.trim()) {
       newErrors.first_name = "First name is required";
@@ -63,10 +73,15 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           onChange={handleChange}
           required
           aria-invalid={!!errors.first_name}
-          aria-describedby={errors.first_name ? "edit-user-first-error" : undefined}
+          aria-describedby={
+            errors.first_name ? "edit-user-first-error" : undefined
+          }
         />
         {errors.first_name && (
-          <span id="edit-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-first-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.first_name}
           </span>
         )}
@@ -82,10 +97,15 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           onChange={handleChange}
           required
           aria-invalid={!!errors.last_name}
-          aria-describedby={errors.last_name ? "edit-user-last-error" : undefined}
+          aria-describedby={
+            errors.last_name ? "edit-user-last-error" : undefined
+          }
         />
         {errors.last_name && (
-          <span id="edit-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-last-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.last_name}
           </span>
         )}
@@ -105,7 +125,10 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           aria-describedby={errors.email ? "edit-user-email-error" : undefined}
         />
         {errors.email && (
-          <span id="edit-user-email-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-email-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.email}
           </span>
         )}
@@ -128,7 +151,9 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
       </label>
 
       <div style={{ marginTop: "1rem" }}>
-        <button type="submit" className="btn primary">Save</button>
+        <button type="submit" className="btn primary">
+          Save
+        </button>
         <button type="button" className="btn" onClick={onCancel}>
           Cancel
         </button>

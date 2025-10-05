@@ -19,11 +19,9 @@ import { SchedulePage } from "./pages/SchedulePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { UsersPage } from "./pages/UsersPage";
 import LoginPage from "./pages/LoginPage";
-import AdminConsole, {
-  AuditTable,
-  SystemHealth,
-} from "./components/admin/AdminConsole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AuditTable } from "./components/admin/AuditTable";
+import { SystemHealth } from "./components/admin/SystemHealth";
 
 // Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {

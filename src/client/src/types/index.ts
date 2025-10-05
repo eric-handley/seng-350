@@ -36,6 +36,22 @@ export type TabKey =
   | "audit"
   | "health";
 
+export type AuditLog = {
+  id: string;
+  user_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+};
+
 export const getUserDisplayName = (
   user: Pick<User, "first_name" | "last_name">
 ): string => {

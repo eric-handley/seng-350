@@ -1,0 +1,82 @@
+import { useState, useEffect } from "react";
+
+export interface HealthStatus {
+  ok: boolean;
+  now?: string;
+  message: string;
+  error?: string;
+}
+
+export interface SystemHealth {
+  backend: HealthStatus;
+  lastChecked: Date;
+  isChecking: boolean;
+  error: string | null;
+}
+
+export function useHealthCheck(): SystemHealth {
+  const [backend, setBackend] = useState<HealthStatus>({
+    ok: false,
+    message: "Not checked yet",
+  });
+  const [lastChecked, setLastChecked] = useState<Date>(new Date());
+  const [isChecking, setIsChecking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const checkHealth = async () => {
+    setIsChecking(true);
+    setError(null);
+
+    try {
+      const startTime = Date.now();
+      const response = await fetch("/api/health", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const latency = Date.now() - startTime;
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      setBackend({
+        ok: data.ok,
+        now: data.now,
+        message: data.message,
+        error: data.error,
+      });
+
+      setLastChecked(new Date());
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(errorMessage);
+      setBackend({
+        ok: false,
+        message: "Health check failed",
+        error: errorMessage,
+      });
+      setLastChecked(new Date());
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  // Check health on mount and every 30 seconds
+  useEffect(() => {
+    checkHealth();
+    const interval = setInterval(checkHealth, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return {
+    backend,
+    lastChecked,
+    isChecking,
+    error,
+  };
+}
