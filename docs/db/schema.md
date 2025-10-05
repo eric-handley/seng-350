@@ -71,8 +71,9 @@ erDiagram
         uuid id PK
         uuid user_id FK
         string action
-        enum entity_type
-        string entity_id
+        string route
+        jsonb query "nullable"
+        jsonb body "nullable"
         timestamp created_at
         timestamp updated_at
     }

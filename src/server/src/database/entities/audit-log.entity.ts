@@ -1,35 +1,25 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 
-export enum EntityType {
-  USER = 'User',
-  BUILDING = 'Building',
-  ROOM = 'Room',
-  EQUIPMENT = 'Equipment',
-  ROOM_EQUIPMENT = 'RoomEquipment',
-  BOOKING = 'Booking',
-  BOOKING_SERIES = 'BookingSeries'
-}
-
 @Entity('audit_logs')
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  user_id!: string;
+  @Column({ nullable: true })
+  user_id!: string | null;
 
   @Column()
   action!: string;
 
-  @Column({
-    type: 'enum',
-    enum: EntityType
-  })
-  entity_type!: EntityType;
-
   @Column()
-  entity_id!: string;
+  route!: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  query!: Record<string, unknown> | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  body!: unknown;
 
   @CreateDateColumn()
   created_at!: Date;
@@ -37,7 +27,7 @@ export class AuditLog {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @ManyToOne(() => User, user => user.audit_logs)
+  @ManyToOne(() => User, user => user.audit_logs, { nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+  user!: User | null;
 }

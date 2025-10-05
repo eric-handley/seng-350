@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../../src/api/users.controller';
 import { UsersService } from '../../src/services/users.service';
+import { AuditLogsService } from '../../src/services/audit-logs.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../../src/dto/user.dto';
 import { UserRole } from '../../src/database/entities/user.entity';
 import { NotFoundException, ConflictException } from '@nestjs/common';
@@ -44,6 +45,12 @@ describe('UsersController', () => {
     remove: jest.fn(),
   };
 
+  const mockAuditLogsService = {
+    createAuditLog: jest.fn(),
+    findAll: jest.fn(),
+    logApiError: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
@@ -51,6 +58,10 @@ describe('UsersController', () => {
         {
           provide: UsersService,
           useValue: mockUsersService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogsService,
         },
       ],
     }).compile();
