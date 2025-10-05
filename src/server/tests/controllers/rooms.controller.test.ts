@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoomsController } from '../../src/api/rooms.controller';
 import { RoomsService } from '../../src/services/rooms.service';
+import { AuditLogsService } from '../../src/services/audit-logs.service';
 import { RoomQueryDto, RoomResponseDto } from '../../src/dto/room.dto';
 import { RoomType } from '../../src/database/entities/room.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -25,6 +26,12 @@ describe('RoomsController', () => {
     findOne: jest.fn(),
   };
 
+  const mockAuditLogsService = {
+    createAuditLog: jest.fn(),
+    findAll: jest.fn(),
+    logApiError: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RoomsController],
@@ -32,6 +39,10 @@ describe('RoomsController', () => {
         {
           provide: RoomsService,
           useValue: mockRoomsService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogsService,
         },
       ],
     }).compile();

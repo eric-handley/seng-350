@@ -29,7 +29,7 @@ export class ScheduleController {
     summary: 'Get available or booked time slots for rooms, organized by building',
   })
   @ApiQuery({ name: 'room_id', required: false, description: 'Filter by room ID (e.g., ECS-124)' })
-  @ApiQuery({ name: 'building_short_name', required: false, description: 'Filter by building (e.g., ECS)' })
+  @ApiQuery({ name: 'building_short_name', required: false, description: 'Filter by building short name or full name (e.g., "ECS", "Engineering", "Clearihue")' })
   @ApiQuery({ name: 'date', required: false, type: 'string', description: 'Filter by date (YYYY-MM-DD). Defaults to today.' })
   @ApiQuery({ name: 'start_time', required: false, type: 'string', description: 'Query range start time (hh-mm-ss). Defaults to 00-00-00.' })
   @ApiQuery({ name: 'end_time', required: false, type: 'string', description: 'Query range end time (hh-mm-ss). Defaults to 23-59-59.' })

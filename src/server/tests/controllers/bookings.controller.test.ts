@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookingsController } from '../../src/api/bookings.controller';
 import { BookingsService } from '../../src/services/bookings.service';
+import { AuditLogsService } from '../../src/services/audit-logs.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../../src/dto/booking.dto';
 import { BookingStatus } from '../../src/database/entities/booking.entity';
 import { NotFoundException, ConflictException } from '@nestjs/common';
@@ -39,6 +40,12 @@ describe('BookingsController', () => {
     remove: jest.fn(),
   };
 
+  const mockAuditLogsService = {
+    createAuditLog: jest.fn(),
+    findAll: jest.fn(),
+    logApiError: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BookingsController],
@@ -46,6 +53,10 @@ describe('BookingsController', () => {
         {
           provide: BookingsService,
           useValue: mockBookingsService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogsService,
         },
       ],
     }).compile();

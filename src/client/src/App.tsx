@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,35 +8,26 @@ import {
 } from "react-router-dom";
 import "./styles/app.css";
 import "./styles/admin.css";
-import { TabKey, Room, UserRole } from "./types";
-import { useBookings } from "./hooks/useBookings";
+
+import { TabKey, UserRole } from "./types";
+
 import { useUsers } from "./hooks/useUsers";
-import { useRoomFiltering } from "./hooks/useRoomFiltering";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
+import { getCurrentDate } from "./utils/dateHelpers";
+
 import { TabNavigation } from "./components/TabNavigation";
 import { BookingPage } from "./pages/BookingPage";
 import { SchedulePage } from "./pages/SchedulePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { UsersPage } from "./pages/UsersPage";
 import LoginPage from "./pages/LoginPage";
+import AdminConsole from "./components/AdminConsole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { AuditTable } from "./components/admin/AuditTable";
-import { SystemHealth } from "./components/admin/SystemHealth";
 
-// Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<TabKey>("book");
-
-  const {
-    bookings,
-    addBooking,
-    cancelBooking,
-    getUnavailableRoomIds,
-    getUserHistory,
-    getScheduleForDay,
-  } = useBookings();
 
   const canManageUsers =
     currentUser?.role === UserRole.ADMIN ||
@@ -54,35 +45,22 @@ const HomeComponent: React.FC = () => {
     setAddingUser,
   } = useUsers({ autoLoad: !!canManageUsers });
 
-  const {
-    building,
-    setBuilding,
-    roomQuery,
-    setRoomQuery,
-    date,
-    setDate,
-    start,
-    setStart,
-    end,
-    setEnd,
-    requestedStart,
-    requestedEnd,
-    getAvailableRooms,
-  } = useRoomFiltering();
+  // Room filtering state
+  const [building, setBuilding] = useState<string>("");
+  const [roomQuery, setRoomQuery] = useState<string>("");
+  const [date, setDate] = useState<string>(getCurrentDate());
+  const [start, setStart] = useState<string>("10:00");
+  const [end, setEnd] = useState<string>("11:00");
 
-  const unavailableRoomIds = getUnavailableRoomIds(
-    requestedStart,
-    requestedEnd
-  );
-  const availableRooms = getAvailableRooms(unavailableRoomIds);
-  const userHistory = getUserHistory();
-  const scheduleForDay = getScheduleForDay(date);
-
-  const handleBook = (room: Room) => {
-    const success = addBooking(room, date, start, end);
-    if (success) {
-      setTab("history");
+  useEffect(() => {
+    if (currentUser && currentUser.role === "staff" && tab === "schedule") {
+      setTab("book");
     }
+  }, [currentUser, tab]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
   };
 
   if (isLoading) {
@@ -92,11 +70,6 @@ const HomeComponent: React.FC = () => {
   if (!currentUser) {
     return null;
   }
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
-  };
 
   return (
     <div className="app-shell">
@@ -120,6 +93,7 @@ const HomeComponent: React.FC = () => {
 
       {tab === "book" && (
         <BookingPage
+          currentUserId={currentUser.id}
           building={building}
           setBuilding={setBuilding}
           roomQuery={roomQuery}
@@ -130,34 +104,20 @@ const HomeComponent: React.FC = () => {
           setStart={setStart}
           end={end}
           setEnd={setEnd}
-          availableRooms={availableRooms}
-          onBook={handleBook}
+          onBookingCreated={() => setTab("history")}
         />
       )}
 
-      {tab === "schedule" && (
+      {tab === "schedule" && currentUser.role !== "staff" && (
         <SchedulePage
           date={date}
           setDate={setDate}
           building={building}
           setBuilding={setBuilding}
-          scheduleForDay={scheduleForDay}
         />
       )}
 
-      {tab === "history" && (
-        <HistoryPage
-          userHistory={userHistory}
-          allBookings={
-            currentUser.role === UserRole.REGISTRAR ||
-            currentUser.role === UserRole.ADMIN
-              ? bookings
-              : undefined
-          }
-          currentUser={currentUser}
-          onCancel={cancelBooking}
-        />
-      )}
+      {tab === "history" && <HistoryPage currentUser={currentUser} />}
 
       {tab === "users" && (
         <UsersPage
@@ -182,10 +142,8 @@ const HomeComponent: React.FC = () => {
   );
 };
 
-// App Router component that has access to hooks
 const AppRouter: React.FC = () => {
   const { login } = useAuth();
-
   return (
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={login} />} />

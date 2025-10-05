@@ -7,6 +7,20 @@ interface LoginPageProps {
   onLogin: (user: User) => void;
 }
 
+function getErrorMessage(err: unknown, fallback = "Something went wrong") {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  if (typeof err === "string") {
+    return err;
+  }
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return fallback;
+  }
+}
+
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,9 +53,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
-      navigate("/home");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      if (user.role === UserRole.ADMIN) {
+        navigate("/admin-panel");
+      } else {
+        navigate("/home");
+      }
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Login failed"));
     }
     //console.warn("Logging in with:", { email, password });
   };

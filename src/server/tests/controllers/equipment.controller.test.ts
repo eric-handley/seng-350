@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EquipmentController } from '../../src/api/equipment.controller';
 import { EquipmentService } from '../../src/services/equipment.service';
+import { AuditLogsService } from '../../src/services/audit-logs.service';
 import { EquipmentResponseDto } from '../../src/dto/equipment.dto';
 import { NotFoundException } from '@nestjs/common';
 
@@ -19,6 +20,12 @@ describe('EquipmentController', () => {
     findEquipmentByRoom: jest.fn(),
   };
 
+  const mockAuditLogsService = {
+    createAuditLog: jest.fn(),
+    findAll: jest.fn(),
+    logApiError: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EquipmentController],
@@ -26,6 +33,10 @@ describe('EquipmentController', () => {
         {
           provide: EquipmentService,
           useValue: mockEquipmentService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogsService,
         },
       ],
     }).compile();

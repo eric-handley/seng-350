@@ -12,36 +12,47 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
   setTab,
   currentUser,
 }) => {
+  const isStaff = currentUser.role === "staff";
+
   return (
     <div className="tabs" role="tablist" aria-label="Sections">
+      {!isStaff && (
+        <button
+          type="button"
+          className={currentTab === "schedule" ? "tab active" : "tab"}
+          role="tab"
+          aria-selected={currentTab === "schedule"}
+          onClick={() => setTab("schedule")}
+        >
+          Schedule
+        </button>
+      )}
+
       <button
-        className="tab"
-        role="tab"
-        aria-selected={currentTab === "schedule"}
-        onClick={() => setTab("schedule")}
-      >
-        Schedule
-      </button>
-      <button
-        className="tab"
+        type="button"
+        className={currentTab === "book" ? "tab active" : "tab"}
         role="tab"
         aria-selected={currentTab === "book"}
         onClick={() => setTab("book")}
       >
         Book Rooms
       </button>
+
       <button
-        className="tab"
+        type="button"
+        className={currentTab === "history" ? "tab active" : "tab"}
         role="tab"
         aria-selected={currentTab === "history"}
         onClick={() => setTab("history")}
       >
-        My Bookings & History
+        My Bookings &amp; History
       </button>
+
       {(currentUser.role === UserRole.ADMIN ||
         currentUser.role === UserRole.REGISTRAR) && (
         <button
-          className="tab"
+          type="button"
+          className={currentTab === "users" ? "tab active" : "tab"}
           role="tab"
           aria-selected={currentTab === "users"}
           onClick={() => setTab("users")}

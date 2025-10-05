@@ -4,6 +4,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
 import { Session } from 'express-session';
+import { AuditLogsService } from '../services/audit-logs.service';
 
 interface RequestWithUser extends Request {
   user?: AuthenticatedUser;
@@ -25,7 +26,10 @@ class LoginDto {
 @ApiTags('Authentication')
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly auditLogsService: AuditLogsService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -53,6 +57,15 @@ export class AuthController {
     // Also attach to request for immediate use
     req.user = user;
 
+    // Log the login event
+    await this.auditLogsService.createAuditLog(
+      user.id,
+      'LOGIN',
+      '/auth',
+      null,
+      { email: loginDto.email },
+    );
+
     return user;
   }
 
@@ -63,22 +76,41 @@ export class AuthController {
     status: HttpStatus.NO_CONTENT,
     description: 'Logout successful',
   })
-  async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async logout(@Req() req: RequestWithUser, @Res() res: Response): Promise<void> {
+    const user = req.session?.user ?? req.user;
+
     return new Promise((resolve, reject) => {
-      if (req.session) {
-        req.session.destroy((err) => {
-          if (err) {
-            reject(err);
+      // Log the logout event before destroying session
+      const logoutPromise = user
+        ? this.auditLogsService.createAuditLog(
+            user.id,
+            'LOGOUT',
+            '/auth',
+            null,
+            null,
+          )
+        : Promise.resolve();
+
+      logoutPromise
+        .catch(err => {
+          console.error('Failed to log logout event:', err);
+        })
+        .finally(() => {
+          if (req.session) {
+            req.session.destroy((err) => {
+              if (err) {
+                reject(err);
+              } else {
+                res.clearCookie('connect.sid');
+                res.status(HttpStatus.NO_CONTENT).send();
+                resolve();
+              }
+            });
           } else {
-            res.clearCookie('connect.sid');
             res.status(HttpStatus.NO_CONTENT).send();
             resolve();
           }
         });
-      } else {
-        res.status(HttpStatus.NO_CONTENT).send();
-        resolve();
-      }
     });
   }
 

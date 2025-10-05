@@ -9,6 +9,8 @@ const __dirname = dirname(__filename)
 
 const port = Number(process.env.PORT || 5173)
 
+const API_BASE = process.env.API_BASE || 'http://server:3000'
+
 const ctx = await context({
   entryPoints: [resolve(__dirname, 'src/main.tsx')],
   bundle: true,
@@ -18,7 +20,11 @@ const ctx = await context({
   loader: { '.tsx': 'tsx' },
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
   jsx: 'automatic',
-  define: { 'process.env.NODE_ENV': JSON.stringify('development') },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    'process.env.API_BASE': JSON.stringify(process.env.API_BASE || 'http://localhost:3000'),
+    'process.env.USE_CREDENTIALS': JSON.stringify(process.env.USE_CREDENTIALS || 'true'),
+  }
 })
 
 await ctx.watch()

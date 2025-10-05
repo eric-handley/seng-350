@@ -57,15 +57,11 @@ This will:
 To stop all services:
 ```bash
 npm stop
-# or
-docker compose down
 ```
 
 To restart with fresh build:
 ```bash
 npm restart
-# or
-docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate
 ```
 
 ### Other `npm` Scripts

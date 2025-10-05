@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BuildingsController } from '../../src/api/buildings.controller';
 import { BuildingsService } from '../../src/services/buildings.service';
 import { RoomsService } from '../../src/services/rooms.service';
+import { AuditLogsService } from '../../src/services/audit-logs.service';
 import { BuildingResponseDto } from '../../src/dto/building.dto';
 import { RoomResponseDto } from '../../src/dto/room.dto';
 import { RoomType } from '../../src/database/entities/room.entity';
@@ -39,6 +40,12 @@ describe('BuildingsController', () => {
     findByBuilding: jest.fn(),
   };
 
+  const mockAuditLogsService = {
+    createAuditLog: jest.fn(),
+    findAll: jest.fn(),
+    logApiError: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BuildingsController],
@@ -50,6 +57,10 @@ describe('BuildingsController', () => {
         {
           provide: RoomsService,
           useValue: mockRoomsService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogsService,
         },
       ],
     }).compile();

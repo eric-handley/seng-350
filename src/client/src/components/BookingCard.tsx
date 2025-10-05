@@ -1,50 +1,74 @@
 import React from 'react'
-import { Booking, Room } from '../types'
-import { ROOMS } from '../constants'
 
-interface BookingCardProps {
-  booking: Booking
-  room?: Room
+type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  booking: any
   onCancel: (id: string) => void
   showUser?: boolean
 }
 
-export const BookingCard: React.FC<BookingCardProps> = ({
-  booking,
-  room: providedRoom,
-  onCancel,
-  showUser = false
-}) => {
-  const room = providedRoom ?? ROOMS.find(r => r.id === booking.roomId)
-  const d = new Date(booking.start)
-  const dEnd = new Date(booking.end)
-  const dateStr = d.toLocaleDateString()
-  const timeStr = `${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${dEnd.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
+export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = false }) => {
+  // Tolerant field mapping (no hard assumptions such that we avoid having nothing render)
+  const roomId: string =
+    booking.roomId ?? booking.room_id ?? booking.room?.id ?? ''
 
-  if (!room) {
-    return null
-  }
+  const roomName: string =
+    booking.name ??
+    booking.roomName ??
+    booking.room?.name ??
+    roomId ??
+    'Room'
+
+  // date, start, end (accept UI fields or ISO fields)
+  const date: string =
+    booking.date ??
+    (typeof booking.start_time === 'string' && booking.start_time.includes('T')
+      ? booking.start_time.split('T')[0]
+      : '')
+
+  const start: string =
+    booking.start ??
+    (typeof booking.start_time === 'string' && booking.start_time.includes('T')
+      ? booking.start_time.split('T')[1].slice(0, 8)
+      : '')
+
+  const end: string =
+    booking.end ??
+    (typeof booking.end_time === 'string' && booking.end_time.includes('T')
+      ? booking.end_time.split('T')[1].slice(0, 8)
+      : '')
+
+  const cancelled: boolean =
+    !!booking.cancelled ||
+    (typeof booking.status === 'string' && booking.status.toLowerCase() !== 'active')
+
+  const userLabel: string | undefined =
+    (typeof booking.user === 'string' && booking.user) ??
+    (typeof booking.user_id === 'string' && booking.user_id) ??
+    undefined
 
   return (
     <article className="card">
-      <div className="row">
-        <h3>{room.name}</h3>
-        <span className="kv">{room.building}</span>
+      <div className="card-title" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span>{roomName}</span>
+        {cancelled && <span className="badge danger">Cancelled</span>}
       </div>
-      <div className="meta">
-        <span>{dateStr}</span>
-        <span>{timeStr}</span>
-        {showUser && <span>User: {booking.user}</span>}
-        <span>ID: {booking.id}</span>
+
+      <div className="card-meta" style={{ marginTop: 6 }}>
+        {date && <span>{date} · </span>}
+        <span>{start} → {end}</span>
+        {showUser && userLabel && <span style={{ marginLeft: 8 }}>· User: {userLabel}</span>}
       </div>
-      <div className="row" style={{marginTop:12}}>
-        <span className="meta">{booking.cancelled ? 'Cancelled' : 'Active'}</span>
-        {!booking.cancelled ? (
-          <button className="btn danger" onClick={() => onCancel(booking.id)}>Cancel</button>
-        ) : (
-          <button className="btn ghost" onClick={() => console.error('This is a demo. In a real app you might restore or rebook.')}>Rebook</button>
-        )}
-      </div>
+
+      {!cancelled && (
+        <div style={{ marginTop: 10 }}>
+          <button className="btn danger" onClick={() => onCancel(String(booking.id))}>
+            Cancel
+          </button>
+        </div>
+      )}
     </article>
   )
 }
+
+export default BookingCard

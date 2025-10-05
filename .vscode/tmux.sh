@@ -7,11 +7,11 @@ set -Eeuo pipefail
 # - Split bottom-right vertical (top/bottom)
 #
 # Panes:
-#  top-left:    client logs
-#  top-right:   server logs
-#  bottom-left: db logs
-#  bottom-right (top):    docker compose up --wait (closes when ready)
-#  bottom-right (bottom): deps install logs
+#  top-left:              client logs
+#  top-right:             server logs
+#  bottom-left:           db logs
+#  bottom-right (top):    deps install logs
+#  bottom-right (bottom): docker compose up --wait (closes when ready)
 
 SESSION="${TMUX_SESSION:-dev}"
 
