@@ -42,8 +42,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       } else {
         navigate('/home');
       }
-    } catch (err: any) {
-      setError(err.message ?? "Login failed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
     }
     //console.warn("Logging in with:", { email, password });
   };

@@ -64,7 +64,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     setAddingUser(null)
   }
 
-  const handleBlockUser = (_user: User) => {
+  const handleBlockUser = () => {
     // TODO: integrate with API once blocking is supported
   }
 
