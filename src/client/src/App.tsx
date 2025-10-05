@@ -282,7 +282,7 @@ const HomeComponent: React.FC = () => {
         />
       )}
 
-      {tab === 'schedule' && (
+      {tab === 'schedule' && activeUser.role !== 'staff' && (
         <SchedulePage
           date={date}
           setDate={setDate}
