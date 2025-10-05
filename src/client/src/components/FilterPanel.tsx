@@ -44,7 +44,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           <label>Room</label>
           <input 
             className="input" 
-            placeholder="e.g., E-201" 
+            placeholder="e.g., BWC-B150" 
             value={roomQuery} 
             onChange={e => setRoomQuery(e.target.value)} 
           />
