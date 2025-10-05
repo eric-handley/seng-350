@@ -3,6 +3,7 @@ import { Room } from '../types';
 import { RoomCard } from '../components/RoomCard';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
+import { toApiTime } from '../utils/time';
 
 interface BookingPageProps {
   building: string;
@@ -31,9 +32,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   const { rooms, loading, error } = useSchedule({
     building_short_name: building || undefined,
     room_id: roomQuery || undefined,
-    date: date || undefined,
-    start_time: start || undefined,
-    end_time: end || undefined,
+    date: date || undefined,                    // YYYY-MM-DD is fine
+    start_time: toApiTime(start),               // <-- normalize here
+    end_time: toApiTime(end),                   // <-- and here
     slot_type: 'available',
   });
 
