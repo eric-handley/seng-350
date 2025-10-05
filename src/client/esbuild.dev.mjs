@@ -20,10 +20,15 @@ const ctx = await context({
   loader: { '.tsx': 'tsx' },
   resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs', '.json'],
   jsx: 'automatic',
+  // define: {
+  //   'process.env.NODE_ENV': JSON.stringify('production'),
+  //   'process.env.API_BASE': JSON.stringify(API_BASE),
+  // },
   define: {
-    'process.env.NODE_ENV': JSON.stringify('production'),
-    'process.env.API_BASE': JSON.stringify(API_BASE),
-  },
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    'process.env.API_BASE': JSON.stringify(process.env.API_BASE || 'http://localhost:3000'),
+    'process.env.USE_CREDENTIALS': JSON.stringify(process.env.USE_CREDENTIALS || 'true'), // <-- add
+  }
 })
 
 await ctx.watch()
