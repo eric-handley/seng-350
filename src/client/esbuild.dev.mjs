@@ -9,6 +9,8 @@ const __dirname = dirname(__filename)
 
 const port = Number(process.env.PORT || 5173)
 
+const API_BASE = process.env.API_BASE || 'http://server:3000'
+
 const ctx = await context({
   entryPoints: [resolve(__dirname, 'src/main.tsx')],
   bundle: true,
@@ -20,7 +22,7 @@ const ctx = await context({
   jsx: 'automatic',
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
-    'process.env.API_BASE': JSON.stringify(API_BASE), // <— add this line
+    'process.env.API_BASE': JSON.stringify(API_BASE),
   },
 })
 

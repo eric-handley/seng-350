@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.css'
 import './styles/admin.css'
@@ -16,17 +16,34 @@ import LoginPage from './pages/LoginPage'
 import AdminConsole from './components/AdminConsole'
 // import { ProtectedRoute } from './components/ProtectedRoute'
 
+import { createBooking, fetchUserBookings } from './api/bookings'
+import { toApiTime } from './utils/time'
+
+import type { Booking as UiBooking } from './types'
+import type { Booking as ApiBooking } from './api/bookings'
+import { fromApiTime } from './utils/time'
+
+function mapApiBookingToUi(b: ApiBooking): UiBooking {
+  return {
+    id: b.id,
+    roomId: b.room_id,                    // camelCase for UI
+    start: fromApiTime(b.start_time),     // "hh-mm-ss" -> "hh:mm:ss"
+    end: fromApiTime(b.end_time),
+    user: b.user_id,                      // UI requires 'user' (string)
+    cancelled: (b as any).status === 'cancelled' ? true : undefined // tweak if your API has a flag
+  }
+}
 // Component for the home page (staff/registrar)
 const HomeComponent: React.FC = () => {
   const { currentUser } = useAuth()
   const [tab, setTab] = useState<TabKey>('book')
 
+  // legacy/local hooks (you can prune later)
   const {
     bookings,
-    addBooking,
     cancelBooking,
     getUnavailableRoomIds,
-    getUserHistory,
+    getUserHistory,      // fallback if API isn’t available yet
     getScheduleForDay
   } = useBookings()
 
@@ -61,24 +78,66 @@ const HomeComponent: React.FC = () => {
 
   const unavailableRoomIds = getUnavailableRoomIds(requestedStart, requestedEnd)
   const availableRooms = getAvailableRooms(unavailableRoomIds)
-  const userHistory = getUserHistory()
   const scheduleForDay = getScheduleForDay(date)
 
-  const handleBook = (room: Room) => {
-    const success = addBooking(room, date, start, end)
-    if (success) {
-      setTab('history')
-    }
+  // Mock while auth is bypassed
+  const activeUser = currentUser ?? {
+    id: 'temp',
+    name: 'Guest',
+    email: 'guest@example.com',
+    role: 'staff' as const,
+    isBlocked: false
   }
 
-  // TODO: TEMPORARY FIX - Disabled currentUser check while auth is bypassed
-  // Re-enable this check when ProtectedRoute is restored
-  // if (!currentUser) {
-  //   return null
-  // }
+  // NEW: API-backed user history state
+  const [userHistoryApi, setUserHistoryApi] = useState<ApiBooking[] | null>(null)
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyError, setHistoryError] = useState<string | null>(null)
 
-  // TODO: TEMPORARY FIX - Mock user for testing without auth
-  const activeUser = currentUser ?? { id: 'temp', name: 'Guest', email: 'guest@example.com', role: 'staff' as const, isBlocked: false }
+  // Guard: staff can’t land on hidden schedule tab
+  useEffect(() => {
+    if (activeUser.role === 'staff' && tab === 'schedule') setTab('book')
+  }, [activeUser.role, tab])
+
+  // Load history from API when switching to History tab
+  useEffect(() => {
+    if (tab !== 'history') return
+    let cancelled = false
+    ;(async () => {
+      try {
+        setHistoryLoading(true)
+        setHistoryError(null)
+        const data = await fetchUserBookings(activeUser.id)
+        if (!cancelled) setUserHistoryApi(data)
+      } catch (e: any) {
+        if (!cancelled) setHistoryError(e?.message ?? 'Failed to load history')
+      } finally {
+        if (!cancelled) setHistoryLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [tab, activeUser.id])
+
+  // Book via backend, then jump to History and refresh
+  const handleBook = async (room: Room) => {
+    try {
+      await createBooking({
+        user_id: activeUser.id,
+        room_id: room.id,
+        date,
+        start_time: toApiTime(start)!, // produces hh-mm-ss
+        end_time: toApiTime(end)!,
+      })
+      setTab('history')
+      // eager refresh
+      setHistoryLoading(true)
+      const fresh = await fetchUserBookings(activeUser.id)
+      setUserHistoryApi(fresh)
+      setHistoryLoading(false)
+    } catch (err: any) {
+      alert(err?.message ?? 'Failed to create booking')
+    }
+  }
 
   return (
     <div className="app-shell">
@@ -106,7 +165,7 @@ const HomeComponent: React.FC = () => {
           end={end}
           setEnd={setEnd}
           availableRooms={availableRooms}
-          onBook={handleBook}
+          onBook={handleBook}  // now calls backend
         />
       )}
 
@@ -122,7 +181,11 @@ const HomeComponent: React.FC = () => {
 
       {tab === 'history' && (
         <HistoryPage
-          userHistory={userHistory}
+          userHistory={
+            userHistoryApi
+              ? userHistoryApi.map(mapApiBookingToUi) // <-- convert here
+              : getUserHistory()                      // legacy local fallback
+          }
           allBookings={activeUser.role === 'registrar' ? bookings : undefined}
           currentUser={activeUser}
           onCancel={cancelBooking}

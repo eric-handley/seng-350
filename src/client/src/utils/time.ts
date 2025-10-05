@@ -20,3 +20,9 @@ export function toApiTime(t?: string) {
 
   return `${h}-${m}-${sec}`;
 }
+
+
+export function fromApiTime(t?: string) {
+  if (!t) return '';
+  return t.replace(/-/g, ':'); // "hh-mm-ss" -> "hh:mm:ss"
+}

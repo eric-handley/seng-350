@@ -6,6 +6,8 @@ import { cp } from 'node:fs/promises'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const API_BASE = process.env.API_BASE || 'http://localhost:3000'
+
 await build({
   entryPoints: [resolve(__dirname, 'src/main.tsx')],
   bundle: true,
@@ -17,7 +19,7 @@ await build({
   jsx: 'automatic',
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
-    'process.env.API_BASE': JSON.stringify(API_BASE), // <— add this line
+    'process.env.API_BASE': JSON.stringify(API_BASE),
   },
   minify: true,
 })
