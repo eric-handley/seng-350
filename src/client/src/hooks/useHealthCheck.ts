@@ -29,7 +29,7 @@ export function useHealthCheck(): SystemHealth {
 
     try {
       const startTime = Date.now();
-      const response = await fetch("/api/health", {
+      const response = await fetch("http://localhost:3000/health", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +53,17 @@ export function useHealthCheck(): SystemHealth {
 
       setLastChecked(new Date());
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      let errorMessage = "Unknown error";
+
+      if (err instanceof TypeError && err.message.includes("Failed to fetch")) {
+        errorMessage = "Cannot connect to server - server may be down";
+      } else if (err instanceof SyntaxError && err.message.includes("JSON")) {
+        errorMessage =
+          "Server returned invalid response - check server configuration";
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
       setError(errorMessage);
       setBackend({
         ok: false,
