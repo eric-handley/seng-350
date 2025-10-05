@@ -21,15 +21,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     const booking = allBookings?.find(b => b.id === id)
     if (!booking) return
     // Create a new booking with the same details, but ensure cancelled is false
-    const response = await fetch('/bookings', {
+    const response = await fetch('http://localhost:3000/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({
-        roomId: booking.roomId,
-        start: booking.start,
-        end: booking.end,
-        user: booking.user,
-        cancelled: false,
+        room_id: booking.roomId,
+        start_time: booking.start,
+        end_time: booking.end,
       }),
     })
     if (response.ok && refreshBookings) {

@@ -43,9 +43,10 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
 
   const handleSaveUser = async (updatedUser: User) => {
     try {
-      const response = await fetch(`/users/${updatedUser.id}`, {
+      const response = await fetch(`http://localhost:3000/users/${updatedUser.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           email: updatedUser.email,
           first_name: updatedUser.first_name,
@@ -78,11 +79,14 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
   }
 
   const handleSaveNewUser = async (newUser: User) => {
+    // Remove id before sending
+    const { id, ...userData } = newUser
     try {
-      const response = await fetch('/users', {
+      const response = await fetch('http://localhost:3000/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
+        credentials: 'include',
+        body: JSON.stringify(userData),
       })
       if (response.ok) {
         const createdUser = await response.json()
@@ -99,8 +103,9 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
 
   const handleBlockUser = async (user: User) => {
     try {
-      const response = await fetch(`/users/${user.id}`, {
+      const response = await fetch(`http://localhost:3000/users/${user.id}`, {
         method: 'DELETE',
+        credentials: 'include',
       })
       if (response.ok) {
         setUsers(prev => prev.filter(u => u.id !== user.id))
