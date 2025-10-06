@@ -5,14 +5,14 @@ import { BookingPage } from '../src/pages/BookingPage';
 import { useSchedule } from '../src/hooks/useSchedule';
 import { useBookingHistory } from '../src/hooks/useBookingHistory';
 import { Room } from '../src/types';
-
+import { UiBooking } from '../src/types';
 // Mock hooks
 jest.mock('../../hooks/useSchedule');
 jest.mock('../../hooks/useBookingHistory');
 
 // Mock child components
 jest.mock('../../components/FilterPanel', () => ({
-    FilterPanel: ({ building, setBuilding }: any) => (
+    FilterPanel: ({ building, setBuilding }: { building: string; setBuilding: (b: string) => void }) => (
         <div data-testid="filter-panel">
             <button onClick={() => setBuilding('ECS')}>Set Building</button>
             <span>Building: {building}</span>
@@ -21,7 +21,7 @@ jest.mock('../../components/FilterPanel', () => ({
 }));
 
 jest.mock('../../components/RoomCard', () => ({
-    RoomCard: ({ room, onBook }: any) => (
+    RoomCard: ({ room, onBook }: { room: Room; onBook: (room: Room) => void }) => (
         <div data-testid="room-card">
             <h3>{room.name}</h3>
             <button onClick={() => onBook(room)}>Book</button>

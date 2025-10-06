@@ -1,8 +1,7 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { SchedulePage } from '../src/pages/SchedulePage'
 import { useSchedule } from '../src/hooks/useSchedule'
-import { FilterPanel } from '../src/components/FilterPanel'
 
 // Mock the hook and FilterPanel
 jest.mock('../hooks/useSchedule')
@@ -97,7 +96,7 @@ describe('<SchedulePage />', () => {
         mockUseSchedule.mockReturnValue({ rooms, loading: false, error: null })
 
         // Mock FilterPanel callback
-        const { rerender } = render(
+         render(
             <SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />
         )
 

@@ -4,13 +4,23 @@ import { UsersPage } from '../src/pages/UsersPage'
 import { User, UserRole } from '../src/types'
 
 // Mock child components
-jest.mock('../components/UserTab', () => () => <div data-testid="users-tab">UsersTab</div>)
-jest.mock('../components/EditUser', () => ({ user }: { user: User }) => (
-    <div data-testid="edit-user">Editing: {user.first_name}</div>
-))
-jest.mock('../components/AddUser', () => ({ user }: { user: User }) => (
-    <div data-testid="add-user">Adding: {user.first_name}</div>
-))
+jest.mock('../components/UserTab', () => {
+    const Mock = () => <div data-testid="users-tab">UsersTab</div>
+    Mock.displayName = 'UserTab'
+    return Mock
+})
+
+jest.mock('../components/EditUser', () => {
+    const Mock = ({ user }: { user: User }) => <div data-testid="edit-user">Editing: {user.first_name}</div>
+    Mock.displayName = 'EditUser'
+    return Mock
+})
+
+jest.mock('../components/AddUser', () => {
+    const Mock = ({ user }: { user: User }) => <div data-testid="add-user">Adding: {user.first_name}</div>
+    Mock.displayName = 'AddUser'
+    return Mock
+})
 
 const baseUser: User = {
     id: '1',
@@ -43,7 +53,7 @@ describe('UsersPage', () => {
                 currentUser={baseUser}
                 editingUser={null}
                 addingUser={null}
-                error={null} 
+                error={null}
                 {...mockHandlers}
             />
         )
@@ -58,7 +68,7 @@ describe('UsersPage', () => {
                 currentUser={baseUser}
                 editingUser={sampleUsers[0]}
                 addingUser={null}
-                error={null} 
+                error={null}
                 {...mockHandlers}
             />
         )
@@ -72,7 +82,7 @@ describe('UsersPage', () => {
                 users={sampleUsers}
                 currentUser={baseUser}
                 editingUser={null}
-                error={null} 
+                error={null}
                 addingUser={sampleUsers[1]}
                 {...mockHandlers}
             />
@@ -90,7 +100,7 @@ describe('UsersPage', () => {
                 currentUser={nonAdmin}
                 editingUser={null}
                 addingUser={null}
-                error={null} 
+                error={null}
                 {...mockHandlers}
             />
         )
