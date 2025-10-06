@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FilterPanel } from '../components/FilterPanel'
 import { useSchedule } from '../hooks/useSchedule'
 import { toApiTime } from '../utils/time'
@@ -16,6 +16,7 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
   building,
   setBuilding,
 }) => {
+  const [roomQuery, setRoomQuery] = useState('')
   const { rooms, loading, error } = useSchedule({
     building_short_name: building || undefined,
     date: date || undefined,
@@ -24,7 +25,7 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
     slot_type: 'booked',
   })
 
-  // Flatten rooms with their booked slots
+  // Flatten rooms with their booked slots and filter by room query
   const bookedSlots = rooms.flatMap(room =>
     room.slots.map(slot => ({
       room_id: room.room_id,
@@ -35,7 +36,14 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
       start_time: slot.start_time,
       end_time: slot.end_time,
     }))
-  )
+  ).filter(slot => {
+    if (!roomQuery) {return true}
+    const query = roomQuery.toLowerCase()
+    const roomNum = slot.room_number.toLowerCase()
+    const shortName = slot.building_short_name.toLowerCase()
+    const fullRoom = `${shortName}${roomNum}`
+    return roomNum.includes(query) || shortName.includes(query) || fullRoom.includes(query)
+  })
 
   return (
     <section className="panel" aria-labelledby="schedule-label">
@@ -45,8 +53,8 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
         <FilterPanel
           building={building}
           setBuilding={setBuilding}
-          roomQuery=""
-          setRoomQuery={() => {}}
+          roomQuery={roomQuery}
+          setRoomQuery={setRoomQuery}
           date={date}
           setDate={setDate}
           start=""
@@ -54,7 +62,7 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
           end=""
           setEnd={() => {}}
           showTimeFilters={false}
-          showRoomFilter={false}
+          showRoomFilter={true}
         />
       </div>
 
