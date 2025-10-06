@@ -127,7 +127,7 @@ const HomeComponent: React.FC = () => {
           editingUser={editingUser}
           addingUser={addingUser}
           error={error}
-          onEditUser={handleEditUser}
+          onEditUser={(user: User) => handleEditUser(user, currentUser)}
           onSaveUser={handleSaveUser}
           onAddUser={() => handleAddUser(currentUser)}
           onSaveNewUser={handleSaveNewUser}

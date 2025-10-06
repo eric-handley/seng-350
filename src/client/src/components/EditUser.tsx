@@ -8,21 +8,19 @@ type EditUserProps = {
 }
 
 export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
-  const [formData, setFormData] = useState<User>(user);
-  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
+  const [formData, setFormData] = useState<User & { password?: string }>(user);
+  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    if (name === 'role') {
-      setFormData(prev => ({ ...prev, role: value as UserRole }))
-    } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
+    if (name === 'first_name' || name === 'last_name' || name === 'email' || name === 'password') {
       setFormData(prev => ({ ...prev, [name]: value }))
       setErrors(prev => ({ ...prev, [name]: undefined }))
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
+    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>> = {};
 
     if (!formData.first_name.trim()) {
       newErrors.first_name = "First name is required";
@@ -113,20 +111,24 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-role">
-        Role:
-        <select
-          id="edit-user-role"
-          className="select"
-          name="role"
-          value={formData.role}
+      <label htmlFor="edit-user-password">
+        Password:
+        <input
+          id="edit-user-password"
+          className="input"
+          name="password"
+          type="password"
+          value={formData.password ?? ""}
           onChange={handleChange}
           required
-        >
-          <option value={UserRole.STAFF}>{UserRole.STAFF}</option>
-          <option value={UserRole.REGISTRAR}>{UserRole.REGISTRAR}</option>
-          <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
-        </select>
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "edit-user-password-error" : undefined}
+        />
+        {errors.password && (
+          <span id="edit-user-password-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.password}
+          </span>
+        )}
       </label>
 
       <div style={{ marginTop: "1rem" }}>

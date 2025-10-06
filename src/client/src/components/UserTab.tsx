@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User, getUserDisplayName } from "../types"
+import { User, getUserDisplayName, UserRole } from "../types"
 
 type UsersTabProps = {
   users: User[]
@@ -8,6 +8,7 @@ type UsersTabProps = {
   handleEditUser: (user: User) => void
   handleAddUser: (currentUser: User) => void 
   handleBlockUser: (user: User) => void
+  handleEditRole: (user: User) => void
 };
 
 export default function UsersTab({
@@ -17,6 +18,7 @@ export default function UsersTab({
   handleEditUser,
   handleAddUser,
   handleBlockUser,
+  handleEditRole, 
 }: UsersTabProps) {
 
   if (currentUser.role !== 'Registrar' && currentUser.role !== 'Admin') {
@@ -56,9 +58,8 @@ export default function UsersTab({
                   currentUser.role === "Admin" ||
                   (currentUser.role === "Registrar" && u.role === "Staff");
 
-                const canAddUser =
-                  (currentUser.role === "Admin") ||
-                  (currentUser.role === "Registrar" && u.role === "Staff")
+                // Only admin can edit the role of other users
+                const canEditRole = currentUser.role === "Admin";
 
                 return (
                   <tr key={u.id}>
@@ -78,9 +79,19 @@ export default function UsersTab({
                         className="btn primary"
                         onClick={() => setUserToBlock(u)}
                         disabled={!canEditOrBlock}
+                        style={{ marginRight: '10px' }}
                       >
                         Block
                       </button>
+                      {canEditRole && (
+                        <button
+                          className="btn"
+                          onClick={() => handleEditRole(u)}
+                          style={{ marginRight: '10px' }}
+                        >
+                          Edit Role
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
