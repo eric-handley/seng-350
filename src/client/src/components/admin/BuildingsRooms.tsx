@@ -357,8 +357,8 @@ export default function BuildingsRooms(): JSX.Element {
                 <div style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
                   Rooms
                 </div>
-                <div style={{ overflowX: "auto" }}>
-                  <table className="table" style={{ width: "100%" }}>
+                <div className="table-wrap">
+                  <table className="table">
                     <thead>
                       <tr>
                         <th>Room</th>
