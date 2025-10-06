@@ -431,7 +431,7 @@ export class BookingsService {
   }
 
   private toResponseDto(booking: Booking): BookingResponseDto {
-    return {
+    const response: BookingResponseDto = {
       id: booking.id,
       user_id: booking.user_id,
       room_id: booking.room_id,
@@ -442,5 +442,18 @@ export class BookingsService {
       created_at: booking.created_at,
       updated_at: booking.updated_at,
     };
+
+    // Include user details if user relation is loaded
+    if (booking.user) {
+      response.user = {
+        id: booking.user.id,
+        email: booking.user.email,
+        first_name: booking.user.first_name,
+        last_name: booking.user.last_name,
+        role: booking.user.role,
+      };
+    }
+
+    return response;
   }
 }

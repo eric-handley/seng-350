@@ -109,4 +109,23 @@ export class BookingResponseDto {
 
   @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'Last update date' })
   updated_at!: Date;
+
+  @ApiProperty({
+    description: 'User details (populated for Admin/Registrar)',
+    required: false,
+    example: {
+      id: 'uuid-string',
+      email: 'user@uvic.ca',
+      first_name: 'John',
+      last_name: 'Doe',
+      role: 'Staff'
+    }
+  })
+  user?: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+  };
 }

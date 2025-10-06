@@ -1,4 +1,4 @@
-const API_BASE = process.env.API_BASE ?? 'http://localhost:3000';
+const API_BASE = 'http://localhost:3000';
 
 export type CreateBookingReq = {
   room_id: string;
@@ -16,6 +16,14 @@ export type Booking = {
   booking_series_id: string;
   created_at: string;
   updated_at: string;
+  // User details (populated by backend for registrars/admins)
+  user?: {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+  };
 };
 
 export async function createBooking(body: CreateBookingReq): Promise<Booking> {
@@ -33,9 +41,10 @@ export async function createBooking(body: CreateBookingReq): Promise<Booking> {
   return res.json() as Promise<Booking>;
 }
 
-export async function fetchUserBookings(): Promise<Booking[]> {
-  // No filters: server derives "me" from session (staff → my bookings)
-  const res = await fetch(`${API_BASE}/bookings`, {
+export async function fetchUserBookings(userId?: string): Promise<Booking[]> {
+  // If userId provided, filter to that user's bookings
+  const url = userId ? `${API_BASE}/bookings?userId=${encodeURIComponent(userId)}` : `${API_BASE}/bookings`;
+  const res = await fetch(url, {
     method: 'GET',
     credentials: 'include',
     headers: { 'Accept': 'application/json' },

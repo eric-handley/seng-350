@@ -4,6 +4,7 @@ import './styles/app.css'
 import './styles/admin.css'
 
 import { TabKey, UserRole } from './types'
+
 import { useUsers } from './hooks/useUsers'
 import { useAuth, AuthProvider } from './contexts/AuthContext'
 import { getCurrentDate } from './utils/dateHelpers'
@@ -41,6 +42,7 @@ const HomeComponent: React.FC = () => {
     handleBlockUser,
     setEditingUser,
     setAddingUser,
+    error,
   } = useUsers({ autoLoad: !!canManageUsers })
 
   // Room filtering state
@@ -67,7 +69,7 @@ const HomeComponent: React.FC = () => {
     <div className="app-shell">
       <div className="header">
         <div className="header-info">
-          <span className="badge">{currentUser.role.toUpperCase()}</span>
+          <span className="badge">{String(currentUser.role).toUpperCase()}</span>
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">
@@ -111,6 +113,9 @@ const HomeComponent: React.FC = () => {
       {tab === 'history' && (
         <HistoryPage
           currentUser={currentUser}
+          onCancel={() => {
+            // Implement cancellation logic here or leave empty if not needed
+          }}
         />
       )}
 
@@ -120,9 +125,10 @@ const HomeComponent: React.FC = () => {
           currentUser={currentUser}
           editingUser={editingUser}
           addingUser={addingUser}
+          error={error}
           onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
-          onAddUser={handleAddUser}
+          onAddUser={() => handleAddUser(currentUser)}
           onSaveNewUser={handleSaveNewUser}
           onBlockUser={handleBlockUser}
           onCancelEdit={() => setEditingUser(null)}
@@ -141,7 +147,7 @@ const AppRouter: React.FC = () => {
       <Route
         path="/home"
         element={
-          <ProtectedRoute allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR]}>
+          <ProtectedRoute allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR, UserRole.ADMIN]}>
             <HomeComponent />
           </ProtectedRoute>
         }
