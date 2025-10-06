@@ -32,7 +32,7 @@ export async function fetchBuildings(
   options: { includeRooms?: boolean } = {}
 ): Promise<Building[]> {
   const params = new URLSearchParams();
-  if (options.includeRooms) params.set("includeRooms", "true");
+  if (options.includeRooms) {params.set("includeRooms", "true");}
   const res = await fetch(
     `${API_BASE}/buildings${params.toString() ? `?${params.toString()}` : ""}`,
     {

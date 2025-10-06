@@ -141,6 +141,6 @@ export class RoomResponseDto {
       id: string;
       name: string;
     };
-    quantity?: number;
+    quantity: number | null;
   }>;
 }

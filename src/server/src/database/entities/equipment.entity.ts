@@ -15,6 +15,6 @@ export class Equipment {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @OneToMany(() => RoomEquipment, roomEquipment => roomEquipment.equipment)
+  @OneToMany(() => RoomEquipment, roomEquipment => roomEquipment.equipment, { cascade: true })
   room_equipment!: RoomEquipment[];
 }

@@ -10,8 +10,8 @@ export class RoomEquipment {
   @PrimaryColumn()
   equipment_id!: string;
 
-  @Column({ nullable: true })
-  quantity!: number;
+  @Column({ type: 'integer', nullable: true })
+  quantity!: number | null;
 
   @CreateDateColumn()
   created_at!: Date;

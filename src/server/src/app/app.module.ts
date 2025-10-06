@@ -22,6 +22,7 @@ import { BookingsController } from "../api/bookings.controller";
 import { RoomsController } from "../api/rooms.controller";
 import { BuildingsController } from "../api/buildings.controller";
 import { EquipmentController } from "../api/equipment.controller";
+import { RoomEquipmentController } from "../api/room-equipment.controller";
 import { ScheduleController } from "../api/schedule.controller";
 import { AuditLogsController } from "../api/audit-logs.controller";
 
@@ -31,6 +32,7 @@ import { BookingsService } from "../services/bookings.service";
 import { RoomsService } from "../services/rooms.service";
 import { BuildingsService } from "../services/buildings.service";
 import { EquipmentService } from "../services/equipment.service";
+import { RoomEquipmentService } from "../services/room-equipment.service";
 import { AuditLogsService } from "../services/audit-logs.service";
 
 // Import interceptors
@@ -59,6 +61,7 @@ import { AuditLoggingInterceptor } from '../shared/interceptors/audit-logging.in
     RoomsController,
     BuildingsController,
     EquipmentController,
+    RoomEquipmentController,
     ScheduleController,
     AuditLogsController,
   ],
@@ -69,6 +72,7 @@ import { AuditLoggingInterceptor } from '../shared/interceptors/audit-logging.in
     RoomsService,
     BuildingsService,
     EquipmentService,
+    RoomEquipmentService,
     AuditLogsService,
     AuditLoggingInterceptor,
   ],

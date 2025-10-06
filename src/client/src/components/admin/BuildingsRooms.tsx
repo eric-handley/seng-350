@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Building,
   CreateBuilding,
@@ -66,14 +66,9 @@ export default function BuildingsRooms(): JSX.Element {
     void reload();
   }, []);
 
-  const buildingMap = useMemo(() => {
-    const map: Record<string, Building> = {};
-    for (const b of buildings) map[b.short_name] = b;
-    return map;
-  }, [buildings]);
 
   const handleCreateBuilding = async (): Promise<void> => {
-    if (!newBuilding.short_name.trim() || !newBuilding.name.trim()) return;
+    if (!newBuilding.short_name.trim() || !newBuilding.name.trim()) {return;}
     setBusy({ kind: "create-building" });
     setError(null);
     try {
@@ -96,7 +91,7 @@ export default function BuildingsRooms(): JSX.Element {
   };
 
   const handleUpdateBuilding = async (shortName: string): Promise<void> => {
-    if (!editingBuildingName.trim()) return;
+    if (!editingBuildingName.trim()) {return;}
     setBusy({ kind: "update-building", shortName });
     setError(null);
     try {
@@ -116,8 +111,9 @@ export default function BuildingsRooms(): JSX.Element {
   };
 
   const handleDeleteBuilding = async (shortName: string): Promise<void> => {
-    if (!confirm(`Delete building ${shortName}? This also removes rooms.`))
-      return;
+    // eslint-disable-next-line no-alert
+    if (!window.confirm(`Delete building ${shortName}? This also removes rooms.`))
+      {return;}
     setBusy({ kind: "delete-building", shortName });
     setError(null);
     try {
@@ -148,7 +144,7 @@ export default function BuildingsRooms(): JSX.Element {
 
   const handleCreateRoom = async (shortName: string): Promise<void> => {
     const draft = getRoomDraftFor(shortName);
-    if (!draft.room_number.trim() || !draft.url.trim()) return;
+    if (!draft.room_number.trim() || !draft.url.trim()) {return;}
     setBusy({ kind: "create-room", buildingShortName: shortName });
     setError(null);
     try {
@@ -161,7 +157,7 @@ export default function BuildingsRooms(): JSX.Element {
       setBuildings((prev) =>
         prev.map((b) =>
           b.short_name === shortName
-            ? { ...b, rooms: [created as unknown as Room, ...(b.rooms || [])] }
+            ? { ...b, rooms: [created as unknown as Room, ...(b.rooms ?? [])] }
             : b
         )
       );
@@ -192,7 +188,7 @@ export default function BuildingsRooms(): JSX.Element {
 
   const handleUpdateRoom = async (room: Room): Promise<void> => {
     const draft = editingRoom[room.room_id];
-    if (!draft) return;
+    if (!draft) {return;}
     setBusy({ kind: "update-room", roomId: room.room_id });
     setError(null);
     try {
@@ -200,7 +196,7 @@ export default function BuildingsRooms(): JSX.Element {
       setBuildings((prev) =>
         prev.map((b) => ({
           ...b,
-          rooms: (b.rooms || []).map((r) =>
+          rooms: (b.rooms ?? []).map((r) =>
             r.room_id === room.room_id ? (updated as unknown as Room) : r
           ),
         }))
@@ -218,7 +214,8 @@ export default function BuildingsRooms(): JSX.Element {
   };
 
   const handleDeleteRoom = async (room: Room): Promise<void> => {
-    if (!confirm(`Delete room ${room.room_id}?`)) return;
+    // eslint-disable-next-line no-alert
+    if (!window.confirm(`Delete room ${room.room_id}?`)) {return;}
     setBusy({ kind: "delete-room", roomId: room.room_id });
     setError(null);
     try {
@@ -226,7 +223,7 @@ export default function BuildingsRooms(): JSX.Element {
       setBuildings((prev) =>
         prev.map((b) => ({
           ...b,
-          rooms: (b.rooms || []).filter((r) => r.room_id !== room.room_id),
+          rooms: (b.rooms ?? []).filter((r) => r.room_id !== room.room_id),
         }))
       );
     } catch (e) {
@@ -369,7 +366,7 @@ export default function BuildingsRooms(): JSX.Element {
                       </tr>
                     </thead>
                     <tbody>
-                      {(b.rooms || []).map((r) => {
+                      {(b.rooms ?? []).map((r) => {
                         const draft = editingRoom[r.room_id];
                         const isEditing = Boolean(draft);
                         return (
