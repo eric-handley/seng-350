@@ -583,3 +583,48 @@ main.theme {
   border-color: #7f1d1d;
   color: #fca5a5;
 }
+
+/* Room Selection Info Styles */
+.room-selection-info {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--bg);
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.room-selection-info h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.room-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.room-info-item {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.room-info-item strong {
+  color: var(--uvic-blue);
+  font-weight: 600;
+}
+
+/* Current Room Info Styles */
+.current-room-info {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--line);
+}
+
+.current-room-info h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 600;
+}

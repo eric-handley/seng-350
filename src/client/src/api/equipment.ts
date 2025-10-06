@@ -29,6 +29,21 @@ export async function fetchEquipmentByRoom(
   return res.json() as Promise<Equipment[]>;
 }
 
+export async function fetchAllEquipment(): Promise<Equipment[]> {
+  const res = await fetch(`${API_BASE}/equipment`, {
+    method: "GET",
+    credentials: "include",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(
+      `GET /equipment failed: ${res.status} ${res.statusText} ${text}`
+    );
+  }
+  return res.json() as Promise<Equipment[]>;
+}
+
 export async function createEquipment(
   body: CreateEquipment
 ): Promise<Equipment> {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useEquipment } from "../../hooks/useEquipment";
 import { fetchBuildings, Building, Room } from "../../api/buildings";
+import { fetchAllEquipment } from "../../api/equipment";
 import {
   Equipment,
   CreateEquipment,
@@ -72,8 +73,8 @@ export default function EquipmentManagement() {
   useEffect(() => {
     const loadAvailableEquipment = async () => {
       try {
-        // For now, we'll create a simple list. In a real app, you'd have an endpoint to get all equipment
-        setAvailableEquipment([]);
+        const data = await fetchAllEquipment();
+        setAvailableEquipment(data);
       } catch (err) {
         console.error("Failed to load available equipment:", err);
       }
@@ -111,7 +112,7 @@ export default function EquipmentManagement() {
 
   const handleAddRoomEquipment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRoom || !editingRoomEquipment) return;
+    if (!selectedRoom || !editingRoomEquipment?.equipmentId) return;
 
     try {
       const roomEquipmentData: CreateRoomEquipment = {
@@ -212,18 +213,13 @@ export default function EquipmentManagement() {
       <div className="equipment-header">
         <h2>Equipment Management</h2>
         <div className="equipment-actions">
-          <button
-            className="btn btn--primary"
-            onClick={() => setShowAddEquipment(true)}
-          >
-            Add Equipment
-          </button>
           {selectedRoom && (
             <button
               className="btn btn--secondary"
               onClick={() => setShowAddRoomEquipment(true)}
             >
-              Add Equipment to Room
+              Add Equipment to{" "}
+              {rooms.find((r) => r.room_id === selectedRoom)?.room_number}
             </button>
           )}
         </div>
@@ -271,6 +267,13 @@ export default function EquipmentManagement() {
 
       {selectedRoom && (
         <div className="equipment-content">
+          <div className="current-room-info">
+            <h3>
+              Equipment in{" "}
+              {buildings.find((b) => b.short_name === selectedBuilding)?.name} -
+              Room {rooms.find((r) => r.room_id === selectedRoom)?.room_number}
+            </h3>
+          </div>
           {loading ? (
             <div className="loading">Loading equipment...</div>
           ) : (
@@ -302,12 +305,12 @@ export default function EquipmentManagement() {
                       >
                         Edit
                       </button>
-                      <button
+                      {/* <button
                         className="btn btn--small btn--secondary"
                         onClick={() => startEditRoomEquipment(eq)}
                       >
                         Edit Quantity
-                      </button>
+                      </button> */}
                       <button
                         className="btn btn--small btn--danger"
                         onClick={() => handleDeleteRoomEquipment(eq.id)}
@@ -424,6 +427,52 @@ export default function EquipmentManagement() {
               </button>
             </div>
             <form onSubmit={handleAddRoomEquipment} className="modal-body">
+              <div className="room-selection-info">
+                <h4>Adding equipment to:</h4>
+                <div className="room-info-card">
+                  <div className="room-info-item">
+                    <strong>Building:</strong>{" "}
+                    {
+                      buildings.find((b) => b.short_name === selectedBuilding)
+                        ?.name
+                    }{" "}
+                    ({selectedBuilding})
+                  </div>
+                  <div className="room-info-item">
+                    <strong>Room:</strong>{" "}
+                    {rooms.find((r) => r.room_id === selectedRoom)?.room_number}
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="equipment-select">Select Equipment:</label>
+                <select
+                  id="equipment-select"
+                  value={editingRoomEquipment?.equipmentId || ""}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setEditingRoomEquipment({
+                        roomId: selectedRoom,
+                        equipmentId: e.target.value,
+                        quantity: 1,
+                      });
+                    } else {
+                      setEditingRoomEquipment(null);
+                    }
+                  }}
+                  className="form-control"
+                  required
+                >
+                  <option value="">Choose equipment to add</option>
+                  {availableEquipment.map((eq) => (
+                    <option key={eq.id} value={eq.id}>
+                      {eq.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="room-equipment-quantity">Quantity:</label>
                 <input
@@ -447,7 +496,8 @@ export default function EquipmentManagement() {
                   Cancel
                 </button>
                 <button type="submit" className="btn btn--primary">
-                  Add to Room
+                  Add to{" "}
+                  {rooms.find((r) => r.room_id === selectedRoom)?.room_number}
                 </button>
               </div>
             </form>

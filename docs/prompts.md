@@ -109,4 +109,6 @@ Branch `feature-6/admin-rooms-system`
     "path": "/api/buildings?includeRooms=true",
     "method": "GET"
     }
+  - Fix the Manage rooms page's css. The tables are out of the screen.
   - Add a new page to admin for managing equipments for individual rooms. (Creating, editing, deleting.)
+  - Make the add equipment really clear which building and room it is adding to
