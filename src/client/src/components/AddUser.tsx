@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { User, UserRole } from "../types"
 
 type AddUserProps = {
@@ -59,7 +59,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
     e.preventDefault();
     if (validateForm()) {
       // Remove id if present before sending
-      const { id, ...userData } = formData;
+      const { ...userData } = formData;
       onSave(userData as User & { password: string });
     }
   };
@@ -156,7 +156,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           className="input"
           name="password"
           type="password"
-          value={formData.password || ''}
+          value={formData.password ?? ''}
           onChange={handleChange}
           required
           aria-invalid={!!errors.password}

@@ -46,9 +46,13 @@ export function mapApiBookingToUi(b: ApiBooking): UiBooking {
 
   // Include user details if present (for registrars/admins)
   if (b.user) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ui as any).user = b.user;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ui as any).user_name = `${b.user.first_name} ${b.user.last_name}`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ui as any).user_email = b.user.email;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ui as any).user_role = b.user.role;
   }
 

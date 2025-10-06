@@ -57,7 +57,8 @@ export const BookingCard: React.FC<Props> = ({
     booking.user_name ??
     (booking.user?.first_name && booking.user?.last_name
       ? `${booking.user.first_name} ${booking.user.last_name}`
-      : undefined)
+      : undefined) ??
+    undefined
 
   const userEmail: string | undefined =
     booking.user_email ??
@@ -81,7 +82,7 @@ export const BookingCard: React.FC<Props> = ({
         <span>{start} → {end}</span>
       </div>
 
-      {showUser && (userName || userEmail || userRole) && (
+      {showUser && (userName ?? userEmail ?? userRole) && (
         <div className="card-meta" style={{ marginTop: 8, fontSize: '0.9em', opacity: 0.9 }}>
           {userName && <div><strong>User:</strong> {userName}</div>}
           {userEmail && <div><strong>Email:</strong> {userEmail}</div>}

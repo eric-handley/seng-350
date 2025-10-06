@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User, getUserDisplayName, UserRole } from "../types"
+import { User } from "../types"
 
 type UsersTabProps = {
   users: User[]
@@ -20,13 +20,13 @@ export default function UsersTab({
   handleBlockUser,
   handleEditRole, 
 }: UsersTabProps) {
+  const [userToBlock, setUserToBlock] = useState<User | null>(null)
 
   if (currentUser.role !== 'Registrar' && currentUser.role !== 'Admin') {
     return null
   }
 
   const visibleUsers = users
-  const [userToBlock, setUserToBlock] = useState<User | null>(null)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

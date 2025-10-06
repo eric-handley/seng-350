@@ -57,7 +57,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
       }
 
       // Only include password if it was provided (not empty)
-      if (updatedUser.password && updatedUser.password.trim()) {
+      if (updatedUser.password?.trim()) {
         updateData.password = updatedUser.password
       }
 
@@ -80,7 +80,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     }
   }
 
-  const handleAddUser = (currentUser: User) => {
+  const handleAddUser = () => {
     // Only allow admin to create registrar/admin, registrar can only create staff
     setAddingUser({
       id: '',
@@ -93,7 +93,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
 
   const handleSaveNewUser = async (newUser: User) => {
     // Remove id before sending
-    const { id, ...userData } = newUser
+    const { ...userData } = newUser
     try {
       const response = await fetch(`http://localhost:3000/users`, {
         method: 'POST',
@@ -109,7 +109,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
       } else {
         setError('Failed to add user')
       }
-    } catch (error) {
+    } catch {
       setError('Error adding user')
     }
   }
@@ -126,7 +126,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
       } else {
         setLoadError('Failed to remove user')
       }
-    } catch (error) {
+    } catch {
       setLoadError('Error removing user')
     }
   }

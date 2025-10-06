@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User, UserRole } from "../types"
+import { User } from "../types"
 
 type EditUserProps = {
   user: User;

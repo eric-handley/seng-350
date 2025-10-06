@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocat
 import './styles/app.css'
 import './styles/admin.css'
 
-import { TabKey, UserRole, User } from './types'
+import { TabKey, UserRole } from './types'
 
 import { useUsers } from './hooks/useUsers'
 import { useAuth, AuthProvider } from './contexts/AuthContext'
@@ -113,9 +113,8 @@ const HomeComponent: React.FC = () => {
       {tab === 'history' && (
         <HistoryPage
           currentUser={currentUser}
-          onCancel={(id: string) => {
+          onCancel={() => {
             // Implement cancellation logic here or leave empty if not needed
-            console.log(`Cancel booking with id: ${id}`)
           }}
         />
       )}

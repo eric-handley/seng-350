@@ -6,7 +6,7 @@ import { useBookingHistory } from '../hooks/useBookingHistory'
 
 interface HistoryPageProps {
   currentUser: User
-  onCancel: (id: string) => void
+  onCancel?: (id: string) => void
   onRebook?: (id: string) => void
 }
 
@@ -30,10 +30,10 @@ class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState>
 
 const FallbackTile: React.FC<{
   booking: UiBooking
-  onCancel: (id: string)=>void
+  onCancel?: (id: string)=>void
   onRebook?: (id: string) => void
   showUser?: boolean
-}> = ({ booking, onCancel, onRebook, showUser }) => {
+}> = ({ booking, onRebook, showUser }) => {
   return (
     <div className="card" style={{padding:'12px'}}>
       <div className="card-title" style={{fontWeight:600}}>
@@ -73,7 +73,6 @@ const GuardedBookingCard: React.FC<{
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
-  onCancel,
 }) => {
   // Add allBookings to your hook and fetch it for admins/registrars
   const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id) as {
@@ -98,8 +97,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   }
 
   const handleRebook = async (id: string) => {
-    const booking = allBookings.find(b => b.id === id) || allBookings.find(b => b.id === id)
-    if (!booking) return
+    const booking = userHistory?.find(b => b.id === id) ?? userHistory.find(b => b.id === id)
+    if (!booking) {return}
 
     // PATCH the booking to reactivate it
     const response = await fetch(`http://localhost:3000/bookings/${id}`, {
@@ -111,11 +110,13 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       }),
     })
     if (response.ok) {
-      alert('Rebooking successful!')
+      // eslint-disable-next-line no-alert
+      window.confirm('Rebooking successful!')
       await fetchHistory()
     }
     else {
-      alert('Failed to rebook. Please try again later.')
+      // eslint-disable-next-line no-alert
+      window.confirm('Failed to rebook. Please try again later.')
     }
   }
 
