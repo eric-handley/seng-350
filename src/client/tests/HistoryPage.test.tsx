@@ -38,6 +38,8 @@ describe('<HistoryPage />', () => {
             error: null,
             fetchHistory: mockFetchHistory,
             cancelBooking: mockCancelBooking,
+            fetchAllBookings: jest.fn(),
+            allBookings: [],
         });
 
         render(<HistoryPage currentUser={baseUser} />);
@@ -52,6 +54,8 @@ describe('<HistoryPage />', () => {
             error: 'Something went wrong',
             fetchHistory: mockFetchHistory,
             cancelBooking: mockCancelBooking,
+            fetchAllBookings: jest.fn(),
+            allBookings: [],
         });
 
         render(<HistoryPage currentUser={baseUser} />);
@@ -66,6 +70,8 @@ describe('<HistoryPage />', () => {
             error: null,
             fetchHistory: mockFetchHistory,
             cancelBooking: mockCancelBooking,
+            fetchAllBookings: jest.fn(),
+            allBookings: [],
         });
 
         render(<HistoryPage currentUser={baseUser} />);
@@ -93,6 +99,8 @@ describe('<HistoryPage />', () => {
             error: null,
             fetchHistory: mockFetchHistory,
             cancelBooking: mockCancelBooking,
+            fetchAllBookings: jest.fn(),
+            allBookings: [],
         });
 
         render(<HistoryPage currentUser={baseUser} />);
@@ -129,6 +137,8 @@ describe('<HistoryPage />', () => {
             error: null,
             fetchHistory: mockFetchHistory,
             cancelBooking: mockCancelBooking,
+            fetchAllBookings: jest.fn(),
+            allBookings: [],
         });
 
         render(<HistoryPage currentUser={baseUser} />);

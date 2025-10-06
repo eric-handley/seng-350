@@ -50,15 +50,9 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {editingUser && (
         <EditUser
           user={editingUser}
+          currentUser={currentUser}
           onSave={onSaveUser}
           onCancel={onCancelEdit}
-        />
-      )}
-      {editingRoleUser && (
-        <EditUser
-          user={editingRoleUser}
-          onSave={handleSaveRole}
-          onCancel={handleCancelRoleEdit}
         />
       )}
       {addingUser && (
