@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { User, UserRole } from '../types'
 import { BookingCard } from '../components/BookingCard'
 import type { UiBooking } from '../types'
@@ -74,6 +74,8 @@ const GuardedBookingCard: React.FC<{
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
 }) => {
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+
   const {
     history: userHistory,
     loading,
@@ -125,14 +127,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       }),
     })
     if (response.ok) {
-      window.confirm('Rebooking successful!')
+      setMessage({ text: 'Rebooking successful!', type: 'success' })
       await fetchHistory()
       if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
         await fetchAllBookings()
       }
     }
     else {
-      window.confirm('Failed to rebook. Please try again later.')
+      setMessage({ text: 'Failed to rebook. Please try again later.', type: 'error' })
     }
   }
 
@@ -157,6 +159,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
 
   return (
     <div>
+      {message && (
+        <div className="toast" style={{
+          background: message.type === 'success' ? '#22c55e' : '#ef4444',
+          marginBottom: '1rem'
+        }}>
+          {message.text}
+        </div>
+      )}
       <section className="panel" aria-labelledby="history-label">
         <h2 id="history-label" style={{marginTop:0}}>My Bookings</h2>
         {userHistory.length === 0 ? (
@@ -168,7 +178,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 key={booking.id}
                 booking={booking}
                 onCancel={handleCancel}
-                //onRebook={handleRebook}
+                onRebook={handleRebook}
                 showUser={false}
               />
             ))}

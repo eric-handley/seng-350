@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { User } from "../types"
+import { ConfirmModal } from "./ConfirmModal"
 
 type UsersTabProps = {
   users: User[]
@@ -109,30 +110,20 @@ export default function UsersTab({
           Add User
         </button>
       </section>
-      {userToBlock && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <p style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete {userToBlock.first_name} {userToBlock.last_name}?</p>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-              <button
-                className="btn danger"
-                onClick={() => {
-                  handleBlockUser(userToBlock)
-                  setUserToBlock(null)
-                }}
-              >
-                Delete
-              </button>
-              <button
-                className="btn"
-                onClick={() => setUserToBlock(null)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        isOpen={!!userToBlock}
+        title="Delete User"
+        message={`Are you sure you want to delete ${userToBlock?.first_name} ${userToBlock?.last_name}?`}
+        confirmText="Delete"
+        onConfirm={() => {
+          if (userToBlock) {
+            handleBlockUser(userToBlock)
+            setUserToBlock(null)
+          }
+        }}
+        onCancel={() => setUserToBlock(null)}
+        isDanger={true}
+      />
     </div>
     
   )
