@@ -5,7 +5,7 @@
 **Cycle 1**
 - Implementation 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/implement))
     - > [!important]
-      > **Running**: `docker compose up -d --wait` and wait for all services to be healthy (could take a while) before testing
+      > **Running**: `docker compose up -d --wait` and wait for all services to be healthy (could take a while) before testing. A `NetworkError` when attempting to log in indicates that the server has not fully started yet (this is usually the last service to finish setting up)
     - Architecture Documentation
         - [Database Schema](docs/db/schema.md)
         - [API Documentation](docs/api/api.md)
