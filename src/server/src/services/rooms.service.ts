@@ -275,7 +275,11 @@ export class RoomsService {
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
     });
 
-    return this.toResponseDto(roomWithRelations!);
+    if (!roomWithRelations) {
+      throw new NotFoundException('Room not found after creation');
+    }
+
+    return this.toResponseDto(roomWithRelations);
   }
 
   async update(room_id: string, updateRoomDto: UpdateRoomDto): Promise<RoomResponseDto> {
@@ -312,7 +316,11 @@ export class RoomsService {
       relations: ['building', 'room_equipment', 'room_equipment.equipment'],
     });
 
-    return this.toResponseDto(roomWithRelations!);
+    if (!roomWithRelations) {
+      throw new NotFoundException('Room not found after update');
+    }
+
+    return this.toResponseDto(roomWithRelations);
   }
 
   async remove(room_id: string): Promise<void> {
