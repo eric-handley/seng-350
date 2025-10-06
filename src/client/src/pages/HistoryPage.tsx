@@ -76,37 +76,40 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     }
   }
 
-  return (
-    <div>
-      {loading && (
-        <section className="panel" aria-labelledby="history-loading">
-          <div className="empty">Loading your bookings…</div>
-        </section>
-      )}
-      {error && (
-        <section className="panel" aria-labelledby="history-error">
-          <div className="empty">Error: {error}</div>
-        </section>
-      )}
-
-      <section className="panel" aria-labelledby="history-label">
-        <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
-
-        {userHistory.length === 0 ? (
-          <div className="empty">You have no bookings yet.</div>
-        ) : (
-          <div className="grid">
-            {userHistory.map(booking => (
-              <GuardedBookingCard
-                key={booking.id}
-                booking={booking}
-                onCancel={handleCancel}
-                showUser={false}
-              />
-            ))}
-          </div>
-        )}
+  if (loading) {
+    return (
+      <section className="panel" aria-labelledby="history-loading">
+        <div className="empty">Loading your bookings…</div>
       </section>
-    </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="panel" aria-labelledby="history-error">
+        <div className="empty">Error: {error}</div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="panel" aria-labelledby="history-label">
+      <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
+
+      {userHistory.length === 0 ? (
+        <div className="empty">You have no bookings yet.</div>
+      ) : (
+        <div className="grid">
+          {userHistory.map(booking => (
+            <GuardedBookingCard
+              key={booking.id}
+              booking={booking}
+              onCancel={handleCancel}
+              showUser={false}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   )
 }

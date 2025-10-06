@@ -44,9 +44,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       onLogin(user);
 
       if (user.role === UserRole.ADMIN) {
-        navigate('/admin-panel');
+        navigate('/admin-panel/logs');
       } else {
-        navigate('/home');
+        navigate('/home/book');
       }
     } catch (err: unknown) {
       setError(getErrorMessage(err, 'Login failed'));

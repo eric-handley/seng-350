@@ -39,7 +39,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
     slot_type: 'available',
   });
 
-  const { createBooking } = useBookingHistory(currentUserId);
+  const { createBooking, error: bookingError } = useBookingHistory(currentUserId);
 
   const handleBook = async (room: Room) => {
     try {
@@ -69,6 +69,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
 
       {loading && <div className="empty">Loading available rooms…</div>}
       {error && <div className="empty">Error: {error}</div>}
+      {bookingError && <div className="empty error" style={{ color: '#d32f2f', backgroundColor: '#ffebee', padding: '1rem', borderRadius: '4px', marginBottom: '1rem' }}>Booking error: {bookingError}</div>}
 
       {!loading && !error && rooms.length === 0 ? (
         <div className="empty">No rooms available for the selected time. Try adjusting filters.</div>
