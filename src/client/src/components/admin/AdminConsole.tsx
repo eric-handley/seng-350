@@ -5,6 +5,7 @@ import { convertAuditLogToRow } from "../../types/admin";
 import { AuditTable } from "./AuditTable";
 import { SystemHealth } from "./SystemHealth";
 import BuildingsRooms from "./BuildingsRooms";
+import EquipmentManagement from "./EquipmentManagement";
 
 type AdminConsoleProps = {
   onLogout?: () => void;
@@ -12,7 +13,9 @@ type AdminConsoleProps = {
 
 export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
   const [dark, setDark] = useDarkModePref();
-  const [tab, setTab] = useState<"audit" | "health" | "buildings">("audit");
+  const [tab, setTab] = useState<
+    "audit" | "health" | "buildings" | "equipment"
+  >("audit");
   const { auditLogs, loading, error } = useAuditLogs();
 
   // Convert audit logs to display format
@@ -41,6 +44,12 @@ export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
               onClick={() => setTab("buildings")}
             >
               Buildings & Rooms
+            </button>
+            <button
+              className={`tab ${tab === "equipment" ? "is-active" : ""}`}
+              onClick={() => setTab("equipment")}
+            >
+              Equipment
             </button>
             <button
               className={`tab ${tab === "health" ? "is-active" : ""}`}
@@ -73,6 +82,7 @@ export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
           <AuditTable rows={auditRows} loading={loading} error={error} />
         )}
         {tab === "buildings" && <BuildingsRooms />}
+        {tab === "equipment" && <EquipmentManagement />}
         {tab === "health" && <SystemHealth />}
       </section>
 

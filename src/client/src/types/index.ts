@@ -64,6 +64,49 @@ export type AuditLog = {
   updated_at: string;
 };
 
+export type Equipment = {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  room_equipment?: Array<{
+    room: {
+      id: string;
+      room: string;
+      building_id: string;
+      building_name: string;
+      building_short_name: string;
+    };
+    quantity?: number;
+  }>;
+};
+
+export type RoomEquipment = {
+  room_id: string;
+  equipment_id: string;
+  quantity: number | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CreateEquipment = {
+  name: string;
+};
+
+export type UpdateEquipment = {
+  name?: string;
+};
+
+export type CreateRoomEquipment = {
+  room_id: string;
+  equipment_id: string;
+  quantity?: number;
+};
+
+export type UpdateRoomEquipment = {
+  quantity?: number;
+};
+
 export const getUserDisplayName = (
   user: Pick<User, "first_name" | "last_name">
 ): string => {

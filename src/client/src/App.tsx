@@ -26,6 +26,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuditTable } from "./components/admin/AuditTable";
 import { SystemHealth } from "./components/admin/SystemHealth";
 import BuildingsRooms from "./components/admin/BuildingsRooms";
+import EquipmentManagement from "./components/admin/EquipmentManagement";
 
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
@@ -147,6 +148,9 @@ const HomeComponent: React.FC = () => {
       )}
       {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
         <BuildingsRooms />
+      )}
+      {tab === "equipment" && currentUser.role === UserRole.ADMIN && (
+        <EquipmentManagement />
       )}
     </div>
   );
