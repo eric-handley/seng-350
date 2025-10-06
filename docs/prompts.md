@@ -95,11 +95,18 @@ Branch `issue-46/set-up-audit-logging`
 
 - [Conversation Link](https://chatgpt.com/c/68e06ed2-b4e0-8325-989c-e928475cd206)
 
+Branch `feature-6/admin-page`
+
+- `Cursor` prompts:
+  - Make an admin console that shows audit logs and system health using University of Victoria colours.
+  - Integrate the existing backend api endpoints for audits and system health to the admin console.
+
 Branch `feature-6/admin-rooms-system`
 
 - `Cursor` prompts:
   - Make the admin console look like the page in App.tsx file. Make the banner the same. Make it look the same.
   - get the audit logs in Admin console using the existing endpoints.
+  - Add functionality for system health.
   - In admin add two new pages. One for managing rooms, buildings. (Creating new ones or deleting/editing existing ones.) And one for managing equipment. (Adding new eqipment or deleting/editing)
   - Fix this problem: {
     "statusCode": 404,
@@ -111,4 +118,4 @@ Branch `feature-6/admin-rooms-system`
     }
   - Fix the Manage rooms page's css. The tables are out of the screen.
   - Add a new page to admin for managing equipments for individual rooms. (Creating, editing, deleting.)
-  - Make the add equipment really clear which building and room it is adding to
+  - Make the add equipment really clear which building and room it is adding to.
