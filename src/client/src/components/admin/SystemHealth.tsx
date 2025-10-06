@@ -6,12 +6,12 @@ export const SystemHealth = () => {
   const { backend, lastChecked, isChecking, error } = useHealthCheck();
 
   const getStatusTone = (ok: boolean) => {
-    if (isChecking) return "info";
+    if (isChecking) {return "info";}
     return ok ? "ok" : "danger";
   };
 
   const getStatusText = (ok: boolean) => {
-    if (isChecking) return "Checking...";
+    if (isChecking) {return "Checking...";}
     return ok ? "Healthy" : "Unhealthy";
   };
 

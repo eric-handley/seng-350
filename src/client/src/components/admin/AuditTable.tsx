@@ -33,7 +33,7 @@ export const AuditTable = ({
       "action",
       "target",
       "severity",
-      "ip",
+      "details",
     ] as const;
     const csv = [headers.join(",")]
       .concat(filtered.map((r) => headers.map((h) => r[h]).join(",")))
@@ -93,7 +93,7 @@ export const AuditTable = ({
         <div className="filters">
           <input
             className="input"
-            placeholder="Search id, actor, action, target, ip…"
+            placeholder="Search id, actor, action, target…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -125,13 +125,15 @@ export const AuditTable = ({
               <th>Action</th>
               <th>Target</th>
               <th>Severity</th>
-              <th>IP</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
             {pageRows.map((r) => (
               <tr key={r.id}>
-                <td className="mono">{r.id}</td>
+                <td className="mono" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.id}>
+                  {r.id}
+                </td>
                 <td className="mono">{new Date(r.time).toLocaleString()}</td>
                 <td>{r.actor}</td>
                 <td className="mono">{r.action}</td>
@@ -149,7 +151,9 @@ export const AuditTable = ({
                     {r.severity}
                   </Badge>
                 </td>
-                <td className="mono">{r.ip}</td>
+                <td className="mono" style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.details}>
+                  {r.details}
+                </td>
               </tr>
             ))}
             {pageRows.length === 0 && (

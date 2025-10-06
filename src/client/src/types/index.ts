@@ -46,18 +46,20 @@ export type TabKey =
 
 export type AuditLog = {
   id: string;
-  user_id: string;
-  action: string;
-  entity_type: string;
-  entity_id: string;
-  created_at: string;
-  updated_at: string;
   user: {
     id: string;
     email: string;
     first_name: string;
     last_name: string;
-  };
+  } | null;
+  action: string;
+  route: string;
+  request: {
+    query?: Record<string, unknown> | null;
+    body?: unknown;
+  } | null;
+  created_at: string;
+  updated_at: string;
 };
 
 export const getUserDisplayName = (

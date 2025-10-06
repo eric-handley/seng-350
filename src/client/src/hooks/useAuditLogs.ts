@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AuditLog } from "../types";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "http://localhost:3000";
 
 export function useAuditLogs() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
@@ -13,15 +13,10 @@ export function useAuditLogs() {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
       const response = await fetch(`${API_BASE_URL}/logs`, {
         method: "GET",
+        credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });

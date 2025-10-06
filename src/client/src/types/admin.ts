@@ -8,23 +8,32 @@ export type AuditRow = {
   action: string;
   target: string;
   severity: "low" | "medium" | "high";
-  ip: string;
+  details: string;
 };
 
 // Convert API audit log to display format
 export function convertAuditLogToRow(auditLog: AuditLog): AuditRow {
+  const actor = auditLog.user
+    ? `${auditLog.user.first_name} ${auditLog.user.last_name} (${auditLog.user.email})`
+    : "Unknown";
+
+  // Format request details for display
+  const details = auditLog.request
+    ? JSON.stringify(auditLog.request, null, 2)
+    : "N/A";
+
   return {
     id: auditLog.id,
     time: auditLog.created_at,
-    actor: `${auditLog.user.first_name} ${auditLog.user.last_name} (${auditLog.user.email})`,
+    actor,
     action: auditLog.action,
-    target: `${auditLog.entity_type}:${auditLog.entity_id}`,
+    target: auditLog.route,
     severity:
       auditLog.action === "DELETE"
         ? "high"
-        : auditLog.action === "UPDATE"
+        : auditLog.action === "UPDATE" || auditLog.action === "CREATE"
         ? "medium"
         : "low",
-    ip: "N/A", // IP not available in current API response
+    details,
   };
 }

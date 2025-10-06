@@ -28,15 +28,12 @@ export function useHealthCheck(): SystemHealth {
     setError(null);
 
     try {
-      const startTime = Date.now();
       const response = await fetch("http://localhost:3000/health", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      const latency = Date.now() - startTime;
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

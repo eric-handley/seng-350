@@ -15,14 +15,16 @@ import { useUsers } from "./hooks/useUsers";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { getCurrentDate } from "./utils/dateHelpers";
 
-import { TabNavigation } from "./components/TabNavigation";
-import { BookingPage } from "./pages/BookingPage";
-import { SchedulePage } from "./pages/SchedulePage";
-import { HistoryPage } from "./pages/HistoryPage";
-import { UsersPage } from "./pages/UsersPage";
-import LoginPage from "./pages/LoginPage";
-import AdminConsole from "./components/AdminConsole";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { TabNavigation } from './components/TabNavigation'
+import { BookingPage } from './pages/BookingPage'
+import { SchedulePage } from './pages/SchedulePage'
+import { HistoryPage } from './pages/HistoryPage'
+import { UsersPage } from './pages/UsersPage'
+import LoginPage from './pages/LoginPage'
+import AdminConsole from './components/admin/AdminConsole'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { AuditTable } from './components/admin/AuditTable'
+import { SystemHealth } from './components/admin/SystemHealth'
 
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
@@ -157,39 +159,39 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      {/* <Route
+      <Route
         path="/admin-panel"
         element={
           <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
             <AdminPage />
           </ProtectedRoute>
         }
-      /> */}
+      />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
 
-// const AdminPage: React.FC = () => {
-//   const { currentUser, isLoading, logout } = useAuth();
-//   const navigate = useNavigate();
+const AdminPage: React.FC = () => {
+  const { currentUser, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
 
-//   if (isLoading) {
-//     return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
-//   }
+  if (isLoading) {
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
+  }
 
-//   if (!currentUser) {
-//     return null;
-//   }
+  if (!currentUser) {
+    return null;
+  }
 
-//   const handleLogout = async () => {
-//     await logout();
-//     navigate("/login", { replace: true });
-//   };
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
-//   return <AdminConsole onLogout={handleLogout} />;
-// };
+  return <AdminConsole onLogout={handleLogout} />;
+};
 
 export default function App() {
   return (
