@@ -28,7 +28,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // send cookies (needed if using sessions)
+        credentials: "include",
       });
 
       if (response.status === 401) {

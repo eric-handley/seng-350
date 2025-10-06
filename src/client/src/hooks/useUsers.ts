@@ -11,6 +11,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
   const [addingUser, setAddingUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true)
@@ -40,12 +41,47 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     setEditingUser(user)
   }
 
-  const handleSaveUser = (updatedUser: User) => {
-    setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u))
-    setEditingUser(null)
+  const handleSaveUser = async (updatedUser: User & { password?: string }) => {
+    try {
+      const updateData: {
+        email: string
+        first_name: string
+        last_name: string
+        role: string
+        password?: string
+      } = {
+        email: updatedUser.email,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        role: updatedUser.role,
+      }
+
+      // Only include password if it was provided (not empty)
+      if (updatedUser.password?.trim()) {
+        updateData.password = updatedUser.password
+      }
+
+      const response = await fetch(`http://localhost:3000/users/${updatedUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updateData),
+      })
+      if (response.ok) {
+        const savedUser = await response.json()
+        setUsers(prev => prev.map(u => u.id === savedUser.id ? savedUser : u))
+        setEditingUser(null)
+        setError(null)
+      } else {
+        setError('Failed to save user')
+      }
+    } catch (err) {
+      setError(`Error saving user: ${String(err)}`)
+    }
   }
 
   const handleAddUser = () => {
+    // Only allow admin to create registrar/admin, registrar can only create staff
     setAddingUser({
       id: '',
       email: '',
@@ -55,17 +91,44 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     })
   }
 
-  const handleSaveNewUser = (newUser: User) => {
-    const userWithId = {
-      ...newUser,
-      id: newUser.id || `usr-${Math.random().toString(36).slice(2, 10)}`,
+  const handleSaveNewUser = async (newUser: User) => {
+    // Remove id before sending
+    const { ...userData } = newUser
+    try {
+      const response = await fetch(`http://localhost:3000/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(userData),
+      })
+      if (response.ok) {
+        const createdUser = await response.json()
+        setUsers(prev => [...prev, createdUser])
+        setAddingUser(null)
+        setError(null)
+      } else {
+        setError('Failed to add user')
+      }
+    } catch {
+      setError('Error adding user')
     }
-    setUsers(prev => [...prev, userWithId])
-    setAddingUser(null)
   }
 
-  const handleBlockUser = () => {
-    // TODO: integrate with API once blocking is supported
+  const handleBlockUser = async (user: User) => {
+    try {
+      const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        setUsers(prev => prev.filter(u => u.id !== user.id))
+        setError(null)
+      } else {
+        setLoadError('Failed to remove user')
+      }
+    } catch {
+      setLoadError('Error removing user')
+    }
   }
 
   return {
@@ -74,6 +137,7 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     addingUser,
     isLoading,
     loadError,
+    error,
     refreshUsers: fetchUsers,
     handleEditUser,
     handleSaveUser,
