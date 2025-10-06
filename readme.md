@@ -3,6 +3,18 @@
 ## Links
 
 **Cycle 1**
+- Implementation 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/implement))
+    - > [!important]
+      > **Running**: `docker compose up -d --wait` and wait for all services to be healthy (could take a while) before testing
+    - Architecture Documentation
+        - [Database Schema](docs/db/schema.md)
+        - [API Documentation](docs/api/api.md)
+            - [Swagger OpenAPI Documentation](docs/api/swagger.md) (`localhost:3000/api-docs`)
+            - [Authentication](docs/api/auth.md)
+        - [Role Permissions Matrix](docs/api/permissions.md)
+    - Marking
+        - [Rubric](docs/implement-1/rubric.md)
+        - [Scope Changes](docs/implement-1/scope-changes.md)
 - Design 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/design))
     - [Product Requirements Document](docs/product-requirements-document.md)
     - [Test Plan](docs/test-plan.md)
@@ -10,9 +22,6 @@
         1. [Tech Stack Choices](docs/adr/adr-1-tech-stack-choices.md)
         2. [Performance Priorities](docs/adr/adr-2-performance-priorities.md)
         2. [Development Workflow](docs/adr/adr-3-development-workflow.md)
-- Implementation 1 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-1/implement))
-    - [Database Schema](docs/db/schema.md)
-    - [Swagger/API Usage](docs/api/api.md)
 
 
 **Team Docs**
