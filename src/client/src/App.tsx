@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import './styles/app.css'
 import './styles/admin.css'
 
-import { TabKey, UserRole } from './types'
+import { TabKey, UserRole, User } from './types'
 
 import { useUsers } from './hooks/useUsers'
 import { useAuth, AuthProvider } from './contexts/AuthContext'
@@ -127,7 +127,7 @@ const HomeComponent: React.FC = () => {
           editingUser={editingUser}
           addingUser={addingUser}
           error={error}
-          onEditUser={(user: User) => handleEditUser(user, currentUser)}
+          onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
           onAddUser={() => handleAddUser(currentUser)}
           onSaveNewUser={handleSaveNewUser}
