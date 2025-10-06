@@ -48,13 +48,19 @@ Branch `issue-31/db-setup`
 Branch `feature-7/registrar`
 - ChatGPT prompts:
     - how can i break up a .tsx file into multiple files for better code quality?
-    - how can I edit this function to properly add the submitted information to the table? const handleSaveNewUser = (updated: User) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === updated.id ? updated : u))
-    );
-    setAddingUser(null);
-  };
-  - 
+    - how can I edit this function to properly add the submitted information to the table? 
+        ```js
+        const handleSaveNewUser = (updated: User) => {
+            setUsers((prev) =>
+            prev.map((u) => (u.id === updated.id ? updated : u))
+            );
+            setAddingUser(null);
+        };
+        ```
+
+Branch `issue-46/set-up-audit-logging`
+- `claude-code` prompts:
+    - make a plan to implement api logging to the audit_logs table (check @docs/db/schema.md ). this should somehow hook into all api calls so that the active user (authenticated) and the action/object are logged to the db. it should also capture logins and logouts. your changes should only be server-side
 
 **Design-I**
 

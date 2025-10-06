@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { BookingStatus } from '../database/entities/booking.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
@@ -109,32 +109,4 @@ export class BookingResponseDto {
 
   @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'Last update date' })
   updated_at!: Date;
-}
-
-export class CreateBookingSeriesDto {
-  @ApiProperty({ example: 'ECS-124', description: 'Room ID to book' })
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => normalizeRoomId(value))
-  room_id!: string;
-
-  @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Booking start time (ISO 8601)' })
-  @Type(() => Date)
-  @IsDate()
-  start_time!: Date;
-
-  @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Booking end time (ISO 8601)' })
-  @Type(() => Date)
-  @IsDate()
-  end_time!: Date;
-
-  @ApiProperty({ example: 'weekly', description: 'Recurrence pattern (e.g., weekly, daily)' })
-  @IsString()
-  @IsNotEmpty()
-  recurrence!: string;
-
-  @ApiProperty({ example: 4, description: 'Number of recurrences to create' })
-  @IsInt()
-  @Min(1)
-  recurrence_count!: number;
 }

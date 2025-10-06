@@ -1,14 +1,13 @@
 import React from 'react'
-import { Booking } from '../types'
-import { ROOMS } from '../constants'
 import { FilterPanel } from '../components/FilterPanel'
+import { useSchedule } from '../hooks/useSchedule'
+import { toApiTime } from '../utils/time'
 
 interface SchedulePageProps {
   date: string
   setDate: (date: string) => void
   building: string
   setBuilding: (building: string) => void
-  scheduleForDay: Booking[]
 }
 
 export const SchedulePage: React.FC<SchedulePageProps> = ({
@@ -16,18 +15,32 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
   setDate,
   building,
   setBuilding,
-  scheduleForDay,
 }) => {
-  const filteredSchedule = scheduleForDay.filter(b => {
-    if (!building) {return true}
-    const room = ROOMS.find(r => r.id === b.roomId)
-    return room?.building === building
+  const { rooms, loading, error } = useSchedule({
+    building_short_name: building || undefined,
+    date: date || undefined,
+    start_time: toApiTime('00:00'),
+    end_time: toApiTime('23:59'),
+    slot_type: 'booked',
   })
+
+  // Flatten rooms with their booked slots
+  const bookedSlots = rooms.flatMap(room =>
+    room.slots.map(slot => ({
+      room_id: room.room_id,
+      room_number: room.room_number,
+      building_short_name: room.building_short_name,
+      building_name: room.building_name,
+      capacity: room.capacity,
+      start_time: slot.start_time,
+      end_time: slot.end_time,
+    }))
+  )
 
   return (
     <section className="panel" aria-labelledby="schedule-label">
       <h2 id="schedule-label" style={{marginTop:0}}>Schedule for {date}</h2>
-      
+
       <div style={{marginBottom:8}}>
         <FilterPanel
           building={building}
@@ -45,37 +58,38 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
         />
       </div>
 
-      {filteredSchedule.length === 0 ? (
+      {loading && <div className="empty">Loading schedule…</div>}
+      {error && <div className="empty">Error: {error}</div>}
+
+      {!loading && !error && bookedSlots.length === 0 ? (
         <div className="empty">No bookings for this date.</div>
       ) : (
-        <table className="table" aria-label="Schedule">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Room</th>
-              <th>Building</th>
-              <th>Booked By</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredSchedule.map(b => {
-              const room = ROOMS.find(r => r.id === b.roomId)
-              const start = new Date(b.start).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-              const end = new Date(b.end).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-              if (!room) {return null}
-              return (
-                <tr key={b.id}>
-                  <td>{start}–{end}</td>
-                  <td>{room.name}</td>
-                  <td>{room.building}</td>
-                  <td>{b.user}</td>
-                  <td>{b.cancelled ? 'Cancelled' : 'Active'}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        !loading && !error && (
+          <table className="table" aria-label="Schedule">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Room</th>
+                <th>Building</th>
+                <th>Capacity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookedSlots.map((slot, idx) => {
+                const start = new Date(slot.start_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+                const end = new Date(slot.end_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+                return (
+                  <tr key={`${slot.room_id}-${idx}`}>
+                    <td>{start}–{end}</td>
+                    <td>{slot.building_short_name} {slot.room_number}</td>
+                    <td>{slot.building_name}</td>
+                    <td>{slot.capacity}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )
       )}
     </section>
   )

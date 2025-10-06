@@ -3,6 +3,7 @@ import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
+import { AuditLoggingInterceptor } from './shared/interceptors/audit-logging.interceptor';
 import session from 'express-session';
 
 async function bootstrap() {
@@ -45,6 +46,10 @@ async function bootstrap() {
 
   // Apply global exception filter for consistent error reporting
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // Apply global audit logging interceptor
+  const auditLoggingInterceptor = app.get(AuditLoggingInterceptor);
+  app.useGlobalInterceptors(auditLoggingInterceptor);
 
   app.enableCors({
     origin: process.env.NODE_ENV === 'production' ? false : 'http://localhost:5173',
