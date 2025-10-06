@@ -74,30 +74,45 @@ const GuardedBookingCard: React.FC<{
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
 }) => {
-  // Add allBookings to your hook and fetch it for admins/registrars
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id) as {
+  const {
+    history: userHistory,
+    loading,
+    error,
+    fetchHistory,
+    cancelBooking,
+    allBookings = [],
+    fetchAllBookings
+  } = useBookingHistory(currentUser.id) as {
     history: UiBooking[],
     loading: boolean,
     error: string | null,
     fetchHistory: () => Promise<void>,
     cancelBooking: (id: string) => Promise<void>,
-    allBookings: UiBooking[]
+    allBookings: UiBooking[],
+    fetchAllBookings: () => Promise<void>
   }
 
   useEffect(() => {
     void fetchHistory()
-  }, [fetchHistory])
+    if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+      void fetchAllBookings()
+    }
+  }, [fetchHistory, fetchAllBookings, currentUser])
 
   const handleCancel = async (id: string) => {
     try {
       await cancelBooking(id)
+      await fetchHistory()
+      if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+        await fetchAllBookings()
+      }
     } catch {
       // Error already set by hook
     }
   }
 
   const handleRebook = async (id: string) => {
-    const booking = userHistory?.find(b => b.id === id) ?? userHistory.find(b => b.id === id)
+    const booking = allBookings.find(b => b.id === id) ?? userHistory.find(b => b.id === id)
     if (!booking) {return}
 
     // PATCH the booking to reactivate it
@@ -110,12 +125,13 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       }),
     })
     if (response.ok) {
-      // eslint-disable-next-line no-alert
       window.confirm('Rebooking successful!')
       await fetchHistory()
+      if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+        await fetchAllBookings()
+      }
     }
     else {
-      // eslint-disable-next-line no-alert
       window.confirm('Failed to rebook. Please try again later.')
     }
   }
@@ -137,7 +153,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   }
 
   // Only show active (non-cancelled) bookings for all users
-  const activeAllBookings = allBookings.filter(b => !b.cancelled)
+  // const activeAllBookings = allBookings.filter(b => !b.cancelled)
 
   return (
     <div>
@@ -162,11 +178,11 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All User Bookings</h2>
-          {activeAllBookings.length === 0 ? (
+          {allBookings.length === 0 ? (
             <div className="empty">There are no current bookings.</div>
           ) : (
             <div className="grid">
-              {activeAllBookings.map(booking => (
+              {allBookings.map(booking => (
                 <GuardedBookingCard
                   key={booking.id}
                   booking={booking}
