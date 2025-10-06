@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, Min } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { RoomType } from '../database/entities/room.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -23,6 +23,58 @@ const normalizeRoomType = (value: unknown): unknown => {
 
   return ROOM_TYPE_LOOKUP[trimmed.toLowerCase()] ?? value;
 };
+
+export class CreateRoomDto {
+  @ApiProperty({ example: 'ECS', description: 'Building short name' })
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(10)
+  building_short_name!: string;
+
+  @ApiProperty({ example: '124', description: 'Room number' })
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(20)
+  room_number!: string;
+
+  @ApiProperty({ example: 50, description: 'Room capacity' })
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  capacity!: number;
+
+  @ApiProperty({ enum: RoomType, example: RoomType.CLASSROOM, description: 'Room type' })
+  @IsNotEmpty()
+  @IsEnum(RoomType)
+  @Transform(({ value }) => normalizeRoomType(value))
+  room_type!: RoomType;
+
+  @ApiProperty({ example: 'https://example.com/room/ECS-124', description: 'Room details URL' })
+  @IsNotEmpty()
+  @IsUrl()
+  url!: string;
+}
+
+export class UpdateRoomDto {
+  @ApiProperty({ example: 50, description: 'Room capacity', required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  capacity?: number;
+
+  @ApiProperty({ enum: RoomType, example: RoomType.CLASSROOM, description: 'Room type', required: false })
+  @IsOptional()
+  @IsEnum(RoomType)
+  @Transform(({ value }) => normalizeRoomType(value))
+  room_type?: RoomType;
+
+  @ApiProperty({ example: 'https://example.com/room/ECS-124', description: 'Room details URL', required: false })
+  @IsOptional()
+  @IsUrl()
+  url?: string;
+}
 
 export class RoomQueryDto {
   @ApiProperty({ example: 'ECS', description: 'Filter by building short name', required: false })
@@ -89,6 +141,6 @@ export class RoomResponseDto {
       id: string;
       name: string;
     };
-    quantity?: number;
+    quantity: number | null;
   }>;
 }

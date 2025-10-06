@@ -52,6 +52,6 @@ export class Room {
   @OneToMany(() => BookingSeries, series => series.room)
   booking_series!: BookingSeries[];
 
-  @OneToMany(() => RoomEquipment, equipment => equipment.room)
+  @OneToMany(() => RoomEquipment, equipment => equipment.room, { cascade: true, onDelete: 'CASCADE' })
   room_equipment!: RoomEquipment[];
 }

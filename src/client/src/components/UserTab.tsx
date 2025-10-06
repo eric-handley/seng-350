@@ -7,9 +7,8 @@ type UsersTabProps = {
   currentUser: User
   error: string | null
   handleEditUser: (user: User) => void
-  handleAddUser: (currentUser: User) => void 
+  handleAddUser: (currentUser: User) => void
   handleBlockUser: (user: User) => void
-  handleEditRole: (user: User) => void
 };
 
 export default function UsersTab({
@@ -19,7 +18,6 @@ export default function UsersTab({
   handleEditUser,
   handleAddUser,
   handleBlockUser,
-  handleEditRole, 
 }: UsersTabProps) {
   const [userToBlock, setUserToBlock] = useState<User | null>(null)
 
@@ -59,9 +57,6 @@ export default function UsersTab({
                   currentUser.role === "Admin" ||
                   (currentUser.role === "Registrar" && u.role === "Staff");
 
-                // Only admin can edit the role of other users
-                const canEditRole = currentUser.role === "Admin";
-
                 return (
                   <tr key={u.id}>
                     <td>{u.first_name} {u.last_name}</td>
@@ -84,15 +79,6 @@ export default function UsersTab({
                       >
                         Block
                       </button>
-                      {canEditRole && (
-                        <button
-                          className="btn"
-                          onClick={() => handleEditRole(u)}
-                          style={{ marginRight: '10px' }}
-                        >
-                          Edit Role
-                        </button>
-                      )}
                     </td>
                   </tr>
                 );

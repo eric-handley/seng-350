@@ -6,25 +6,30 @@ import { useBookingHistory } from '../hooks/useBookingHistory'
 
 interface HistoryPageProps {
   currentUser: User
-  onCancel?: (id: string) => void
-  onRebook?: (id: string) => void
 }
 
 type CardBoundaryProps = {
-  fallback: React.ReactNode
-  children?: React.ReactNode
-}
-type CardBoundaryState = { hasError: boolean }
+  fallback: React.ReactNode;
+  children?: React.ReactNode;
+};
+type CardBoundaryState = { hasError: boolean };
 
-class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState> {
+class CardBoundary extends React.Component<
+  CardBoundaryProps,
+  CardBoundaryState
+> {
   constructor(props: CardBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
-  static getDerivedStateFromError() { return { hasError: true } }
-  componentDidCatch() {}
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {
+    /* swallow */
+  }
   render() {
-    return this.state.hasError ? this.props.fallback : this.props.children
+    return this.state.hasError ? this.props.fallback : this.props.children;
   }
 }
 
@@ -35,12 +40,13 @@ const FallbackTile: React.FC<{
   showUser?: boolean
 }> = ({ booking, onRebook, showUser }) => {
   return (
-    <div className="card" style={{padding:'12px'}}>
-      <div className="card-title" style={{fontWeight:600}}>
+    <div className="card" style={{ padding: "12px" }}>
+      <div className="card-title" style={{ fontWeight: 600 }}>
         {booking.name ?? booking.room?.name ?? booking.roomId}
       </div>
-      <div className="card-sub" style={{opacity:.8}}>
-        {(booking.building ? booking.building + ' ' : '') + (booking.roomNumber ?? '')}
+      <div className="card-sub" style={{ opacity: 0.8 }}>
+        {(booking.building ? booking.building + " " : "") +
+          (booking.roomNumber ?? "")}
       </div>
       <div className="card-meta" style={{marginTop:6}}>
         {booking.date ? booking.date + ' · ' : ''}{booking.start} → {booking.end}
@@ -55,8 +61,8 @@ const FallbackTile: React.FC<{
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
 const GuardedBookingCard: React.FC<{
   booking: UiBooking
@@ -69,7 +75,7 @@ const GuardedBookingCard: React.FC<{
   >
     <BookingCard booking={booking} onCancel={onCancel} onRebook={onRebook} showUser={showUser} />
   </CardBoundary>
-)
+);
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
@@ -185,7 +191,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           </div>
         )}
       </section>
-      {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
+      {(currentUser.role === UserRole.REGISTRAR || currentUser.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All User Bookings</h2>
           {allBookings.length === 0 ? (

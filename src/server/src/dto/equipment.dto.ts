@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 
 export class EquipmentResponseDto {
   @ApiProperty({ example: 'uuid-string', description: 'Equipment unique identifier' })
@@ -13,7 +14,7 @@ export class EquipmentResponseDto {
   @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'Last update date' })
   updated_at!: Date;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Rooms that have this equipment',
     type: 'array',
     items: {
@@ -32,7 +33,7 @@ export class EquipmentResponseDto {
         quantity: { type: 'number', example: 2, nullable: true }
       }
     },
-    required: false 
+    required: false
   })
   room_equipment?: Array<{
     room: {
@@ -44,4 +45,20 @@ export class EquipmentResponseDto {
     };
     quantity?: number;
   }>;
+}
+
+export class CreateEquipmentDto {
+  @ApiProperty({ example: 'Projector', description: 'Equipment name' })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
+  name!: string;
+}
+
+export class UpdateEquipmentDto {
+  @ApiProperty({ example: 'Projector', description: 'Equipment name', required: false })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
+  name?: string;
 }
