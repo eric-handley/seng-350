@@ -84,7 +84,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           <label style={labelStyle}>ROOM</label>
           <input
             className="input"
-            placeholder="e.g., CLE-A308"
+            placeholder="e.g., CLE-A308, 130"
             value={roomQuery}
             onChange={(e) => setRoomQuery(e.target.value)}
             style={inputStyle}
