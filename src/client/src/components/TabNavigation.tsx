@@ -60,6 +60,27 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           User List
         </button>
       )}
+
+      {currentUser.role === UserRole.ADMIN && (
+        <button
+          className="tab"
+          role="tab"
+          aria-selected={currentTab === "buildings"}
+          onClick={() => setTab("buildings")}
+        >
+          Manage Buildings & Rooms
+        </button>
+      )}
+      {currentUser.role === UserRole.ADMIN && (
+        <button
+          className="tab"
+          role="tab"
+          aria-selected={currentTab === "equipment"}
+          onClick={() => setTab("equipment")}
+        >
+          Manage Equipment
+        </button>
+      )}
       {currentUser.role === UserRole.ADMIN && (
         <button
           className="tab"
@@ -78,16 +99,6 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           onClick={() => setTab("health")}
         >
           System Health
-        </button>
-      )}
-      {currentUser.role === UserRole.ADMIN && (
-        <button
-          className="tab"
-          role="tab"
-          aria-selected={currentTab === "buildings"}
-          onClick={() => setTab("buildings")}
-        >
-          Buildings & Rooms
         </button>
       )}
     </div>

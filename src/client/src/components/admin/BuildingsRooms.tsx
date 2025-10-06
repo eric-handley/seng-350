@@ -234,13 +234,10 @@ export default function BuildingsRooms(): JSX.Element {
   };
 
   return (
-    <div className="content-stack">
+    <div className="content-stack" style={{ width: "100%" }}>
       <div className="card">
         <div className="card-title">Create Building</div>
-        <div
-          className="card-body"
-          style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
-        >
+        <div className="card-body" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
           <input
             aria-label="Building short name"
             placeholder="Short name (e.g., ECS)"
@@ -281,7 +278,7 @@ export default function BuildingsRooms(): JSX.Element {
       {isLoading ? (
         <div style={{ padding: "1rem" }}>Loading buildings…</div>
       ) : (
-        <div className="grid" style={{ gap: "1rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {buildings.map((b) => (
             <div key={b.short_name} className="card">
               <div

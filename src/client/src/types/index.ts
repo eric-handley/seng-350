@@ -43,7 +43,8 @@ export type TabKey =
   | "users"
   | "audit"
   | "health"
-  | "buildings";
+  | "buildings"
+  | "equipment";
 
 export type AuditLog = {
   id: string;
