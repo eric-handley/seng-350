@@ -154,7 +154,7 @@ const HomeComponent: React.FC = () => {
       {tab === "audit" && currentUser.role === UserRole.ADMIN && (
         <AuditTable rows={auditRows} loading={auditLoading} error={auditError} />
       )}
-      {tab === "health" && currentUser.role === UserRole.ADMIN && (
+      {tab === "health" && (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
         <SystemHealth />
       )}
       {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
