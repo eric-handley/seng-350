@@ -142,8 +142,8 @@ export class InitialSchema1732573200000 implements MigrationInterface {
         `);
 
         // Create foreign key constraints
-        await queryRunner.query(`ALTER TABLE "rooms" ADD CONSTRAINT "FK_rooms_building_short_name" FOREIGN KEY ("building_short_name") REFERENCES "buildings"("short_name") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "rooms" ADD CONSTRAINT "FK_rooms_building_short_name" FOREIGN KEY ("building_short_name") REFERENCES "buildings"("short_name") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "room_equipment" ADD CONSTRAINT "FK_room_equipment_equipment_id" FOREIGN KEY ("equipment_id") REFERENCES "equipment"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "booking_series" ADD CONSTRAINT "FK_booking_series_user_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "booking_series" ADD CONSTRAINT "FK_booking_series_room_id" FOREIGN KEY ("room_id") REFERENCES "rooms"("room_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);

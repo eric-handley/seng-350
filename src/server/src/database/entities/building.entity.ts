@@ -15,6 +15,6 @@ export class Building {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @OneToMany(() => Room, room => room.building)
+  @OneToMany(() => Room, room => room.building, { cascade: true, onDelete: 'CASCADE' })
   rooms!: Room[];
 }
