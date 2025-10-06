@@ -5,7 +5,7 @@ import type { UiBooking } from '../types'
 import { mapApiBookingToUi, mergeBookings, reconcileTemp, toIsoDateTimeUTC } from '../utils/bookings'
 import { toApiTime } from '../utils/time'
 
-export function useBookingHistory(userId: string, currentUser: { role?: string } = {}) {
+export function useBookingHistory(userId: string) {
   const [serverHistory, setServerHistory] = useState<ApiBooking[] | null>(null)
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [loading, setLoading] = useState(false)
