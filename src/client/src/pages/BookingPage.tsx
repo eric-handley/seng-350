@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Room } from '../types';
 import { RoomCard } from '../components/RoomCard';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
+import { useRooms } from '../hooks/useRooms';
 import { toApiTime } from '../utils/time';
-import { toIsoDateTimeUTC } from '../utils/bookings';
 import { useBookingHistory } from '../hooks/useBookingHistory';
 
 interface BookingPageProps {
@@ -31,47 +31,42 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   end, setEnd,
   onBookingCreated,
 }) => {
-  const { rooms: allRooms, loading, error } = useSchedule({
+  const [showReserved, setShowReserved] = useState(true);
+
+  // Fetch all rooms in the building
+  const { rooms: allRooms, loading: loadingRooms, error: errorRooms } = useRooms({
     building_short_name: building || undefined,
-    room_id: roomQuery || undefined,
+  });
+
+  // Fetch booked slots for the requested time range
+  const { rooms: bookedRooms, loading: loadingBooked, error: errorBooked } = useSchedule({
+    building_short_name: building || undefined,
     date: date || undefined,
     start_time: toApiTime(start),
     end_time: toApiTime(end),
-    slot_type: 'available',
+    slot_type: 'booked',
   });
 
   const { createBooking, error: bookingError } = useBookingHistory(currentUserId);
 
-  // Filter to only show rooms where an available slot fully contains the requested time
-  const rooms = allRooms.filter(room => {
-    if (!room.slots || room.slots.length === 0) {
-      return false;
-    }
+  const loading = loadingRooms || loadingBooked;
+  const error = errorRooms ?? errorBooked;
 
-    const apiStart = toApiTime(start);
-    const apiEnd = toApiTime(end);
+  // Build a set of room IDs that have bookings overlapping with the requested time
+  const bookedRoomIds = new Set(bookedRooms.map(r => r.room_id));
 
-    // Bail out early if we couldn't parse the requested time range
-    if (!date || !apiStart || !apiEnd) {
-      return false;
-    }
+  const apiStart = toApiTime(start);
+  const apiEnd = toApiTime(end);
+  const hasValidTime = date && apiStart && apiEnd;
 
-    const selectedStart = new Date(toIsoDateTimeUTC(date, apiStart));
-    const selectedEnd = new Date(toIsoDateTimeUTC(date, apiEnd));
-
-    if (Number.isNaN(selectedStart.getTime()) || Number.isNaN(selectedEnd.getTime())) {
-      return false;
-    }
-
-    // Check if there's an available slot that fully contains the requested time
-    return room.slots.some(slot => {
-      const slotStart = new Date(slot.start_time);
-      const slotEnd = new Date(slot.end_time);
-
-      // Slot must start at or before requested start AND end at or after requested end
-      return slotStart <= selectedStart && slotEnd >= selectedEnd;
-    });
-  });
+  const rooms = allRooms
+    .filter(room => !roomQuery || room.room_id.toLowerCase().includes(roomQuery.toLowerCase()))
+    .map(room => ({
+      ...room,
+      id: room.room_id,
+      isReserved: !hasValidTime || bookedRoomIds.has(room.room_id),
+    }))
+    .filter(room => showReserved || !room.isReserved);
 
   const handleBook = async (room: Room) => {
     try {
@@ -97,6 +92,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({
         setStart={setStart}
         end={end}
         setEnd={setEnd}
+        showReserved={showReserved}
+        setShowReserved={setShowReserved}
+        showReservedFilter={true}
       />
 
       {loading && <div className="empty">Loading available rooms…</div>}
@@ -111,19 +109,18 @@ export const BookingPage: React.FC<BookingPageProps> = ({
             <RoomCard
               key={room.id}
               room={{
-                // adapt to your existing Room type if needed:
                 id: room.id,
                 name: `${room.building_short_name} ${room.room_number}`,
                 number: room.room_number,
                 capacity: room.capacity,
                 type: room.room_type,
                 building: room.building_short_name,
-                slots: room.slots, // show these inside RoomCard
               } as unknown as Room}
               date={date}
               start={start}
               end={end}
               onBook={handleBook}
+              isReserved={room.isReserved}
             />
           ))}
         </div>

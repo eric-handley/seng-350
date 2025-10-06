@@ -1,5 +1,6 @@
 import React from 'react'
 import { Room } from '../types'
+import { formatTimeForDisplay } from '../utils/time'
 
 interface RoomCardProps {
   room: Room
@@ -7,9 +8,10 @@ interface RoomCardProps {
   start: string
   end: string
   onBook: (room: Room) => void
+  isReserved?: boolean
 }
 
-export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook }) => {
+export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isReserved = false }) => {
   return (
     <article className="card">
       <div className="row">
@@ -23,9 +25,16 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBo
       <div className="row" style={{marginTop:12}}>
         <div className="meta">
           <span>{date}</span>
-          <span>{start}–{end}</span>
+          <span>{formatTimeForDisplay(start)}–{formatTimeForDisplay(end)}</span>
         </div>
-        <button className="btn primary" onClick={() => onBook(room)}>Book</button>
+        <button
+          className="btn primary"
+          onClick={() => onBook(room)}
+          disabled={isReserved}
+          style={isReserved ? { opacity: 0.5, cursor: 'not-allowed', background: 'grey' } : {}}
+        >
+          {isReserved ? 'Reserved' : 'Book'}
+        </button>
       </div>
     </article>
   )
