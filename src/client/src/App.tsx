@@ -14,8 +14,6 @@ import { TabKey, UserRole } from "./types";
 import { useUsers } from "./hooks/useUsers";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { getCurrentDate } from "./utils/dateHelpers";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-
 import { TabNavigation } from "./components/TabNavigation";
 import { BookingPage } from "./pages/BookingPage";
 import { SchedulePage } from "./pages/SchedulePage";
@@ -41,6 +39,14 @@ const HomeComponent: React.FC = () => {
     ? "history"
     : location.pathname.includes("/users")
     ? "users"
+    : location.pathname.includes("/audit")
+    ? "audit"
+    : location.pathname.includes("/health")
+    ? "health"
+    : location.pathname.includes("/buildings")
+    ? "buildings"
+    : location.pathname.includes("/equipment")
+    ? "equipment"
     : "book";
 
   const canManageUsers =
@@ -172,18 +178,10 @@ const AppRouter: React.FC = () => {
         <Route path="book" element={null} />
         <Route path="history" element={null} />
         <Route path="users" element={null} />
-      </Route>
-      <Route
-        path="/admin-panel"
-        element={
-          <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
-            <AdminPage />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="/admin-panel/logs" replace />} />
-        <Route path="logs" element={null} />
+        <Route path="audit" element={null} />
         <Route path="health" element={null} />
+        <Route path="buildings" element={null} />
+        <Route path="equipment" element={null} />
       </Route>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
