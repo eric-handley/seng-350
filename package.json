@@ -1,0 +1,51 @@
+{
+  "name": "seng-350",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "src/client",
+    "src/server"
+  ],
+  "scripts": {
+    "prestart": "docker compose build",
+    "start": "docker compose up -d",
+    "stop": "docker compose down",
+    "restart": "docker compose down -v --remove-orphans && docker compose build --no-cache && docker compose up -d --force-recreate --wait",
+    "clean": "docker compose down -v --remove-orphans && docker compose build --no-cache",
+    "tmux": "bash .vscode/tmux.sh && npm stop",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build:client": "npm run build -w client",
+    "build:server": "npm run build -w server",
+    "lint": "eslint . --fix",
+    "test": "jest --runInBand",
+    "test:retry": "jest --runInBand -f",
+    "test:coverage": "jest  --runInBand --coverage"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.17.8",
+    "@types/pg": "^8.11.12",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.1.2",
+    "ts-jest": "^29.4.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "swagger-ui-express": "^5.0.1"
+  }
+}

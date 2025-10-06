@@ -2,3 +2,5 @@
 **/node_modules
 **/dist
 **/.fuse_hidden*
+**/.venv
+**/build

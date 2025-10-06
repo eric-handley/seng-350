@@ -1,0 +1,17 @@
+{
+  "name": "client",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node esbuild.dev.mjs",
+    "build": "node esbuild.build.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  }
+}

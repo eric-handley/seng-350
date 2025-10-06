@@ -1,0 +1,127 @@
+services:
+  deps:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    command: [
+      "sh", "-lc",
+      "echo 'Installing dependencies...' && npm install --loglevel verbose"
+    ]
+
+  client:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+    command: ["sh", "-c", "npm run dev:client"]
+
+  server:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - PGHOST=db
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SESSION_SECRET=dev-session-secret-change-in-production
+      - NEXTAUTH_SECRET=dev-secret-key-change-in-production
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api-docs | grep -q 'Swagger'"]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  test-db:
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test_db
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  test-db-setup:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=test
+      - PGHOST=test-db
+      - PGPORT=5432
+      - PGUSER=test
+      - PGPASSWORD=test
+      - PGDATABASE=test_db
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      test-db:
+        condition: service_healthy
+    command: ["sh", "-c", "cd src/server && npm run db:setup"]
+
+volumes:
+  db-data:
+  redis-data:
+  test-db-data:
