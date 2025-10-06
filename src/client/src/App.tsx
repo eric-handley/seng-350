@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import "./styles/app.css";
 import "./styles/admin.css";
 
 import { TabKey, UserRole } from "./types";
-
 import { useUsers } from "./hooks/useUsers";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { getCurrentDate } from "./utils/dateHelpers";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { TabNavigation } from "./components/TabNavigation";
 import { BookingPage } from "./pages/BookingPage";
@@ -31,7 +32,16 @@ import EquipmentManagement from "./components/admin/EquipmentManagement";
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<TabKey>("book");
+  const location = useLocation();
+
+  // Derive current tab from URL path
+  const tab: TabKey = location.pathname.includes("/schedule")
+    ? "schedule"
+    : location.pathname.includes("/history")
+    ? "history"
+    : location.pathname.includes("/users")
+    ? "users"
+    : "book";
 
   const canManageUsers =
     currentUser?.role === UserRole.ADMIN ||
@@ -55,16 +65,6 @@ const HomeComponent: React.FC = () => {
   const [date, setDate] = useState<string>(getCurrentDate());
   const [start, setStart] = useState<string>("10:00");
   const [end, setEnd] = useState<string>("11:00");
-
-  useEffect(() => {
-    if (
-      currentUser &&
-      currentUser.role === UserRole.STAFF &&
-      tab === "schedule"
-    ) {
-      setTab("book");
-    }
-  }, [currentUser, tab]);
 
   const handleLogout = async () => {
     await logout();
@@ -93,11 +93,7 @@ const HomeComponent: React.FC = () => {
         </div>
       </div>
 
-      <TabNavigation
-        currentTab={tab}
-        setTab={setTab}
-        currentUser={currentUser}
-      />
+      <TabNavigation currentTab={tab} currentUser={currentUser} />
 
       {tab === "book" && (
         <BookingPage
@@ -112,11 +108,11 @@ const HomeComponent: React.FC = () => {
           setStart={setStart}
           end={end}
           setEnd={setEnd}
-          onBookingCreated={() => setTab("history")}
+          onBookingCreated={() => navigate("/home/history")}
         />
       )}
 
-      {tab === "schedule" && currentUser.role !== UserRole.STAFF && (
+      {tab === "schedule" && (
         <SchedulePage
           date={date}
           setDate={setDate}
@@ -170,7 +166,13 @@ const AppRouter: React.FC = () => {
             <HomeComponent />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Navigate to="/home/book" replace />} />
+        <Route path="schedule" element={null} />
+        <Route path="book" element={null} />
+        <Route path="history" element={null} />
+        <Route path="users" element={null} />
+      </Route>
       <Route
         path="/admin-panel"
         element={
@@ -178,7 +180,11 @@ const AppRouter: React.FC = () => {
             <AdminPage />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Navigate to="/admin-panel/logs" replace />} />
+        <Route path="logs" element={null} />
+        <Route path="health" element={null} />
+      </Route>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

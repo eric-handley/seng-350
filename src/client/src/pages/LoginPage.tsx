@@ -53,6 +53,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
+      if (user.role === UserRole.ADMIN) {
+        navigate("/admin-panel/logs");
+      } else {
+        navigate("/home/book");
+      }
       navigate("/home");
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Login failed"));

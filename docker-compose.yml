@@ -54,9 +54,9 @@ services:
     command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api-docs | grep -q 'Swagger'"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 100
 
   db:
     image: postgres:16
@@ -72,7 +72,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   redis:
     image: redis:7-alpine
@@ -83,8 +83,8 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
-      timeout: 3s
-      retries: 5
+      timeout: 5s
+      retries: 100
 
   test-db:
     image: postgres:16
@@ -100,7 +100,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   test-db-setup:
     image: node:22-alpine
