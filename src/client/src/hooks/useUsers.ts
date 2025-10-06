@@ -93,7 +93,8 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
 
   const handleSaveNewUser = async (newUser: User) => {
     // Remove id before sending
-    const { id, ...userData } = newUser
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, ...userData } = newUser
     try {
       const response = await fetch(`http://localhost:3000/users`, {
         method: 'POST',

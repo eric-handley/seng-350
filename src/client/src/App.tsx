@@ -20,7 +20,6 @@ import { SchedulePage } from "./pages/SchedulePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { UsersPage } from "./pages/UsersPage";
 import LoginPage from "./pages/LoginPage";
-import AdminConsole from "./components/admin/AdminConsole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuditTable } from "./components/admin/AuditTable";
 import { SystemHealth } from "./components/admin/SystemHealth";
@@ -56,6 +55,7 @@ const HomeComponent: React.FC = () => {
     users,
     editingUser,
     addingUser,
+    error,
     handleEditUser,
     handleSaveUser,
     handleAddUser,
@@ -138,7 +138,7 @@ const HomeComponent: React.FC = () => {
           error={error}
           onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
-          onAddUser={() => handleAddUser(currentUser)}
+          onAddUser={handleAddUser}
           onSaveNewUser={handleSaveNewUser}
           onBlockUser={handleBlockUser}
           onCancelEdit={() => setEditingUser(null)}
@@ -190,25 +190,6 @@ const AppRouter: React.FC = () => {
   );
 };
 
-const AdminPage: React.FC = () => {
-  const { currentUser, isLoading, logout } = useAuth();
-  const navigate = useNavigate();
-
-  if (isLoading) {
-    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
-  }
-
-  if (!currentUser) {
-    return null;
-  }
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
-  };
-
-  return <AdminConsole onLogout={handleLogout} />;
-};
 
 export default function App() {
   return (

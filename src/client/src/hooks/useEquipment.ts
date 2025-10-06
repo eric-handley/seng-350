@@ -3,7 +3,6 @@ import {
   Equipment,
   CreateEquipment,
   UpdateEquipment,
-  RoomEquipment,
   CreateRoomEquipment,
   UpdateRoomEquipment,
 } from "../types";
@@ -23,7 +22,7 @@ export function useEquipment(roomId?: string) {
   const [error, setError] = useState<string | null>(null);
 
   const loadEquipment = async () => {
-    if (!roomId) return;
+    if (!roomId) {return;}
 
     setLoading(true);
     setError(null);
@@ -129,7 +128,8 @@ export function useEquipment(roomId?: string) {
   };
 
   useEffect(() => {
-    loadEquipment();
+    void loadEquipment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   return {

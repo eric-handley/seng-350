@@ -29,6 +29,11 @@ export default function EquipmentManagement() {
   const [newRoomEquipmentQuantity, setNewRoomEquipmentQuantity] =
     useState<number>(1);
   const [availableEquipment, setAvailableEquipment] = useState<Equipment[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    message: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, message: "", onConfirm: () => {} });
 
   const {
     equipment,
@@ -84,7 +89,7 @@ export default function EquipmentManagement() {
 
   const handleAddEquipment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newEquipmentName.trim()) return;
+    if (!newEquipmentName.trim()) {return;}
 
     try {
       const equipmentData: CreateEquipment = { name: newEquipmentName.trim() };
@@ -98,7 +103,7 @@ export default function EquipmentManagement() {
 
   const handleEditEquipment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingEquipment || !newEquipmentName.trim()) return;
+    if (!editingEquipment || !newEquipmentName.trim()) {return;}
 
     try {
       const equipmentData: UpdateEquipment = { name: newEquipmentName.trim() };
@@ -112,7 +117,7 @@ export default function EquipmentManagement() {
 
   const handleAddRoomEquipment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRoom || !editingRoomEquipment?.equipmentId) return;
+    if (!selectedRoom || !editingRoomEquipment?.equipmentId) {return;}
 
     try {
       const roomEquipmentData: CreateRoomEquipment = {
@@ -131,7 +136,7 @@ export default function EquipmentManagement() {
 
   const handleEditRoomEquipment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingRoomEquipment || !selectedRoom) return;
+    if (!editingRoomEquipment || !selectedRoom) {return;}
 
     try {
       const roomEquipmentData: UpdateRoomEquipment = {
@@ -150,36 +155,39 @@ export default function EquipmentManagement() {
   };
 
   const handleDeleteEquipment = async (equipmentId: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this equipment? This will remove it from all rooms."
-      )
-    ) {
-      return;
-    }
-
-    try {
-      await removeEquipment(equipmentId);
-    } catch (err) {
-      console.error("Failed to delete equipment:", err);
-    }
+    setConfirmDialog({
+      isOpen: true,
+      message: "Are you sure you want to delete this equipment? This will remove it from all rooms.",
+      onConfirm: async () => {
+        try {
+          await removeEquipment(equipmentId);
+          setConfirmDialog({ isOpen: false, message: "", onConfirm: () => {} });
+        } catch (err) {
+          console.error("Failed to delete equipment:", err);
+          setConfirmDialog({ isOpen: false, message: "", onConfirm: () => {} });
+        }
+      }
+    });
   };
 
   const handleDeleteRoomEquipment = async (equipmentId: string) => {
-    if (
-      !selectedRoom ||
-      !window.confirm(
-        "Are you sure you want to remove this equipment from the room?"
-      )
-    ) {
+    if (!selectedRoom) {
       return;
     }
 
-    try {
-      await removeRoomEquipment(selectedRoom, equipmentId);
-    } catch (err) {
-      console.error("Failed to remove equipment from room:", err);
-    }
+    setConfirmDialog({
+      isOpen: true,
+      message: "Are you sure you want to remove this equipment from the room?",
+      onConfirm: async () => {
+        try {
+          await removeRoomEquipment(selectedRoom, equipmentId);
+          setConfirmDialog({ isOpen: false, message: "", onConfirm: () => {} });
+        } catch (err) {
+          console.error("Failed to remove equipment from room:", err);
+          setConfirmDialog({ isOpen: false, message: "", onConfirm: () => {} });
+        }
+      }
+    });
   };
 
   const startEditEquipment = (equipment: Equipment) => {
@@ -187,19 +195,20 @@ export default function EquipmentManagement() {
     setNewEquipmentName(equipment.name);
   };
 
-  const startEditRoomEquipment = (equipment: Equipment) => {
-    const roomEquipment = equipment.room_equipment?.find(
-      (re) => re.room.room === selectedRoom.split("-")[1]
-    );
-    if (roomEquipment) {
-      setEditingRoomEquipment({
-        roomId: selectedRoom,
-        equipmentId: equipment.id,
-        quantity: roomEquipment.quantity || null,
-      });
-      setNewRoomEquipmentQuantity(roomEquipment.quantity || 1);
-    }
-  };
+  // Commented out - functionality incomplete/disabled
+  // const startEditRoomEquipment = (equipment: Equipment) => {
+  //   const roomEquipment = equipment.room_equipment?.find(
+  //     (re) => re.room.room === selectedRoom.split("-")[1]
+  //   );
+  //   if (roomEquipment) {
+  //     setEditingRoomEquipment({
+  //       roomId: selectedRoom,
+  //       equipmentId: equipment.id,
+  //       quantity: roomEquipment.quantity ?? null,
+  //     });
+  //     setNewRoomEquipmentQuantity(roomEquipment.quantity ?? 1);
+  //   }
+  // };
 
   const cancelEdit = () => {
     setEditingEquipment(null);
@@ -293,7 +302,7 @@ export default function EquipmentManagement() {
                       {eq.room_equipment && eq.room_equipment.length > 0 && (
                         <div className="room-equipment-info">
                           <p>
-                            Quantity: {eq.room_equipment[0].quantity || "N/A"}
+                            Quantity: {eq.room_equipment[0].quantity ?? "N/A"}
                           </p>
                         </div>
                       )}
@@ -449,7 +458,7 @@ export default function EquipmentManagement() {
                 <label htmlFor="equipment-select">Select Equipment:</label>
                 <select
                   id="equipment-select"
-                  value={editingRoomEquipment?.equipmentId || ""}
+                  value={editingRoomEquipment?.equipmentId ?? ""}
                   onChange={(e) => {
                     if (e.target.value) {
                       setEditingRoomEquipment({
@@ -543,6 +552,36 @@ export default function EquipmentManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {confirmDialog.isOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Confirm Action</h3>
+            </div>
+            <div className="modal-body">
+              <p>{confirmDialog.message}</p>
+            </div>
+            <div className="modal-actions" style={{ padding: '1rem', gap: '0.5rem', display: 'flex' }}>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => setConfirmDialog({ isOpen: false, message: "", onConfirm: () => {} })}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn--danger"
+                onClick={() => confirmDialog.onConfirm()}
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       )}
