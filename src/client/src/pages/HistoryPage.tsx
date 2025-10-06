@@ -45,6 +45,9 @@ const FallbackTile: React.FC<{
       <div className="card-meta" style={{marginTop:6}}>
         {booking.date ? booking.date + ' · ' : ''}{booking.start} → {booking.end}
         {booking.cancelled ? <span className="badge danger" style={{marginLeft:8}}>Cancelled</span> : null}
+        {showUser && booking.user && (
+          <span style={{marginLeft:8, fontStyle:'italic'}}>User: {booking.user}</span>
+        )}
       </div>
       {booking.cancelled && onRebook && (
         <button className="btn ghost" onClick={() => onRebook(booking.id)}>
@@ -72,7 +75,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
   onCancel,
 }) => {
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking } = useBookingHistory(currentUser.id)
+  // Add allBookings to your hook and fetch it for admins/registrars
+  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id)
 
   useEffect(() => {
     void fetchHistory()
@@ -89,42 +93,24 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   const handleRebook = async (id: string) => {
     const booking = userHistory?.find(b => b.id === id) || userHistory.find(b => b.id === id)
     if (!booking) return
-    const response = await fetch('http://localhost:3000/bookings', {
-      method: 'POST',
+
+    // PATCH the booking to reactivate it
+    const response = await fetch(`http://localhost:3000/bookings/${id}`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
-        room_id: booking.roomId,
-        start_time: booking.start,
-        end_time: booking.end,
+        status: 'Active'
       }),
     })
     if (response.ok) {
       alert('Rebooking successful!')
+      await fetchHistory()
+    }
+    else {
+      alert('Failed to rebook. Please try again later.')
     }
   }
-
-  //const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
-
-  const handleRebook = async (id: string) => {
-    const booking = userHistory?.find(b => b.id === id) || userHistory.find(b => b.id === id)
-    if (!booking) return
-    const response = await fetch('http://localhost:3000/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        room_id: booking.roomId,
-        start_time: booking.start,
-        end_time: booking.end,
-      }),
-    })
-    if (response.ok) {
-      alert('Rebooking successful!')
-    }
-  }
-
-  //const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
 
   if (loading) {
     return (
@@ -142,27 +128,15 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     )
   }
 
-  return (
-    <section className="panel" aria-labelledby="history-label">
-      <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
+  // Only show active bookings for all users
+  const activeAllBookings = allBookings.filter(b => b.status === 'Active')
 
-      {userHistory.length === 0 ? (
-        <div className="empty">You have no bookings yet.</div>
-      ) : (
-        <div className="grid">
-          {userHistory.map(booking => (
-            <GuardedBookingCard
-              key={booking.id}
-              booking={booking}
-              onCancel={handleCancel}
-              showUser={false}
-            />
-          ))}
-        </div>
-      )}
-    </section>
+  return (
+    <div>
+      <section className="panel" aria-labelledby="history-label">
+        <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
         {userHistory.length === 0 ? (
-          <div className="empty">You have no current bookings.</div>
+          <div className="empty">You have no bookings yet.</div>
         ) : (
           <div className="grid">
             {userHistory.map(booking => (
@@ -177,7 +151,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           </div>
         )}
       </section>
-      {/* {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
+      {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All Current Bookings</h2>
           {activeAllBookings.length === 0 ? (
@@ -196,7 +170,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
             </div>
           )}
         </section>
-      )} */}
+      )}
     </div>
   )
 }
