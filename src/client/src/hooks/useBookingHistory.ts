@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'
@@ -10,12 +10,13 @@ export function useBookingHistory(userId: string) {
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [allBookings, setAllBookings] = useState<ApiBooking[]>([])
 
   const fetchHistory = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await fetchUserBookings()
+      const data = await fetchUserBookings(userId)
       setServerHistory(data)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load history'
@@ -23,7 +24,7 @@ export function useBookingHistory(userId: string) {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [userId])
 
   const createNewBooking = async (
     roomId: string,
@@ -70,7 +71,7 @@ export function useBookingHistory(userId: string) {
 
       // Refresh from server
       try {
-        const fresh = await fetchUserBookings()
+        const fresh = await fetchUserBookings(userId)
         setServerHistory(fresh)
       } catch {
         // Ignore refresh errors
@@ -93,7 +94,7 @@ export function useBookingHistory(userId: string) {
       setServerHistory(prev => (prev ? prev.filter(b => b.id !== id) : prev))
 
       // Refresh from server
-      const fresh = await fetchUserBookings()
+      const fresh = await fetchUserBookings(userId)
       setServerHistory(fresh)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to cancel booking'
@@ -114,12 +115,32 @@ export function useBookingHistory(userId: string) {
     [mergedApiHistory]
   )
 
+  const fetchAllBookings = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
+      if (response.ok) {
+        const data = await response.json()
+        setAllBookings(data)
+      }
+    } catch (err: unknown) {
+      console.error('Failed to fetch all bookings:', err)
+    }
+  }, [])
+
+  // Convert all bookings to UI format
+  const allBookingsUi: UiBooking[] = useMemo(
+    () => allBookings.map(mapApiBookingToUi),
+    [allBookings]
+  )
+
   return {
     history,
     loading,
     error,
     fetchHistory,
+    fetchAllBookings,
     createBooking: createNewBooking,
     cancelBooking,
+    allBookings: allBookingsUi,
   }
 }

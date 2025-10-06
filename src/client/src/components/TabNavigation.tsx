@@ -42,7 +42,9 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         aria-selected={currentTab === "history"}
         onClick={() => navigate("/home/history")}
       >
-        My Bookings &amp; History
+        {(currentUser.role === UserRole.REGISTRAR || currentUser.role === UserRole.ADMIN)
+          ? 'All Bookings'
+          : 'My Bookings & History'}
       </button>
 
       {(currentUser.role === UserRole.ADMIN ||

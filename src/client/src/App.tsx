@@ -89,7 +89,7 @@ const HomeComponent: React.FC = () => {
     <div className="app-shell">
       <div className="header">
         <div className="header-info">
-          <span className="badge">{currentUser.role.toUpperCase()}</span>
+          <span className="badge">{String(currentUser.role).toUpperCase()}</span>
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">
@@ -135,9 +135,10 @@ const HomeComponent: React.FC = () => {
           currentUser={currentUser}
           editingUser={editingUser}
           addingUser={addingUser}
+          error={error}
           onEditUser={handleEditUser}
           onSaveUser={handleSaveUser}
-          onAddUser={handleAddUser}
+          onAddUser={() => handleAddUser(currentUser)}
           onSaveNewUser={handleSaveNewUser}
           onBlockUser={handleBlockUser}
           onCancelEdit={() => setEditingUser(null)}

@@ -41,7 +41,9 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
     if (!formData.last_name.trim()) {
       newErrors.last_name = "Last name is required";
     }
-
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -61,10 +63,10 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
 
   return (
     <form className="panel" onSubmit={handleSubmit}>
-      <h2>Edit User</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Edit User</h2>
 
-      <label htmlFor="edit-user-first_name">
-        First Name:
+      <label htmlFor="edit-user-first_name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>First Name:</div>
         <input
           id="edit-user-first_name"
           className="input"
@@ -87,8 +89,8 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-last_name">
-        Last Name:
+      <label htmlFor="edit-user-last_name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Last Name:</div>
         <input
           id="edit-user-last_name"
           className="input"
@@ -111,8 +113,8 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-email">
-        Email:
+      <label htmlFor="edit-user-email" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Email:</div>
         <input
           id="edit-user-email"
           className="input"
@@ -123,6 +125,7 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           required
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "edit-user-email-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.email && (
           <span
@@ -134,20 +137,25 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-role">
-        Role:
-        <select
-          id="edit-user-role"
-          className="select"
-          name="role"
-          value={formData.role}
+      <label htmlFor="edit-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password (Optional):</div>
+        <input
+          id="edit-user-password"
+          className="input"
+          name="password"
+          type="password"
+          placeholder="Leave blank to keep current password"
+          value={formData.password ?? ""}
           onChange={handleChange}
-          required
-        >
-          <option value={UserRole.STAFF}>{UserRole.STAFF}</option>
-          <option value={UserRole.REGISTRAR}>{UserRole.REGISTRAR}</option>
-          <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
-        </select>
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "edit-user-password-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
+        />
+        {errors.password && (
+          <span id="edit-user-password-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.password}
+          </span>
+        )}
       </label>
 
       <div style={{ marginTop: "1rem" }}>
