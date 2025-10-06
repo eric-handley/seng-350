@@ -4,6 +4,7 @@ import { RoomCard } from '../components/RoomCard';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
 import { toApiTime } from '../utils/time';
+import { toIsoDateTimeUTC } from '../utils/bookings';
 import { useBookingHistory } from '../hooks/useBookingHistory';
 
 interface BookingPageProps {
@@ -30,7 +31,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   end, setEnd,
   onBookingCreated,
 }) => {
-  const { rooms, loading, error } = useSchedule({
+  const { rooms: allRooms, loading, error } = useSchedule({
     building_short_name: building || undefined,
     room_id: roomQuery || undefined,
     date: date || undefined,
@@ -40,6 +41,37 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   });
 
   const { createBooking, error: bookingError } = useBookingHistory(currentUserId);
+
+  // Filter to only show rooms where an available slot fully contains the requested time
+  const rooms = allRooms.filter(room => {
+    if (!room.slots || room.slots.length === 0) {
+      return false;
+    }
+
+    const apiStart = toApiTime(start);
+    const apiEnd = toApiTime(end);
+
+    // Bail out early if we couldn't parse the requested time range
+    if (!date || !apiStart || !apiEnd) {
+      return false;
+    }
+
+    const selectedStart = new Date(toIsoDateTimeUTC(date, apiStart));
+    const selectedEnd = new Date(toIsoDateTimeUTC(date, apiEnd));
+
+    if (Number.isNaN(selectedStart.getTime()) || Number.isNaN(selectedEnd.getTime())) {
+      return false;
+    }
+
+    // Check if there's an available slot that fully contains the requested time
+    return room.slots.some(slot => {
+      const slotStart = new Date(slot.start_time);
+      const slotEnd = new Date(slot.end_time);
+
+      // Slot must start at or before requested start AND end at or after requested end
+      return slotStart <= selectedStart && slotEnd >= selectedEnd;
+    });
+  });
 
   const handleBook = async (room: Room) => {
     try {
