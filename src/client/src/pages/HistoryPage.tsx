@@ -22,7 +22,7 @@ class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState>
     this.state = { hasError: false }
   }
   static getDerivedStateFromError() { return { hasError: true } }
-  componentDidCatch() { /* swallow */ }
+  componentDidCatch() {}
   render() {
     return this.state.hasError ? this.props.fallback : this.props.children
   }
@@ -31,8 +31,9 @@ class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState>
 const FallbackTile: React.FC<{
   booking: UiBooking
   onCancel: (id: string)=>void
+  onRebook?: (id: string) => void
   showUser?: boolean
-}> = ({ booking }) => {
+}> = ({ booking, onCancel, onRebook, showUser }) => {
   return (
     <div className="card" style={{padding:'12px'}}>
       <div className="card-title" style={{fontWeight:600}}>
@@ -45,6 +46,11 @@ const FallbackTile: React.FC<{
         {booking.date ? booking.date + ' · ' : ''}{booking.start} → {booking.end}
         {booking.cancelled ? <span className="badge danger" style={{marginLeft:8}}>Cancelled</span> : null}
       </div>
+      {booking.cancelled && onRebook && (
+        <button className="btn ghost" onClick={() => onRebook(booking.id)}>
+          Rebook
+        </button>
+      )}
     </div>
   )
 }
@@ -56,7 +62,7 @@ const GuardedBookingCard: React.FC<{
   showUser: boolean
 }> = ({ booking, onCancel, onRebook, showUser }) => (
   <CardBoundary
-    fallback={<FallbackTile booking={booking} onCancel={onCancel} showUser={showUser} />}
+    fallback={<FallbackTile booking={booking} onCancel={onCancel} onRebook={onRebook} showUser={showUser} />}
   >
     <BookingCard booking={booking} onCancel={onCancel} onRebook={onRebook} showUser={showUser} />
   </CardBoundary>
@@ -80,24 +86,25 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     }
   }
 
-  // const handleRebook = async (id: string) => {
-  //   const booking = allBookings?.find(b => b.id === id)
-  //   if (!booking) return
-  //   // Create a new booking with the same details, but ensure cancelled is false
-  //   const response = await fetch('http://localhost:3000/bookings', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     credentials: 'include',
-  //     body: JSON.stringify({
-  //       room_id: booking.roomId,
-  //       start_time: booking.start,
-  //       end_time: booking.end,
-  //     }),
-  //   })
-  //   if (response.ok) {
-  //     alert('Rebooking successful!')
-  //   }
-  // }
+  const handleRebook = async (id: string) => {
+    const booking = allBookings?.find(b => b.id === id) || userHistory.find(b => b.id === id)
+    if (!booking) return
+    const response = await fetch('http://localhost:3000/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        room_id: booking.roomId,
+        start_time: booking.start,
+        end_time: booking.end,
+      }),
+    })
+    if (response.ok) {
+      alert('Rebooking successful!')
+    }
+  }
+
+  const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
 
   return (
     <div>
@@ -116,7 +123,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
         <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
 
         {userHistory.length === 0 ? (
-          <div className="empty">You have no bookings yet.</div>
+          <div className="empty">You have no current bookings.</div>
         ) : (
           <div className="grid">
             {userHistory.map(booking => (
@@ -124,6 +131,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 key={booking.id}
                 booking={booking}
                 onCancel={handleCancel}
+                onRebook={handleRebook}
                 showUser={false}
               />
             ))}
@@ -132,16 +140,17 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       </section>
       {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
-          <h2 id="global-label" style={{marginTop:0}}>All Bookings</h2>
-          {allBookings.length === 0 ? (
-            <div className="empty">There are no bookings yet.</div>
+          <h2 id="global-label" style={{marginTop:0}}>All Current Bookings</h2>
+          {activeAllBookings.length === 0 ? (
+            <div className="empty">There are no current bookings.</div>
           ) : (
             <div className="grid">
-              {allBookings.map(booking => (
+              {activeAllBookings.map(booking => (
                 <GuardedBookingCard
                   key={booking.id}
                   booking={booking}
                   onCancel={handleCancel}
+                  onRebook={handleRebook}
                   showUser={true}
                 />
               ))}

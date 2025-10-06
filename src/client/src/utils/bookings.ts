@@ -62,5 +62,3 @@ export function mergeBookings(optimistic: ApiBooking[], server: ApiBooking[]): A
   }
   return Array.from(byId.values())
 }
-// For React Scripts:
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000'

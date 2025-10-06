@@ -4,43 +4,52 @@ import { User, UserRole } from "../types"
 type AddUserProps = {
   user: User;
   currentUser: User;
-  onSave: (user: User) => void;
+  onSave: (user: User & { password: string }) => void;
   onCancel: () => void;
 }
 
 export default function AddUser({ user, currentUser, onSave, onCancel }: AddUserProps) {
-    const [formData, setFormData] = useState<User>(user)
-    const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email', string>>>({});
+  const [formData, setFormData] = useState<User & { password?: string }>(user)
+  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>>>({});
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-        if (name === 'role') {
-          setFormData(prev => ({ ...prev, role: value as UserRole }));
-        } else if (name === 'first_name' || name === 'last_name' || name === 'email') {
-          setFormData(prev => ({ ...prev, [name]: value }));
-          setErrors(prev => ({ ...prev, [name]: undefined }));
-        }
-    };
+    if (name === 'role') {
+      setFormData(prev => ({ ...prev, role: value as UserRole }));
+    } else if (
+      name === 'first_name' ||
+      name === 'last_name' ||
+      name === 'email' ||
+      name === 'password'
+    ) {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
+  };
 
-    const validateForm = (): boolean => {
-        const newErrors: Partial<Record<'first_name' | 'last_name' | 'email', string>> = {};
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>> = {};
 
-        if (!formData.first_name.trim()) {
-          newErrors.first_name = "First name is required";
-        }
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
+    }
 
-        if (!formData.last_name.trim()) {
-          newErrors.last_name = "Last name is required";
-        }
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
 
-        if (!formData.email.trim()) {
-          newErrors.email = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-          newErrors.email = "Email must be valid";
-        }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email must be valid";
+    }
+
+    if (!formData.password || typeof formData.password !== 'string' || formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -49,7 +58,9 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSave(formData);
+      // Remove id if present before sending
+      const { id, ...userData } = formData;
+      onSave(userData as User & { password: string });
     }
   };
 
@@ -59,7 +70,6 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
 
       <label htmlFor="add-user-first-name">
         First Name:
-        {/* Use empty string as a fallback for value to avoid uncontrolled component warning */}
         <input
           id="add-user-first-name"
           className="input"
@@ -133,6 +143,26 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
             </>
           )}
         </select>
+      </label>
+
+      <label htmlFor="add-user-password">
+        Password:
+        <input
+          id="add-user-password"
+          className="input"
+          name="password"
+          type="password"
+          value={formData.password || ''}
+          onChange={handleChange}
+          required
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "add-user-password-error" : undefined}
+        />
+        {errors.password && (
+          <span id="add-user-password-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+            {errors.password}
+          </span>
+        )}
       </label>
 
       <div style={{ marginTop: "1rem" }}>

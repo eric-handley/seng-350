@@ -8,7 +8,12 @@ type Props = {
   showUser?: boolean
 }
 
-export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = false }) => {
+export const BookingCard: React.FC<Props> = ({
+  booking,
+  onCancel,
+  onRebook,
+  showUser = false
+}) => {
   // Tolerant field mapping (no hard assumptions such that we avoid having nothing render)
   const roomId: string =
     booking.roomId ?? booking.room_id ?? booking.room?.id ?? ''
@@ -41,7 +46,7 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
 
   const cancelled: boolean =
     !!booking.cancelled ||
-    (typeof booking.status === 'string' && booking.status.toLowerCase() !== 'active')
+    (typeof booking.status === 'string' && booking.status.toLowerCase() === 'cancelled')
 
   const userLabel: string | undefined =
     (typeof booking.user === 'string' && booking.user) ??
@@ -65,6 +70,14 @@ export const BookingCard: React.FC<Props> = ({ booking, onCancel, showUser = fal
         <div style={{ marginTop: 10 }}>
           <button className="btn danger" onClick={() => onCancel(String(booking.id))}>
             Cancel
+          </button>
+        </div>
+      )}
+
+      {cancelled && onRebook && (
+        <div style={{ marginTop: 10 }}>
+          <button className="btn ghost" onClick={() => onRebook(String(booking.id))}>
+            Rebook
           </button>
         </div>
       )}
