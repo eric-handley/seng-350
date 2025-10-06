@@ -7,8 +7,8 @@ import { BookingCard } from '../src/components/BookingCard';
 import { User, UserRole } from '../src/types';
 
 // Mock the hook and child component
-jest.mock('../../hooks/useBookingHistory');
-jest.mock('../../components/BookingCard', () => ({
+jest.mock('../src/hooks/useBookingHistory');
+jest.mock('../src/components/BookingCard', () => ({
     BookingCard: jest.fn(({ booking }) => (
         <div data-testid="booking-card">{booking.name}</div>
     )),

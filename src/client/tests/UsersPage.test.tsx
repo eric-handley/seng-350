@@ -4,19 +4,19 @@ import { UsersPage } from '../src/pages/UsersPage'
 import { User, UserRole } from '../src/types'
 
 // Mock child components
-jest.mock('../components/UserTab', () => {
+jest.mock('../src/components/UserTab', () => {
     const Mock = () => <div data-testid="users-tab">UsersTab</div>
     Mock.displayName = 'UserTab'
     return Mock
 })
 
-jest.mock('../components/EditUser', () => {
+jest.mock('../src/components/EditUser', () => {
     const Mock = ({ user }: { user: User }) => <div data-testid="edit-user">Editing: {user.first_name}</div>
     Mock.displayName = 'EditUser'
     return Mock
 })
 
-jest.mock('../components/AddUser', () => {
+jest.mock('../src/components/AddUser', () => {
     const Mock = ({ user }: { user: User }) => <div data-testid="add-user">Adding: {user.first_name}</div>
     Mock.displayName = 'AddUser'
     return Mock

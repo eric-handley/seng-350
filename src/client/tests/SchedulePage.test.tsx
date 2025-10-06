@@ -4,8 +4,8 @@ import { SchedulePage } from '../src/pages/SchedulePage'
 import { useSchedule } from '../src/hooks/useSchedule'
 
 // Mock the hook and FilterPanel
-jest.mock('../hooks/useSchedule')
-jest.mock('../components/FilterPanel', () => ({
+jest.mock('../src/hooks/useSchedule')
+jest.mock('../src/components/FilterPanel', () => ({
     FilterPanel: jest.fn(() => <div data-testid="filter-panel" />)
 }))
 
