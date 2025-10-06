@@ -66,7 +66,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {editingUser && (
         <EditUser
           user={editingUser}
-          currentUser={currentUser}
           onSave={onSaveUser}
           onCancel={onCancelEdit}
         />
@@ -74,7 +73,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {editingRoleUser && (
         <EditUser
           user={editingRoleUser}
-          currentUser={currentUser}
           onSave={handleSaveRole}
           onCancel={handleCancelRoleEdit}
         />
