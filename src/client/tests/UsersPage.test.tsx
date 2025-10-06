@@ -43,6 +43,7 @@ describe('UsersPage', () => {
                 currentUser={baseUser}
                 editingUser={null}
                 addingUser={null}
+                error={null} 
                 {...mockHandlers}
             />
         )
@@ -57,6 +58,7 @@ describe('UsersPage', () => {
                 currentUser={baseUser}
                 editingUser={sampleUsers[0]}
                 addingUser={null}
+                error={null} 
                 {...mockHandlers}
             />
         )
@@ -70,6 +72,7 @@ describe('UsersPage', () => {
                 users={sampleUsers}
                 currentUser={baseUser}
                 editingUser={null}
+                error={null} 
                 addingUser={sampleUsers[1]}
                 {...mockHandlers}
             />
@@ -87,6 +90,7 @@ describe('UsersPage', () => {
                 currentUser={nonAdmin}
                 editingUser={null}
                 addingUser={null}
+                error={null} 
                 {...mockHandlers}
             />
         )
