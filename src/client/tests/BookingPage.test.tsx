@@ -5,7 +5,6 @@ import { BookingPage } from '../src/pages/BookingPage';
 import { useSchedule } from '../src/hooks/useSchedule';
 import { useBookingHistory } from '../src/hooks/useBookingHistory';
 import { Room } from '../src/types';
-import { UiBooking } from '../src/types';
 // Mock hooks
 jest.mock('../../hooks/useSchedule');
 jest.mock('../../hooks/useBookingHistory');
