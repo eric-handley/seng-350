@@ -14,6 +14,8 @@ import { TabKey, UserRole } from "./types";
 import { useUsers } from "./hooks/useUsers";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { getCurrentDate } from "./utils/dateHelpers";
+import { useAuditLogs } from "./hooks/useAuditLogs";
+import { convertAuditLogToRow } from "./types/admin";
 import { TabNavigation } from "./components/TabNavigation";
 import { BookingPage } from "./pages/BookingPage";
 import { SchedulePage } from "./pages/SchedulePage";
@@ -65,6 +67,10 @@ const HomeComponent: React.FC = () => {
     setAddingUser,
   } = useUsers({ autoLoad: !!canManageUsers });
 
+  // Fetch audit logs for admin users
+  const { auditLogs, loading: auditLoading, error: auditError } = useAuditLogs();
+  const auditRows = auditLogs.map(convertAuditLogToRow);
+
   // Room filtering state
   const [building, setBuilding] = useState<string>("");
   const [roomQuery, setRoomQuery] = useState<string>("");
@@ -114,7 +120,7 @@ const HomeComponent: React.FC = () => {
           setStart={setStart}
           end={end}
           setEnd={setEnd}
-          onBookingCreated={() => navigate("/home/history")}
+          onBookingCreated={() => navigate("/history")}
         />
       )}
 
@@ -145,7 +151,9 @@ const HomeComponent: React.FC = () => {
           onCancelAdd={() => setAddingUser(null)}
         />
       )}
-      {tab === "audit" && currentUser.role === UserRole.ADMIN && <AuditTable />}
+      {tab === "audit" && currentUser.role === UserRole.ADMIN && (
+        <AuditTable rows={auditRows} loading={auditLoading} error={auditError} />
+      )}
       {tab === "health" && currentUser.role === UserRole.ADMIN && (
         <SystemHealth />
       )}
@@ -165,7 +173,7 @@ const AppRouter: React.FC = () => {
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={login} />} />
       <Route
-        path="/home"
+        path="/"
         element={
           <ProtectedRoute
             allowedRoles={[UserRole.STAFF, UserRole.REGISTRAR, UserRole.ADMIN]}
@@ -174,7 +182,7 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/home/book" replace />} />
+        <Route index element={<Navigate to="/book" replace />} />
         <Route path="schedule" element={null} />
         <Route path="book" element={null} />
         <Route path="history" element={null} />
@@ -184,7 +192,6 @@ const AppRouter: React.FC = () => {
         <Route path="buildings" element={null} />
         <Route path="equipment" element={null} />
       </Route>
-      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

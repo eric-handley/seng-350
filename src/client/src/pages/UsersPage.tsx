@@ -33,23 +33,8 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   onCancelEdit,
   onCancelAdd
 }) => {
-  const [editingRoleUser, setEditingRoleUser] = useState<User | null>(null)
-
   if (currentUser.role !== UserRole.ADMIN && currentUser.role !== UserRole.REGISTRAR) {
     return null
-  }
-
-  const handleEditRole = (user: User) => {
-    setEditingRoleUser(user)
-  }
-
-  const handleSaveRole = (updatedUser: User) => {
-    onSaveUser(updatedUser)
-    setEditingRoleUser(null)
-  }
-
-  const handleCancelRoleEdit = () => {
-    setEditingRoleUser(null)
   }
 
   return (
@@ -61,7 +46,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({
         handleEditUser={onEditUser}
         handleAddUser={onAddUser}
         handleBlockUser={onBlockUser}
-        handleEditRole={handleEditRole} // <-- Pass the handler
       />
       {editingUser && (
         <EditUser
@@ -69,14 +53,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({
           currentUser={currentUser}
           onSave={onSaveUser}
           onCancel={onCancelEdit}
-        />
-      )}
-      {editingRoleUser && (
-        <EditUser
-          user={editingRoleUser}
-          currentUser={currentUser}
-          onSave={handleSaveRole}
-          onCancel={handleCancelRoleEdit}
         />
       )}
       {addingUser && (

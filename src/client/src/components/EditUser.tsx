@@ -3,11 +3,12 @@ import { User, UserRole } from "../types";
 
 type EditUserProps = {
   user: User;
+  currentUser: User;
   onSave: (user: User) => void;
   onCancel: () => void;
 };
 
-export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
+export default function EditUser({ user, currentUser, onSave, onCancel }: EditUserProps) {
   const [formData, setFormData] = useState<User>(user);
   const [errors, setErrors] = useState<
     Partial<Record<"first_name" | "last_name" | "email", string>>
@@ -136,6 +137,28 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           </span>
         )}
       </label>
+
+      {(currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
+        <label htmlFor="edit-user-role" style={{ display: 'block', marginBottom: '1rem' }}>
+          <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Role:</div>
+          <select
+            id="edit-user-role"
+            className="input"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
+          >
+            {currentUser.role === UserRole.ADMIN && (
+              <>
+                <option value={UserRole.ADMIN}>Admin</option>
+                <option value={UserRole.REGISTRAR}>Registrar</option>
+              </>
+            )}
+            <option value={UserRole.STAFF}>Staff</option>
+          </select>
+        </label>
+      )}
 
       <label htmlFor="edit-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password (Optional):</div>

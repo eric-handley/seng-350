@@ -53,9 +53,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
-      navigate("/home/book");
-
-      navigate("/home");
+      navigate("/book");
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Login failed"));
     }

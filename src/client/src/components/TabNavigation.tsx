@@ -20,7 +20,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         className={currentTab === "book" ? "tab active" : "tab"}
         role="tab"
         aria-selected={currentTab === "book"}
-        onClick={() => navigate("/home/book")}
+        onClick={() => navigate("/book")}
       >
         Book Rooms
       </button>
@@ -30,7 +30,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         className={currentTab === "schedule" ? "tab active" : "tab"}
         role="tab"
         aria-selected={currentTab === "schedule"}
-        onClick={() => navigate("/home/schedule")}
+        onClick={() => navigate("/schedule")}
       >
         Schedule
       </button>
@@ -40,7 +40,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         className={currentTab === "history" ? "tab active" : "tab"}
         role="tab"
         aria-selected={currentTab === "history"}
-        onClick={() => navigate("/home/history")}
+        onClick={() => navigate("/history")}
       >
         {(currentUser.role === UserRole.REGISTRAR || currentUser.role === UserRole.ADMIN)
           ? 'All Bookings'
@@ -54,7 +54,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           className={currentTab === "users" ? "tab active" : "tab"}
           role="tab"
           aria-selected={currentTab === "users"}
-          onClick={() => navigate("/home/users")}
+          onClick={() => navigate("/users")}
         >
           User List
         </button>
@@ -65,7 +65,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           className="tab"
           role="tab"
           aria-selected={currentTab === "buildings"}
-          onClick={() => navigate("/home/buildings")}
+          onClick={() => navigate("/buildings")}
         >
           Manage Buildings & Rooms
         </button>
@@ -75,7 +75,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           className="tab"
           role="tab"
           aria-selected={currentTab === "equipment"}
-          onClick={() => navigate("/home/equipment")}
+          onClick={() => navigate("/equipment")}
         >
           Manage Equipment
         </button>
@@ -85,7 +85,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           className="tab"
           role="tab"
           aria-selected={currentTab === "audit"}
-          onClick={() => navigate("/home/audit")}
+          onClick={() => navigate("/audit")}
         >
           Audit
         </button>
@@ -95,7 +95,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           className="tab"
           role="tab"
           aria-selected={currentTab === "health"}
-          onClick={() => navigate("/home/health")}
+          onClick={() => navigate("/health")}
         >
           System Health
         </button>

@@ -24,8 +24,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (allowedRoles && currentUser && !allowedRoles.includes(currentUser.role)) {
     // Redirect to appropriate page based on role
-
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
