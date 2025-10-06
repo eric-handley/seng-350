@@ -12,7 +12,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
   setTab,
   currentUser,
 }) => {
-  const isStaff = currentUser.role === "staff";
+  const isStaff = currentUser.role === UserRole.STAFF;
 
   return (
     <div className="tabs" role="tablist" aria-label="Sections">
@@ -78,6 +78,16 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           onClick={() => setTab("health")}
         >
           System Health
+        </button>
+      )}
+      {currentUser.role === UserRole.ADMIN && (
+        <button
+          className="tab"
+          role="tab"
+          aria-selected={currentTab === "buildings"}
+          onClick={() => setTab("buildings")}
+        >
+          Buildings & Rooms
         </button>
       )}
     </div>

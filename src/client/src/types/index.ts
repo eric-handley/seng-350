@@ -42,7 +42,8 @@ export type TabKey =
   | "history"
   | "users"
   | "audit"
-  | "health";
+  | "health"
+  | "buildings";
 
 export type AuditLog = {
   id: string;

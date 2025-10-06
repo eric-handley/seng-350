@@ -15,16 +15,17 @@ import { useUsers } from "./hooks/useUsers";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import { getCurrentDate } from "./utils/dateHelpers";
 
-import { TabNavigation } from './components/TabNavigation'
-import { BookingPage } from './pages/BookingPage'
-import { SchedulePage } from './pages/SchedulePage'
-import { HistoryPage } from './pages/HistoryPage'
-import { UsersPage } from './pages/UsersPage'
-import LoginPage from './pages/LoginPage'
-import AdminConsole from './components/admin/AdminConsole'
-import { ProtectedRoute } from './components/ProtectedRoute'
-import { AuditTable } from './components/admin/AuditTable'
-import { SystemHealth } from './components/admin/SystemHealth'
+import { TabNavigation } from "./components/TabNavigation";
+import { BookingPage } from "./pages/BookingPage";
+import { SchedulePage } from "./pages/SchedulePage";
+import { HistoryPage } from "./pages/HistoryPage";
+import { UsersPage } from "./pages/UsersPage";
+import LoginPage from "./pages/LoginPage";
+import AdminConsole from "./components/admin/AdminConsole";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AuditTable } from "./components/admin/AuditTable";
+import { SystemHealth } from "./components/admin/SystemHealth";
+import BuildingsRooms from "./components/admin/BuildingsRooms";
 
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
@@ -55,7 +56,11 @@ const HomeComponent: React.FC = () => {
   const [end, setEnd] = useState<string>("11:00");
 
   useEffect(() => {
-    if (currentUser && currentUser.role === "staff" && tab === "schedule") {
+    if (
+      currentUser &&
+      currentUser.role === UserRole.STAFF &&
+      tab === "schedule"
+    ) {
       setTab("book");
     }
   }, [currentUser, tab]);
@@ -110,7 +115,7 @@ const HomeComponent: React.FC = () => {
         />
       )}
 
-      {tab === "schedule" && currentUser.role !== "staff" && (
+      {tab === "schedule" && currentUser.role !== UserRole.STAFF && (
         <SchedulePage
           date={date}
           setDate={setDate}
@@ -139,6 +144,9 @@ const HomeComponent: React.FC = () => {
       {tab === "audit" && currentUser.role === UserRole.ADMIN && <AuditTable />}
       {tab === "health" && currentUser.role === UserRole.ADMIN && (
         <SystemHealth />
+      )}
+      {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
+        <BuildingsRooms />
       )}
     </div>
   );
