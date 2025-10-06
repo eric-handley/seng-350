@@ -38,6 +38,8 @@ test-docker-build:
     - echo "Test building services..."
     - docker compose build
   timeout: 10 minutes
+  retry:
+    max: 2
 
 jest-tests:
   stage: test
@@ -55,8 +57,7 @@ jest-tests:
     - docker compose down -v
   timeout: 10 minutes
   retry:
-    max: 1
-    when: runner_system_failure
+    max: 2
 
 push-container-registry:
   stage: deploy

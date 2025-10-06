@@ -72,7 +72,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
   onCancel,
 }) => {
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings } = useBookingHistory(currentUser.id, currentUser)
+  const { history: userHistory, loading, error, fetchHistory, cancelBooking } = useBookingHistory(currentUser.id)
 
   useEffect(() => {
     void fetchHistory()
@@ -87,7 +87,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   }
 
   const handleRebook = async (id: string) => {
-    const booking = allBookings?.find(b => b.id === id) || userHistory.find(b => b.id === id)
+    const booking = userHistory?.find(b => b.id === id) || userHistory.find(b => b.id === id)
     if (!booking) return
     const response = await fetch('http://localhost:3000/bookings', {
       method: 'POST',
@@ -104,7 +104,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     }
   }
 
-  const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
+  //const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
 
   return (
     <div>
@@ -138,7 +138,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           </div>
         )}
       </section>
-      {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
+      {/* {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All Current Bookings</h2>
           {activeAllBookings.length === 0 ? (
@@ -157,7 +157,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
             </div>
           )}
         </section>
-      )}
+      )} */}
     </div>
   )
 }

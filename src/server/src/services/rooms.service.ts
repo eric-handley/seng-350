@@ -45,8 +45,8 @@ export class RoomsService {
       .addOrderBy('room.room_number', 'ASC');
 
     if (normalizedRoomId) {
-      roomQuery.andWhere('room.room_id = :room_id', {
-        room_id: normalizedRoomId,
+      roomQuery.andWhere('room.room_id LIKE :room_id', {
+        room_id: `%${normalizedRoomId}%`,
       });
     }
     if (buildingSearch) {

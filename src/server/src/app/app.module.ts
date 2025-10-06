@@ -33,6 +33,9 @@ import { BuildingsService } from '../services/buildings.service';
 import { EquipmentService } from '../services/equipment.service';
 import { AuditLogsService } from '../services/audit-logs.service';
 
+// Import interceptors
+import { AuditLoggingInterceptor } from '../shared/interceptors/audit-logging.interceptor';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
@@ -67,6 +70,7 @@ import { AuditLogsService } from '../services/audit-logs.service';
     BuildingsService,
     EquipmentService,
     AuditLogsService,
+    AuditLoggingInterceptor,
   ],
 })
 export class AppModule {}

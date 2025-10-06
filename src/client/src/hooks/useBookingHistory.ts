@@ -5,12 +5,12 @@ import type { UiBooking } from '../types'
 import { mapApiBookingToUi, mergeBookings, reconcileTemp, toIsoDateTimeUTC } from '../utils/bookings'
 import { toApiTime } from '../utils/time'
 
-export function useBookingHistory(userId: string, currentUser: any) {
+export function useBookingHistory(userId: string) {
   const [serverHistory, setServerHistory] = useState<ApiBooking[] | null>(null)
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [allBookings, setAllBookings] = useState<UiBooking[]>([])
+  //const [allBookings, setAllBookings] = useState<UiBooking[]>([])
 
   const fetchHistory = async () => {
     try {
@@ -115,19 +115,19 @@ export function useBookingHistory(userId: string, currentUser: any) {
     [mergedApiHistory]
   )
 
-  const fetchAllBookings = async () => {
-    const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
-    if (response.ok) {
-      const data = await response.json()
-      setAllBookings(data)
-    }
-  }
+  // const fetchAllBookings = async () => {
+  //   const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
+  //   if (response.ok) {
+  //     const data = await response.json()
+  //     setAllBookings(data)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (currentUser.role === 'REGISTRAR' || currentUser.role === 'ADMIN') {
-      fetchAllBookings()
-    }
-  }, [currentUser.role])
+  // useEffect(() => {
+  //   if (currentUser.role === 'REGISTRAR' || currentUser.role === 'ADMIN') {
+  //     fetchAllBookings()
+  //   }
+  // }, [currentUser.role])
 
   return {
     history,
@@ -136,6 +136,6 @@ export function useBookingHistory(userId: string, currentUser: any) {
     fetchHistory,
     createBooking: createNewBooking,
     cancelBooking,
-    allBookings,
+    //allBookings,
   }
 }

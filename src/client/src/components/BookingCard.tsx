@@ -46,7 +46,7 @@ export const BookingCard: React.FC<Props> = ({
 
   const cancelled: boolean =
     !!booking.cancelled ||
-    (typeof booking.status === 'string' && booking.status.toLowerCase() === 'cancelled')
+    (typeof booking.status === 'string' && booking.status.toLowerCase() !== 'active')
 
   const userLabel: string | undefined =
     (typeof booking.user === 'string' && booking.user) ??

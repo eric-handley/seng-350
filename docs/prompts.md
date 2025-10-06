@@ -74,6 +74,19 @@ Branch `feature/staff`
 
 - ChatGPT Conversation to resolve linting issues:
   https://chatgpt.com/share/68e2cfb7-4dcc-8009-b1ad-8f4efafed22c
+    - how can I edit this function to properly add the submitted information to the table? 
+        ```js
+        const handleSaveNewUser = (updated: User) => {
+            setUsers((prev) =>
+            prev.map((u) => (u.id === updated.id ? updated : u))
+            );
+            setAddingUser(null);
+        };
+        ```
+
+Branch `issue-46/set-up-audit-logging`
+- `claude-code` prompts:
+    - make a plan to implement api logging to the audit_logs table (check @docs/db/schema.md ). this should somehow hook into all api calls so that the active user (authenticated) and the action/object are logged to the db. it should also capture logins and logouts. your changes should only be server-side
 
 **Design-I**
 

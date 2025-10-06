@@ -39,7 +39,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
     slot_type: 'available',
   });
 
-  const { createBooking } = useBookingHistory(currentUserId, currentUserId);
+  const { createBooking } = useBookingHistory(currentUserId);
 
   const handleBook = async (room: Room) => {
     try {
