@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'
@@ -126,10 +126,6 @@ export function useBookingHistory(userId: string) {
       console.error('Failed to fetch all bookings:', err)
     }
   }, [])
-
-  useEffect(() => {
-    void fetchAllBookings()
-  }, [fetchAllBookings])
 
   // Convert all bookings to UI format
   const allBookingsUi: UiBooking[] = useMemo(

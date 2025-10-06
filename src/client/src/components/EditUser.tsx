@@ -1,26 +1,39 @@
-import React, { useState } from "react"
-import { User } from "../types"
+import React, { useState } from "react";
+import { User, UserRole } from "../types";
 
 type EditUserProps = {
   user: User;
+  currentUser: User;
   onSave: (user: User) => void;
   onCancel: () => void;
-}
+};
 
-export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
-  const [formData, setFormData] = useState<User & { password?: string }>(user);
-  const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>>>({});
+export default function EditUser({ user, currentUser, onSave, onCancel }: EditUserProps) {
+  const [formData, setFormData] = useState<User>(user);
+  const [errors, setErrors] = useState<
+    Partial<Record<"first_name" | "last_name" | "email", string>>
+  >({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    if (name === 'first_name' || name === 'last_name' || name === 'email' || name === 'password') {
-      setFormData(prev => ({ ...prev, [name]: value }))
-      setErrors(prev => ({ ...prev, [name]: undefined }))
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "role") {
+      setFormData((prev) => ({ ...prev, role: value as UserRole }));
+    } else if (
+      name === "first_name" ||
+      name === "last_name" ||
+      name === "email"
+    ) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>> = {};
+    const newErrors: Partial<
+      Record<"first_name" | "last_name" | "email", string>
+    > = {};
 
     if (!formData.first_name.trim()) {
       newErrors.first_name = "First name is required";
@@ -63,11 +76,15 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           onChange={handleChange}
           required
           aria-invalid={!!errors.first_name}
-          aria-describedby={errors.first_name ? "edit-user-first-error" : undefined}
-          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
+          aria-describedby={
+            errors.first_name ? "edit-user-first-error" : undefined
+          }
         />
         {errors.first_name && (
-          <span id="edit-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-first-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.first_name}
           </span>
         )}
@@ -83,11 +100,15 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           onChange={handleChange}
           required
           aria-invalid={!!errors.last_name}
-          aria-describedby={errors.last_name ? "edit-user-last-error" : undefined}
-          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
+          aria-describedby={
+            errors.last_name ? "edit-user-last-error" : undefined
+          }
         />
         {errors.last_name && (
-          <span id="edit-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-last-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.last_name}
           </span>
         )}
@@ -108,11 +129,36 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.email && (
-          <span id="edit-user-email-error" style={{ color: 'red', fontSize: '0.875rem' }}>
+          <span
+            id="edit-user-email-error"
+            style={{ color: "red", fontSize: "0.875rem" }}
+          >
             {errors.email}
           </span>
         )}
       </label>
+
+      {(currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
+        <label htmlFor="edit-user-role" style={{ display: 'block', marginBottom: '1rem' }}>
+          <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Role:</div>
+          <select
+            id="edit-user-role"
+            className="input"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
+          >
+            {currentUser.role === UserRole.ADMIN && (
+              <>
+                <option value={UserRole.ADMIN}>Admin</option>
+                <option value={UserRole.REGISTRAR}>Registrar</option>
+              </>
+            )}
+            <option value={UserRole.STAFF}>Staff</option>
+          </select>
+        </label>
+      )}
 
       <label htmlFor="edit-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password (Optional):</div>
@@ -135,8 +181,10 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <div style={{ marginTop: "1rem", display: 'flex', gap: '0.5rem' }}>
-        <button type="submit" className="btn primary">Save</button>
+      <div style={{ marginTop: "1rem" }}>
+        <button type="submit" className="btn primary">
+          Save
+        </button>
         <button type="button" className="btn" onClick={onCancel}>
           Cancel
         </button>

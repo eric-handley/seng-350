@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Equipment } from '../database/entities/equipment.entity';
 import { Room } from '../database/entities/room.entity';
 import { RoomEquipment } from '../database/entities/room-equipment.entity';
-import { EquipmentResponseDto } from '../dto/equipment.dto';
+import { EquipmentResponseDto, CreateEquipmentDto, UpdateEquipmentDto } from '../dto/equipment.dto';
 
 @Injectable()
 export class EquipmentService {
@@ -25,7 +25,7 @@ export class EquipmentService {
     const room = await this.roomRepository.findOne({
       where: { room_id: normalizedRoomId },
     });
-    
+
     if (!room) {
       throw new NotFoundException(`Room with ID ${roomId} not found`);
     }
@@ -42,6 +42,66 @@ export class EquipmentService {
       created_at: re.equipment.created_at,
       updated_at: re.equipment.updated_at,
     }));
+  }
+
+  async create(createEquipmentDto: CreateEquipmentDto): Promise<EquipmentResponseDto> {
+    // Check if equipment with this name already exists
+    const existing = await this.equipmentRepository.findOne({
+      where: { name: createEquipmentDto.name },
+    });
+
+    if (existing) {
+      throw new ConflictException(`Equipment with name '${createEquipmentDto.name}' already exists`);
+    }
+
+    const equipment = this.equipmentRepository.create(createEquipmentDto);
+    const saved = await this.equipmentRepository.save(equipment);
+
+    return {
+      id: saved.id,
+      name: saved.name,
+      created_at: saved.created_at,
+      updated_at: saved.updated_at,
+    };
+  }
+
+  async update(id: string, updateEquipmentDto: UpdateEquipmentDto): Promise<EquipmentResponseDto> {
+    const equipment = await this.equipmentRepository.findOne({ where: { id } });
+
+    if (!equipment) {
+      throw new NotFoundException(`Equipment with ID ${id} not found`);
+    }
+
+    // Check if new name conflicts with existing equipment
+    if (updateEquipmentDto.name && updateEquipmentDto.name !== equipment.name) {
+      const existing = await this.equipmentRepository.findOne({
+        where: { name: updateEquipmentDto.name },
+      });
+
+      if (existing) {
+        throw new ConflictException(`Equipment with name '${updateEquipmentDto.name}' already exists`);
+      }
+    }
+
+    Object.assign(equipment, updateEquipmentDto);
+    const saved = await this.equipmentRepository.save(equipment);
+
+    return {
+      id: saved.id,
+      name: saved.name,
+      created_at: saved.created_at,
+      updated_at: saved.updated_at,
+    };
+  }
+
+  async remove(id: string): Promise<void> {
+    const equipment = await this.equipmentRepository.findOne({ where: { id } });
+
+    if (!equipment) {
+      throw new NotFoundException(`Equipment with ID ${id} not found`);
+    }
+
+    await this.equipmentRepository.remove(equipment);
   }
 
   private normalizeRoomId(value: string): string {

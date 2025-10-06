@@ -6,25 +6,30 @@ import { useBookingHistory } from '../hooks/useBookingHistory'
 
 interface HistoryPageProps {
   currentUser: User
-  onCancel?: (id: string) => void
-  onRebook?: (id: string) => void
 }
 
 type CardBoundaryProps = {
-  fallback: React.ReactNode
-  children?: React.ReactNode
-}
-type CardBoundaryState = { hasError: boolean }
+  fallback: React.ReactNode;
+  children?: React.ReactNode;
+};
+type CardBoundaryState = { hasError: boolean };
 
-class CardBoundary extends React.Component<CardBoundaryProps, CardBoundaryState> {
+class CardBoundary extends React.Component<
+  CardBoundaryProps,
+  CardBoundaryState
+> {
   constructor(props: CardBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
-  static getDerivedStateFromError() { return { hasError: true } }
-  componentDidCatch() {}
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch() {
+    /* swallow */
+  }
   render() {
-    return this.state.hasError ? this.props.fallback : this.props.children
+    return this.state.hasError ? this.props.fallback : this.props.children;
   }
 }
 
@@ -35,12 +40,13 @@ const FallbackTile: React.FC<{
   showUser?: boolean
 }> = ({ booking, onRebook, showUser }) => {
   return (
-    <div className="card" style={{padding:'12px'}}>
-      <div className="card-title" style={{fontWeight:600}}>
+    <div className="card" style={{ padding: "12px" }}>
+      <div className="card-title" style={{ fontWeight: 600 }}>
         {booking.name ?? booking.room?.name ?? booking.roomId}
       </div>
-      <div className="card-sub" style={{opacity:.8}}>
-        {(booking.building ? booking.building + ' ' : '') + (booking.roomNumber ?? '')}
+      <div className="card-sub" style={{ opacity: 0.8 }}>
+        {(booking.building ? booking.building + " " : "") +
+          (booking.roomNumber ?? "")}
       </div>
       <div className="card-meta" style={{marginTop:6}}>
         {booking.date ? booking.date + ' · ' : ''}{booking.start} → {booking.end}
@@ -55,8 +61,8 @@ const FallbackTile: React.FC<{
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
 const GuardedBookingCard: React.FC<{
   booking: UiBooking
@@ -69,35 +75,31 @@ const GuardedBookingCard: React.FC<{
   >
     <BookingCard booking={booking} onCancel={onCancel} onRebook={onRebook} showUser={showUser} />
   </CardBoundary>
-)
+);
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
 }) => {
-  // Add allBookings to your hook and fetch it for admins/registrars
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id) as {
-    history: UiBooking[],
-    loading: boolean,
-    error: string | null,
-    fetchHistory: () => Promise<void>,
-    cancelBooking: (id: string) => Promise<void>,
-    allBookings: UiBooking[]
-  }
+  const { history: userHistory, loading, error, fetchHistory, cancelBooking, fetchAllBookings, allBookings } = useBookingHistory(currentUser.id)
 
   useEffect(() => {
-    void fetchHistory()
-  }, [fetchHistory])
+    void fetchHistory();
+    // Fetch all bookings for admin/registrar
+    if (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) {
+      void fetchAllBookings();
+    }
+  }, [fetchHistory, fetchAllBookings, currentUser.role]);
 
   const handleCancel = async (id: string) => {
     try {
-      await cancelBooking(id)
+      await cancelBooking(id);
     } catch {
       // Error already set by hook
     }
   }
 
   const handleRebook = async (id: string) => {
-    const booking = userHistory?.find(b => b.id === id) ?? userHistory.find(b => b.id === id)
+    const booking = userHistory.find(b => b.id === id)
     if (!booking) {return}
 
     // PATCH the booking to reactivate it
@@ -111,12 +113,12 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     })
     if (response.ok) {
       // eslint-disable-next-line no-alert
-      window.confirm('Rebooking successful!')
+      window.alert('Rebooking successful!')
       await fetchHistory()
     }
     else {
       // eslint-disable-next-line no-alert
-      window.confirm('Failed to rebook. Please try again later.')
+      window.alert('Failed to rebook. Please try again later.')
     }
   }
 
@@ -152,14 +154,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 key={booking.id}
                 booking={booking}
                 onCancel={handleCancel}
-                //onRebook={handleRebook}
+                onRebook={handleRebook}
                 showUser={false}
               />
             ))}
           </div>
         )}
       </section>
-      {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
+      {(currentUser.role === UserRole.REGISTRAR || currentUser.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All User Bookings</h2>
           {activeAllBookings.length === 0 ? (

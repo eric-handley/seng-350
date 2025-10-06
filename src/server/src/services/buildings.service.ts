@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Building } from '../database/entities/building.entity';
-import { BuildingResponseDto } from '../dto/building.dto';
+import { BuildingResponseDto, CreateBuildingDto, UpdateBuildingDto } from '../dto/building.dto';
 
 @Injectable()
 export class BuildingsService {
@@ -37,6 +37,58 @@ export class BuildingsService {
     }
 
     return this.toResponseDto(building, includeRooms);
+  }
+
+  async create(createBuildingDto: CreateBuildingDto): Promise<BuildingResponseDto> {
+    const normalizedShortName = this.normalizeShortName(createBuildingDto.short_name);
+
+    // Check if building already exists
+    const existingBuilding = await this.buildingRepository.findOne({
+      where: { short_name: normalizedShortName },
+    });
+
+    if (existingBuilding) {
+      throw new ConflictException('Building with this short name already exists');
+    }
+
+    const building = this.buildingRepository.create({
+      short_name: normalizedShortName,
+      name: createBuildingDto.name.trim(),
+    });
+
+    const savedBuilding = await this.buildingRepository.save(building);
+    return this.toResponseDto(savedBuilding);
+  }
+
+  async update(short_name: string, updateBuildingDto: UpdateBuildingDto): Promise<BuildingResponseDto> {
+    const normalizedShortName = this.normalizeShortName(short_name);
+
+    const building = await this.buildingRepository.findOne({
+      where: { short_name: normalizedShortName },
+    });
+
+    if (!building) {
+      throw new NotFoundException('Building not found');
+    }
+
+    building.name = updateBuildingDto.name.trim();
+
+    const savedBuilding = await this.buildingRepository.save(building);
+    return this.toResponseDto(savedBuilding);
+  }
+
+  async remove(short_name: string): Promise<void> {
+    const normalizedShortName = this.normalizeShortName(short_name);
+
+    const building = await this.buildingRepository.findOne({
+      where: { short_name: normalizedShortName },
+    });
+
+    if (!building) {
+      throw new NotFoundException('Building not found');
+    }
+
+    await this.buildingRepository.remove(building);
   }
 
 

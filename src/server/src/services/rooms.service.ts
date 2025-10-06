@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions, LessThan, MoreThan } from 'typeorm';
 import { Room } from '../database/entities/room.entity';
 import { Equipment } from '../database/entities/equipment.entity';
-import { RoomQueryDto, RoomResponseDto } from '../dto/room.dto';
+import { Building } from '../database/entities/building.entity';
+import { RoomQueryDto, RoomResponseDto, CreateRoomDto, UpdateRoomDto } from '../dto/room.dto';
 import {
   ScheduleQueryDto,
   ScheduleResponseDto,
@@ -21,6 +22,8 @@ export class RoomsService {
     private readonly equipmentRepository: Repository<Equipment>,
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
+    @InjectRepository(Building)
+    private readonly buildingRepository: Repository<Building>,
   ) {}
 
   async getSchedule(
@@ -223,6 +226,119 @@ export class RoomsService {
     });
 
     return rooms.map((room) => this.toResponseDto(room));
+  }
+
+  async create(createRoomDto: CreateRoomDto): Promise<RoomResponseDto> {
+    const normalizedBuildingShortName = this.normalizeIdentifier(
+      createRoomDto.building_short_name,
+    );
+    const normalizedRoomNumber = createRoomDto.room_number.trim().toUpperCase();
+
+    if (!normalizedBuildingShortName) {
+      throw new BadRequestException('Invalid building short name');
+    }
+
+    // Verify building exists
+    const building = await this.buildingRepository.findOne({
+      where: { short_name: normalizedBuildingShortName },
+    });
+
+    if (!building) {
+      throw new NotFoundException('Building not found');
+    }
+
+    const room_id = `${normalizedBuildingShortName}-${normalizedRoomNumber}`;
+
+    // Check if room already exists
+    const existingRoom = await this.roomRepository.findOne({
+      where: { room_id },
+    });
+
+    if (existingRoom) {
+      throw new ConflictException('Room already exists');
+    }
+
+    const room = this.roomRepository.create({
+      room_id,
+      building_short_name: normalizedBuildingShortName,
+      room_number: normalizedRoomNumber,
+      capacity: createRoomDto.capacity,
+      room_type: createRoomDto.room_type,
+      url: createRoomDto.url,
+    });
+
+    const savedRoom = await this.roomRepository.save(room);
+
+    // Fetch with relations for response
+    const roomWithRelations = await this.roomRepository.findOne({
+      where: { room_id: savedRoom.room_id },
+      relations: ['building', 'room_equipment', 'room_equipment.equipment'],
+    });
+
+    if (!roomWithRelations) {
+      throw new NotFoundException('Room not found after creation');
+    }
+
+    return this.toResponseDto(roomWithRelations);
+  }
+
+  async update(room_id: string, updateRoomDto: UpdateRoomDto): Promise<RoomResponseDto> {
+    const normalizedRoomId = this.normalizeIdentifier(room_id);
+
+    if (!normalizedRoomId) {
+      throw new NotFoundException('Room not found');
+    }
+
+    const room = await this.roomRepository.findOne({
+      where: { room_id: normalizedRoomId },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    // Update only the fields provided
+    if (updateRoomDto.capacity !== undefined) {
+      room.capacity = updateRoomDto.capacity;
+    }
+    if (updateRoomDto.room_type !== undefined) {
+      room.room_type = updateRoomDto.room_type;
+    }
+    if (updateRoomDto.url !== undefined) {
+      room.url = updateRoomDto.url;
+    }
+
+    const savedRoom = await this.roomRepository.save(room);
+
+    // Fetch with relations for response
+    const roomWithRelations = await this.roomRepository.findOne({
+      where: { room_id: savedRoom.room_id },
+      relations: ['building', 'room_equipment', 'room_equipment.equipment'],
+    });
+
+    if (!roomWithRelations) {
+      throw new NotFoundException('Room not found after update');
+    }
+
+    return this.toResponseDto(roomWithRelations);
+  }
+
+  async remove(room_id: string): Promise<void> {
+    const normalizedRoomId = this.normalizeIdentifier(room_id);
+
+    if (!normalizedRoomId) {
+      throw new NotFoundException('Room not found');
+    }
+
+    const room = await this.roomRepository.findOne({
+      where: { room_id: normalizedRoomId },
+    });
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    await this.roomRepository.remove(room);
   }
 
   private normalizeIdentifier(value?: string): string | undefined {
