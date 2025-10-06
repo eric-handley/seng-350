@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function useDarkModePref(): [boolean, (v: boolean) => void] {
   const [enabled, setEnabled] = useState<boolean>(() => {
@@ -381,7 +382,11 @@ type AdminConsoleProps = {
 
 export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
   const [dark, setDark] = useDarkModePref();
-  const [tab, setTab] = useState<"audit" | "health">("audit");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Derive current tab from URL path
+  const tab = location.pathname.includes("/health") ? "health" : "audit";
 
   return (
     <main className={dark ? "theme theme--dark" : "theme"}>
@@ -397,13 +402,13 @@ export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
           <nav className="tabs">
             <button
               className={`tab ${tab === "audit" ? "is-active" : ""}`}
-              onClick={() => setTab("audit")}
+              onClick={() => navigate("/admin-panel/logs")}
             >
               Audit
             </button>
             <button
               className={`tab ${tab === "health" ? "is-active" : ""}`}
-              onClick={() => setTab("health")}
+              onClick={() => navigate("/admin-panel/health")}
             >
               System Health
             </button>

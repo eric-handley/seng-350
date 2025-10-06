@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'
@@ -12,7 +12,7 @@ export function useBookingHistory(userId: string) {
   const [error, setError] = useState<string | null>(null)
   //const [allBookings, setAllBookings] = useState<UiBooking[]>([])
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -24,7 +24,7 @@ export function useBookingHistory(userId: string) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const createNewBooking = async (
     roomId: string,

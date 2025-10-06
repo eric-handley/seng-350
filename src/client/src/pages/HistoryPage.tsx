@@ -106,22 +106,61 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
 
   //const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
 
+  const handleRebook = async (id: string) => {
+    const booking = userHistory?.find(b => b.id === id) || userHistory.find(b => b.id === id)
+    if (!booking) return
+    const response = await fetch('http://localhost:3000/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        room_id: booking.roomId,
+        start_time: booking.start,
+        end_time: booking.end,
+      }),
+    })
+    if (response.ok) {
+      alert('Rebooking successful!')
+    }
+  }
+
+  //const activeAllBookings = allBookings?.filter(b => b.status === 'Active') ?? []
+
+  if (loading) {
+    return (
+      <section className="panel" aria-labelledby="history-loading">
+        <div className="empty">Loading your bookings…</div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="panel" aria-labelledby="history-error">
+        <div className="empty">Error: {error}</div>
+      </section>
+    )
+  }
+
   return (
-    <div>
-      {loading && (
-        <section className="panel" aria-labelledby="history-loading">
-          <div className="empty">Loading your bookings…</div>
-        </section>
-      )}
-      {error && (
-        <section className="panel" aria-labelledby="history-error">
-          <div className="empty">Error: {error}</div>
-        </section>
-      )}
+    <section className="panel" aria-labelledby="history-label">
+      <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
 
-      <section className="panel" aria-labelledby="history-label">
-        <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
-
+      {userHistory.length === 0 ? (
+        <div className="empty">You have no bookings yet.</div>
+      ) : (
+        <div className="grid">
+          {userHistory.map(booking => (
+            <GuardedBookingCard
+              key={booking.id}
+              booking={booking}
+              onCancel={handleCancel}
+              showUser={false}
+            />
+          ))}
+        </div>
+      )}
+    </section>
         {userHistory.length === 0 ? (
           <div className="empty">You have no current bookings.</div>
         ) : (
