@@ -5,12 +5,12 @@ import type { UiBooking } from '../types'
 import { mapApiBookingToUi, mergeBookings, reconcileTemp, toIsoDateTimeUTC } from '../utils/bookings'
 import { toApiTime } from '../utils/time'
 
-export function useBookingHistory(userId: string) {
+export function useBookingHistory(userId: string, currentUser: { role?: string } = {}) {
   const [serverHistory, setServerHistory] = useState<ApiBooking[] | null>(null)
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  //const [allBookings, setAllBookings] = useState<UiBooking[]>([])
+  const [allBookings, setAllBookings] = useState([])
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -115,27 +115,36 @@ export function useBookingHistory(userId: string) {
     [mergedApiHistory]
   )
 
-  // const fetchAllBookings = async () => {
-  //   const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
-  //   if (response.ok) {
-  //     const data = await response.json()
-  //     setAllBookings(data)
-  //   }
-  // }
+  // Fetch all bookings from the backend
+  const fetchAllBookings = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
+      if (response.ok) {
+        const data = await response.json()
+        // Convert to UI format for consistency
+        setAllBookings(data.map(mapApiBookingToUi))
+      }
+    } catch (err) {
+      setAllBookings([])
+      console.error('Failed to fetch all bookings:', err)
+    }
+  }, [])
 
-  // useEffect(() => {
-  //   if (currentUser.role === 'REGISTRAR' || currentUser.role === 'ADMIN') {
-  //     fetchAllBookings()
-  //   }
-  // }, [currentUser.role])
+  // Fetch all bookings for registrar/admin
+  useEffect(() => {
+    if (currentUser?.role === 'REGISTRAR' || currentUser?.role === 'ADMIN') {
+      fetchAllBookings()
+    }
+  }, [currentUser?.role, fetchAllBookings])
 
   return {
     history,
     loading,
     error,
     fetchHistory,
+    fetchAllBookings,
     createBooking: createNewBooking,
     cancelBooking,
-    //allBookings,
+    allBookings,
   }
 }

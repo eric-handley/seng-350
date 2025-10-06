@@ -76,7 +76,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   onCancel,
 }) => {
   // Add allBookings to your hook and fetch it for admins/registrars
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id)
+  const { history: userHistory, loading, error, fetchHistory, cancelBooking, allBookings = [] } = useBookingHistory(currentUser.id) as {
+    history: UiBooking[],
+    loading: boolean,
+    error: string | null,
+    fetchHistory: () => Promise<void>,
+    cancelBooking: (id: string) => Promise<void>,
+    allBookings: UiBooking[]
+  }
 
   useEffect(() => {
     void fetchHistory()
@@ -91,7 +98,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   }
 
   const handleRebook = async (id: string) => {
-    const booking = userHistory?.find(b => b.id === id) || userHistory.find(b => b.id === id)
+    const booking = allBookings.find(b => b.id === id) || allBookings.find(b => b.id === id)
     if (!booking) return
 
     // PATCH the booking to reactivate it
@@ -128,9 +135,6 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     )
   }
 
-  // Only show active bookings for all users
-  const activeAllBookings = allBookings.filter(b => b.status === 'Active')
-
   return (
     <div>
       <section className="panel" aria-labelledby="history-label">
@@ -144,7 +148,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 key={booking.id}
                 booking={booking}
                 onCancel={handleCancel}
-                onRebook={handleRebook}
+                //onRebook={handleRebook}
                 showUser={false}
               />
             ))}
@@ -152,24 +156,26 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
         )}
       </section>
       {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
-        <section className="panel" aria-labelledby="global-label">
-          <h2 id="global-label" style={{marginTop:0}}>All Current Bookings</h2>
-          {activeAllBookings.length === 0 ? (
-            <div className="empty">There are no current bookings.</div>
-          ) : (
-            <div className="grid">
-              {activeAllBookings.map(booking => (
-                <GuardedBookingCard
-                  key={booking.id}
-                  booking={booking}
-                  onCancel={handleCancel}
-                  onRebook={handleRebook}
-                  showUser={true}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        <>
+          <section className="panel" aria-labelledby="all-bookings-label">
+            <h2 id="all-bookings-label" style={{marginTop:0}}>All Bookings</h2>
+            {allBookings.length === 0 ? (
+              <div className="empty">There are no bookings.</div>
+            ) : (
+              <div className="grid">
+                {allBookings.map(booking => (
+                  <GuardedBookingCard
+                    key={booking.id}
+                    booking={booking}
+                    onCancel={handleCancel}
+                    onRebook={handleRebook}
+                    showUser={true}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </>
       )}
     </div>
   )
