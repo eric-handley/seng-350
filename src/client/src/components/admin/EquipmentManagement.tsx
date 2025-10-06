@@ -241,7 +241,7 @@ export default function EquipmentManagement() {
             id="building-select"
             value={selectedBuilding}
             onChange={(e) => setSelectedBuilding(e.target.value)}
-            className="form-control"
+            className="input"
           >
             <option value="">Select a building</option>
             {buildings.map((building) => (
@@ -259,7 +259,7 @@ export default function EquipmentManagement() {
               id="room-select"
               value={selectedRoom}
               onChange={(e) => setSelectedRoom(e.target.value)}
-              className="form-control"
+              className="input"
             >
               <option value="">Select a room</option>
               {rooms.map((room) => (
@@ -362,7 +362,7 @@ export default function EquipmentManagement() {
                   type="text"
                   value={newEquipmentName}
                   onChange={(e) => setNewEquipmentName(e.target.value)}
-                  className="form-control"
+                  className="input"
                   required
                 />
               </div>
@@ -401,7 +401,7 @@ export default function EquipmentManagement() {
                   type="text"
                   value={newEquipmentName}
                   onChange={(e) => setNewEquipmentName(e.target.value)}
-                  className="form-control"
+                  className="input"
                   required
                 />
               </div>
@@ -470,7 +470,7 @@ export default function EquipmentManagement() {
                       setEditingRoomEquipment(null);
                     }
                   }}
-                  className="form-control"
+                  className="input"
                   required
                 >
                   <option value="">Choose equipment to add</option>
@@ -492,7 +492,7 @@ export default function EquipmentManagement() {
                   onChange={(e) =>
                     setNewRoomEquipmentQuantity(parseInt(e.target.value) || 1)
                   }
-                  className="form-control"
+                  className="input"
                   required
                 />
               </div>
@@ -535,7 +535,7 @@ export default function EquipmentManagement() {
                   onChange={(e) =>
                     setNewRoomEquipmentQuantity(parseInt(e.target.value) || 1)
                   }
-                  className="form-control"
+                  className="input"
                   required
                 />
               </div>

@@ -237,8 +237,12 @@ export default function BuildingsRooms(): JSX.Element {
     <div className="content-stack" style={{ width: "100%" }}>
       <div className="card">
         <div className="card-title">Create Building</div>
-        <div className="card-body" style={{ gap: "0.5rem", flexWrap: "wrap" }}>
+        <div
+          className="card-body"
+          style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+        >
           <input
+            className="input"
             aria-label="Building short name"
             placeholder="Short name (e.g., ECS)"
             value={newBuilding.short_name}
@@ -247,6 +251,7 @@ export default function BuildingsRooms(): JSX.Element {
             }
           />
           <input
+            className="input"
             aria-label="Building full name"
             placeholder="Full name"
             value={newBuilding.name}
@@ -295,6 +300,7 @@ export default function BuildingsRooms(): JSX.Element {
                   </span>
                   {editingBuildingShort === b.short_name ? (
                     <input
+                      className="input"
                       value={editingBuildingName}
                       onChange={(e) => setEditingBuildingName(e.target.value)}
                     />
@@ -302,11 +308,11 @@ export default function BuildingsRooms(): JSX.Element {
                     <span>{b.name}</span>
                   )}
                 </div>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+                <div className="building-actions">
                   {editingBuildingShort === b.short_name ? (
                     <>
                       <button
-                        className="btn"
+                        className="btn btn--small"
                         onClick={() => void handleUpdateBuilding(b.short_name)}
                         disabled={
                           busy?.kind === "update-building" &&
@@ -316,7 +322,7 @@ export default function BuildingsRooms(): JSX.Element {
                         Save
                       </button>
                       <button
-                        className="btn ghost"
+                        className="btn btn--small ghost"
                         onClick={() => {
                           setEditingBuildingShort(null);
                           setEditingBuildingName("");
@@ -328,13 +334,13 @@ export default function BuildingsRooms(): JSX.Element {
                   ) : (
                     <>
                       <button
-                        className="btn"
+                        className="btn btn--small"
                         onClick={() => startEditBuilding(b)}
                       >
                         Edit
                       </button>
                       <button
-                        className="btn danger"
+                        className="btn btn--small danger"
                         onClick={() => void handleDeleteBuilding(b.short_name)}
                         disabled={
                           busy?.kind === "delete-building" &&
@@ -372,6 +378,7 @@ export default function BuildingsRooms(): JSX.Element {
                             <td>
                               {isEditing ? (
                                 <input
+                                  className="input"
                                   type="number"
                                   min={1}
                                   value={draft?.capacity ?? r.capacity}
@@ -393,6 +400,7 @@ export default function BuildingsRooms(): JSX.Element {
                             <td>
                               {isEditing ? (
                                 <input
+                                  className="input"
                                   value={draft?.room_type ?? r.room_type}
                                   onChange={(e) =>
                                     setEditingRoom((prev) => ({
@@ -412,6 +420,7 @@ export default function BuildingsRooms(): JSX.Element {
                             <td>
                               {isEditing ? (
                                 <input
+                                  className="input"
                                   value={draft?.url ?? r.url}
                                   onChange={(e) =>
                                     setEditingRoom((prev) => ({
@@ -436,9 +445,9 @@ export default function BuildingsRooms(): JSX.Element {
                             </td>
                             <td>
                               {isEditing ? (
-                                <>
+                                <div className="room-actions">
                                   <button
-                                    className="btn"
+                                    className="btn btn--small"
                                     onClick={() => void handleUpdateRoom(r)}
                                     disabled={
                                       busy?.kind === "update-room" &&
@@ -448,7 +457,7 @@ export default function BuildingsRooms(): JSX.Element {
                                     Save
                                   </button>
                                   <button
-                                    className="btn ghost"
+                                    className="btn btn--small ghost"
                                     onClick={() =>
                                       setEditingRoom((prev) => {
                                         const next = { ...prev };
@@ -459,17 +468,17 @@ export default function BuildingsRooms(): JSX.Element {
                                   >
                                     Cancel
                                   </button>
-                                </>
+                                </div>
                               ) : (
-                                <>
+                                <div className="room-actions">
                                   <button
-                                    className="btn"
+                                    className="btn btn--small"
                                     onClick={() => startEditRoom(r)}
                                   >
                                     Edit
                                   </button>
                                   <button
-                                    className="btn danger"
+                                    className="btn btn--small danger"
                                     onClick={() => void handleDeleteRoom(r)}
                                     disabled={
                                       busy?.kind === "delete-room" &&
@@ -478,7 +487,7 @@ export default function BuildingsRooms(): JSX.Element {
                                   >
                                     Delete
                                   </button>
-                                </>
+                                </div>
                               )}
                             </td>
                           </tr>
@@ -495,6 +504,7 @@ export default function BuildingsRooms(): JSX.Element {
                           >
                             <span className="muted">{b.short_name}-</span>
                             <input
+                              className="input"
                               placeholder="Number"
                               value={getRoomDraftFor(b.short_name).room_number}
                               onChange={(e) =>
@@ -509,6 +519,7 @@ export default function BuildingsRooms(): JSX.Element {
                         </td>
                         <td>
                           <input
+                            className="input"
                             type="number"
                             min={1}
                             value={getRoomDraftFor(b.short_name).capacity}
@@ -523,6 +534,7 @@ export default function BuildingsRooms(): JSX.Element {
                         </td>
                         <td>
                           <input
+                            className="input"
                             placeholder="Type"
                             value={getRoomDraftFor(b.short_name).room_type}
                             onChange={(e) =>
@@ -536,6 +548,7 @@ export default function BuildingsRooms(): JSX.Element {
                         </td>
                         <td>
                           <input
+                            className="input"
                             placeholder="URL"
                             value={getRoomDraftFor(b.short_name).url}
                             onChange={(e) =>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { User, UserRole } from '../types'
 import UsersTab from '../components/UserTab'
 import EditUser from '../components/EditUser'
