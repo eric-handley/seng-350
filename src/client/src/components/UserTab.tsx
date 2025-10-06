@@ -29,7 +29,7 @@ export default function UsersTab({
   const [userToBlock, setUserToBlock] = useState<User | null>(null)
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div>
         {error && (
           <div className="toast">
@@ -112,12 +112,24 @@ export default function UsersTab({
       {userToBlock && (
         <div className="modal-overlay">
           <div className="modal">
-            <p>Are you sure you want to block {userToBlock.first_name} {userToBlock.last_name}?</p>
-            <button onClick={() => {
-              handleBlockUser(userToBlock)
-              setUserToBlock(null)
-            }}>Confirm</button>
-            <button onClick={() => setUserToBlock(null)}>Cancel</button>
+            <p style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete {userToBlock.first_name} {userToBlock.last_name}?</p>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <button
+                className="btn danger"
+                onClick={() => {
+                  handleBlockUser(userToBlock)
+                  setUserToBlock(null)
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="btn"
+                onClick={() => setUserToBlock(null)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

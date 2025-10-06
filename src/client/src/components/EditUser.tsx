@@ -51,10 +51,10 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
 
   return (
     <form className="panel" onSubmit={handleSubmit}>
-      <h2>Edit User</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Edit User</h2>
 
-      <label htmlFor="edit-user-first_name">
-        First Name:
+      <label htmlFor="edit-user-first_name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>First Name:</div>
         <input
           id="edit-user-first_name"
           className="input"
@@ -64,6 +64,7 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           required
           aria-invalid={!!errors.first_name}
           aria-describedby={errors.first_name ? "edit-user-first-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.first_name && (
           <span id="edit-user-first-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -72,8 +73,8 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-last_name">
-        Last Name:
+      <label htmlFor="edit-user-last_name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Last Name:</div>
         <input
           id="edit-user-last_name"
           className="input"
@@ -83,6 +84,7 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           required
           aria-invalid={!!errors.last_name}
           aria-describedby={errors.last_name ? "edit-user-last-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.last_name && (
           <span id="edit-user-last-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -91,8 +93,8 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-email">
-        Email:
+      <label htmlFor="edit-user-email" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Email:</div>
         <input
           id="edit-user-email"
           className="input"
@@ -103,6 +105,7 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
           required
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "edit-user-email-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.email && (
           <span id="edit-user-email-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -111,18 +114,19 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <label htmlFor="edit-user-password">
-        Password:
+      <label htmlFor="edit-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password (Optional):</div>
         <input
           id="edit-user-password"
           className="input"
           name="password"
           type="password"
+          placeholder="Leave blank to keep current password"
           value={formData.password ?? ""}
           onChange={handleChange}
-          required
           aria-invalid={!!errors.password}
           aria-describedby={errors.password ? "edit-user-password-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.password && (
           <span id="edit-user-password-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -131,7 +135,7 @@ export default function EditUser({ user, onSave, onCancel }: EditUserProps) {
         )}
       </label>
 
-      <div style={{ marginTop: "1rem" }}>
+      <div style={{ marginTop: "1rem", display: 'flex', gap: '0.5rem' }}>
         <button type="submit" className="btn primary">Save</button>
         <button type="button" className="btn" onClick={onCancel}>
           Cancel

@@ -135,10 +135,13 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     )
   }
 
+  // Only show active (non-cancelled) bookings for all users
+  const activeAllBookings = allBookings.filter(b => !b.cancelled)
+
   return (
     <div>
       <section className="panel" aria-labelledby="history-label">
-        <h2 id="history-label" style={{marginTop:0}}>My Bookings &amp; History</h2>
+        <h2 id="history-label" style={{marginTop:0}}>My Bookings</h2>
         {userHistory.length === 0 ? (
           <div className="empty">You have no bookings yet.</div>
         ) : (
@@ -156,26 +159,24 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
         )}
       </section>
       {(currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) && (
-        <>
-          <section className="panel" aria-labelledby="all-bookings-label">
-            <h2 id="all-bookings-label" style={{marginTop:0}}>All Bookings</h2>
-            {allBookings.length === 0 ? (
-              <div className="empty">There are no bookings.</div>
-            ) : (
-              <div className="grid">
-                {allBookings.map(booking => (
-                  <GuardedBookingCard
-                    key={booking.id}
-                    booking={booking}
-                    onCancel={handleCancel}
-                    onRebook={handleRebook}
-                    showUser={true}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-        </>
+        <section className="panel" aria-labelledby="global-label">
+          <h2 id="global-label" style={{marginTop:0}}>All User Bookings</h2>
+          {activeAllBookings.length === 0 ? (
+            <div className="empty">There are no current bookings.</div>
+          ) : (
+            <div className="grid">
+              {activeAllBookings.map(booking => (
+                <GuardedBookingCard
+                  key={booking.id}
+                  booking={booking}
+                  onCancel={handleCancel}
+                  onRebook={handleRebook}
+                  showUser={true}
+                />
+              ))}
+            </div>
+          )}
+        </section>
       )}
     </div>
   )

@@ -41,18 +41,31 @@ export const useUsers = ({ autoLoad = true }: UseUsersOptions = {}) => {
     setEditingUser(user)
   }
 
-  const handleSaveUser = async (updatedUser: User) => {
+  const handleSaveUser = async (updatedUser: User & { password?: string }) => {
     try {
+      const updateData: {
+        email: string
+        first_name: string
+        last_name: string
+        role: string
+        password?: string
+      } = {
+        email: updatedUser.email,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        role: updatedUser.role,
+      }
+
+      // Only include password if it was provided (not empty)
+      if (updatedUser.password && updatedUser.password.trim()) {
+        updateData.password = updatedUser.password
+      }
+
       const response = await fetch(`http://localhost:3000/users/${updatedUser.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          email: updatedUser.email,
-          first_name: updatedUser.first_name,
-          last_name: updatedUser.last_name,
-          role: updatedUser.role,
-        }),
+        body: JSON.stringify(updateData),
       })
       if (response.ok) {
         const savedUser = await response.json()

@@ -53,7 +53,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <UsersTab
         users={users}
         currentUser={currentUser}
@@ -87,6 +87,6 @@ export const UsersPage: React.FC<UsersPageProps> = ({
           onCancel={onCancelAdd}
         />
       )}
-    </>
+    </div>
   )
 }

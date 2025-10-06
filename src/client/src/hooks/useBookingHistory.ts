@@ -10,13 +10,13 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
   const [optimisticHistory, setOptimisticHistory] = useState<ApiBooking[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [allBookings, setAllBookings] = useState([])
+  const [allBookings, setAllBookings] = useState<ApiBooking[]>([])
 
   const fetchHistory = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await fetchUserBookings()
+      const data = await fetchUserBookings(userId)
       setServerHistory(data)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load history'
@@ -24,7 +24,7 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [userId])
 
   const createNewBooking = async (
     roomId: string,
@@ -71,7 +71,7 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
 
       // Refresh from server
       try {
-        const fresh = await fetchUserBookings()
+        const fresh = await fetchUserBookings(userId)
         setServerHistory(fresh)
       } catch {
         // Ignore refresh errors
@@ -94,7 +94,7 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
       setServerHistory(prev => (prev ? prev.filter(b => b.id !== id) : prev))
 
       // Refresh from server
-      const fresh = await fetchUserBookings()
+      const fresh = await fetchUserBookings(userId)
       setServerHistory(fresh)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to cancel booking'
@@ -115,27 +115,27 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
     [mergedApiHistory]
   )
 
-  // Fetch all bookings from the backend
   const fetchAllBookings = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:3000/bookings', { credentials: 'include' })
       if (response.ok) {
         const data = await response.json()
-        // Convert to UI format for consistency
-        setAllBookings(data.map(mapApiBookingToUi))
+        setAllBookings(data)
       }
-    } catch (err) {
-      setAllBookings([])
+    } catch (err: unknown) {
       console.error('Failed to fetch all bookings:', err)
     }
   }, [])
 
-  // Fetch all bookings for registrar/admin
   useEffect(() => {
-    if (currentUser?.role === 'REGISTRAR' || currentUser?.role === 'ADMIN') {
-      fetchAllBookings()
-    }
-  }, [currentUser?.role, fetchAllBookings])
+    void fetchAllBookings()
+  }, [fetchAllBookings])
+
+  // Convert all bookings to UI format
+  const allBookingsUi: UiBooking[] = useMemo(
+    () => allBookings.map(mapApiBookingToUi),
+    [allBookings]
+  )
 
   return {
     history,
@@ -145,6 +145,6 @@ export function useBookingHistory(userId: string, currentUser: { role?: string }
     fetchAllBookings,
     createBooking: createNewBooking,
     cancelBooking,
-    allBookings,
+    allBookings: allBookingsUi,
   }
 }

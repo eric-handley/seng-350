@@ -66,10 +66,10 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
 
   return (
     <form className="panel" onSubmit={handleSubmit}>
-      <h2>Add User</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Add User</h2>
 
-      <label htmlFor="add-user-first-name">
-        First Name:
+      <label htmlFor="add-user-first-name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>First Name:</div>
         <input
           id="add-user-first-name"
           className="input"
@@ -79,6 +79,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           required
           aria-invalid={!!errors.first_name}
           aria-describedby={errors.first_name ? "add-user-first-name-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.first_name && (
           <span id="add-user-first-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -87,8 +88,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
-      <label htmlFor="add-user-last-name">
-        Last Name:
+      <label htmlFor="add-user-last-name" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Last Name:</div>
         <input
           id="add-user-last-name"
           className="input"
@@ -98,6 +99,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           required
           aria-invalid={!!errors.last_name}
           aria-describedby={errors.last_name ? "add-user-last-name-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.last_name && (
           <span id="add-user-last-name-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -105,8 +107,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           </span>
         )}
       </label>
-      <label htmlFor="add-user-email">
-        Email:
+      <label htmlFor="add-user-email" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Email:</div>
         <input
           id="add-user-email"
           className="input"
@@ -117,6 +119,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           required
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "add-user-email-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.email && (
           <span id="add-user-email-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -125,8 +128,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
-      <label htmlFor="add-user-role">
-        Role:
+      <label htmlFor="add-user-role" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Role:</div>
         <select
           id="add-user-role"
           className="select"
@@ -134,6 +137,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           value={formData.role}
           onChange={handleChange}
           required
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         >
           <option value={UserRole.STAFF}>Staff</option>
           {currentUser.role === "Admin" && (
@@ -145,8 +149,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         </select>
       </label>
 
-      <label htmlFor="add-user-password">
-        Password:
+      <label htmlFor="add-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password:</div>
         <input
           id="add-user-password"
           className="input"
@@ -157,6 +161,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           required
           aria-invalid={!!errors.password}
           aria-describedby={errors.password ? "add-user-password-error" : undefined}
+          style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
         />
         {errors.password && (
           <span id="add-user-password-error" style={{ color: 'red', fontSize: '0.875rem' }}>
@@ -165,9 +170,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
-      <div style={{ marginTop: "1rem" }}>
-        <button type="submit" className="btn primary"
-        style={{ marginRight: '10px' }}>
+      <div style={{ marginTop: "1rem", display: 'flex', gap: '0.5rem' }}>
+        <button type="submit" className="btn primary">
           Save
         </button>
         <button type="button" className="btn" onClick={onCancel}>

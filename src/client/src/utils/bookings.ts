@@ -43,6 +43,15 @@ export function mapApiBookingToUi(b: ApiBooking): UiBooking {
     room: { id: b.room_id, name: roomName },
     date: (b.start_time ?? '').split('T')[0],
   }
+
+  // Include user details if present (for registrars/admins)
+  if (b.user) {
+    (ui as any).user = b.user;
+    (ui as any).user_name = `${b.user.first_name} ${b.user.last_name}`;
+    (ui as any).user_email = b.user.email;
+    (ui as any).user_role = b.user.role;
+  }
+
   return ui as UiBooking
 }
 

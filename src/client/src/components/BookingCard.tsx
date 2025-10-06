@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatTimeForDisplay } from '../utils/time'
 
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,25 +33,40 @@ export const BookingCard: React.FC<Props> = ({
       ? booking.start_time.split('T')[0]
       : '')
 
-  const start: string =
+  const startRaw: string =
     booking.start ??
     (typeof booking.start_time === 'string' && booking.start_time.includes('T')
       ? booking.start_time.split('T')[1].slice(0, 8)
       : '')
 
-  const end: string =
+  const endRaw: string =
     booking.end ??
     (typeof booking.end_time === 'string' && booking.end_time.includes('T')
       ? booking.end_time.split('T')[1].slice(0, 8)
       : '')
 
+  // Convert to HH:MM format (remove seconds) and format for display
+  const start = formatTimeForDisplay(startRaw.slice(0, 5))
+  const end = formatTimeForDisplay(endRaw.slice(0, 5))
+
   const cancelled: boolean =
     !!booking.cancelled ||
     (typeof booking.status === 'string' && booking.status.toLowerCase() !== 'active')
 
-  const userLabel: string | undefined =
-    (typeof booking.user === 'string' && booking.user) ??
-    (typeof booking.user_id === 'string' && booking.user_id) ??
+  const userName: string | undefined =
+    booking.user_name ??
+    (booking.user?.first_name && booking.user?.last_name
+      ? `${booking.user.first_name} ${booking.user.last_name}`
+      : undefined)
+
+  const userEmail: string | undefined =
+    booking.user_email ??
+    booking.user?.email ??
+    undefined
+
+  const userRole: string | undefined =
+    booking.user_role ??
+    booking.user?.role ??
     undefined
 
   return (
@@ -63,8 +79,15 @@ export const BookingCard: React.FC<Props> = ({
       <div className="card-meta" style={{ marginTop: 6 }}>
         {date && <span>{date} · </span>}
         <span>{start} → {end}</span>
-        {showUser && userLabel && <span style={{ marginLeft: 8 }}>· User: {userLabel}</span>}
       </div>
+
+      {showUser && (userName || userEmail || userRole) && (
+        <div className="card-meta" style={{ marginTop: 8, fontSize: '0.9em', opacity: 0.9 }}>
+          {userName && <div><strong>User:</strong> {userName}</div>}
+          {userEmail && <div><strong>Email:</strong> {userEmail}</div>}
+          {userRole && <div><strong>Role:</strong> {userRole}</div>}
+        </div>
+      )}
 
       {!cancelled && (
         <div style={{ marginTop: 10 }}>
