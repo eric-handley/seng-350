@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { User, UserRole } from '../types'
 import { BookingCard } from '../components/BookingCard'
 import type { UiBooking } from '../types'
@@ -80,26 +80,47 @@ const GuardedBookingCard: React.FC<{
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
 }) => {
-  const { history: userHistory, loading, error, fetchHistory, cancelBooking, fetchAllBookings, allBookings } = useBookingHistory(currentUser.id)
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+
+  const {
+    history: userHistory,
+    loading,
+    error,
+    fetchHistory,
+    cancelBooking,
+    allBookings = [],
+    fetchAllBookings
+  } = useBookingHistory(currentUser.id) as {
+    history: UiBooking[],
+    loading: boolean,
+    error: string | null,
+    fetchHistory: () => Promise<void>,
+    cancelBooking: (id: string) => Promise<void>,
+    allBookings: UiBooking[],
+    fetchAllBookings: () => Promise<void>
+  }
 
   useEffect(() => {
-    void fetchHistory();
-    // Fetch all bookings for admin/registrar
-    if (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) {
-      void fetchAllBookings();
+    void fetchHistory()
+    if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+      void fetchAllBookings()
     }
-  }, [fetchHistory, fetchAllBookings, currentUser.role]);
+  }, [fetchHistory, fetchAllBookings, currentUser])
 
   const handleCancel = async (id: string) => {
     try {
-      await cancelBooking(id);
+      await cancelBooking(id)
+      await fetchHistory()
+      if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+        await fetchAllBookings()
+      }
     } catch {
       // Error already set by hook
     }
   }
 
   const handleRebook = async (id: string) => {
-    const booking = userHistory.find(b => b.id === id)
+    const booking = allBookings.find(b => b.id === id) ?? userHistory.find(b => b.id === id)
     if (!booking) {return}
 
     // PATCH the booking to reactivate it
@@ -112,13 +133,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       }),
     })
     if (response.ok) {
-      // eslint-disable-next-line no-alert
-      window.alert('Rebooking successful!')
+      setMessage({ text: 'Rebooking successful!', type: 'success' })
       await fetchHistory()
+      if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+        await fetchAllBookings()
+      }
     }
     else {
-      // eslint-disable-next-line no-alert
-      window.alert('Failed to rebook. Please try again later.')
+      setMessage({ text: 'Failed to rebook. Please try again later.', type: 'error' })
     }
   }
 
@@ -139,10 +161,18 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
   }
 
   // Only show active (non-cancelled) bookings for all users
-  const activeAllBookings = allBookings.filter(b => !b.cancelled)
+  // const activeAllBookings = allBookings.filter(b => !b.cancelled)
 
   return (
     <div>
+      {message && (
+        <div className="toast" style={{
+          background: message.type === 'success' ? '#22c55e' : '#ef4444',
+          marginBottom: '1rem'
+        }}>
+          {message.text}
+        </div>
+      )}
       <section className="panel" aria-labelledby="history-label">
         <h2 id="history-label" style={{marginTop:0}}>My Bookings</h2>
         {userHistory.length === 0 ? (
@@ -164,11 +194,11 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       {(currentUser.role === UserRole.REGISTRAR || currentUser.role === UserRole.ADMIN) && (
         <section className="panel" aria-labelledby="global-label">
           <h2 id="global-label" style={{marginTop:0}}>All User Bookings</h2>
-          {activeAllBookings.length === 0 ? (
+          {allBookings.length === 0 ? (
             <div className="empty">There are no current bookings.</div>
           ) : (
             <div className="grid">
-              {activeAllBookings.map(booking => (
+              {allBookings.map(booking => (
                 <GuardedBookingCard
                   key={booking.id}
                   booking={booking}
