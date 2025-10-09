@@ -10,7 +10,7 @@
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
     "seed:rooms": "npx ts-node src/database/seeds/seed-rooms.ts",
     "seed:users": "npx ts-node src/database/seeds/seed-demo-users.ts",
-    "seed": "npm run seed:rooms && npm run seed:users",
+    "seed": "npm run seed:users && npm run seed:rooms",
     "db:setup": "npm run migration:run && npm run seed"
   },
   "devDependencies": {

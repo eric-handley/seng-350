@@ -1,3 +1,4 @@
+.npm-install-checksum
 *.env
 **/node_modules
 **/dist

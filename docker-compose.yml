@@ -6,10 +6,36 @@ services:
       - .:/app
     environment:
       - NODE_ENV=development
-    command: [
-      "sh", "-lc",
-      "echo 'Installing dependencies...' && npm install --loglevel verbose"
-    ]
+      - PGHOST=db
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -lc
+      - |
+        # This is really dumb but it works super well for our setup!
+        CHECKSUM=$$(cat package.json package-lock.json src/*/package.json 2>/dev/null | md5sum)
+        if [ ! -f .npm-install-checksum ] || [ "$$(cat .npm-install-checksum)" != "$$CHECKSUM" ]; then
+          npm install --loglevel verbose --no-audit --no-fund && echo "$$CHECKSUM" > .npm-install-checksum
+        fi
+        touch /tmp/deps-ready
+        apk add --no-cache postgresql-client > /dev/null 2>&1
+        # Check if tables exist before running migrations + seeds
+        TABLE_COUNT=$$(PGPASSWORD=$$PGPASSWORD psql -h $$PGHOST -U $$PGUSER -d $$PGDATABASE -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")
+        if [ "$$TABLE_COUNT" -eq "0" ]; then
+          cd src/server && npm run db:setup
+        fi
+    healthcheck:
+      # Again, really stupid, works great!
+      test: ["CMD-SHELL", "test -f /tmp/deps-ready"]
+      interval: 1s
+      timeout: 1s
+      retries: 300
 
   client:
     image: node:22-alpine
@@ -22,7 +48,7 @@ services:
       - NODE_ENV=development
     depends_on:
       deps:
-        condition: service_completed_successfully
+        condition: service_healthy
     command: ["sh", "-c", "npm run dev:client"]
 
   server:
@@ -46,12 +72,12 @@ services:
       - NEXTAUTH_SECRET=dev-secret-key-change-in-production
     depends_on:
       deps:
-        condition: service_completed_successfully
+        condition: service_healthy
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["sh", "-c", "cd src/server && npm run db:setup && npm run dev"]
+    command: ["sh", "-c", "cd src/server && npm run dev"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api-docs | grep -q 'Swagger'"]
       interval: 5s
