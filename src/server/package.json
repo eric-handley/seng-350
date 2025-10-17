@@ -2,7 +2,7 @@
   "name": "server",
   "private": true,
   "scripts": {
-    "dev": "npx nest start --watch",
+    "dev": "npx nest start --watch --host 0.0.0.0",
     "start": "node dist/main.js",
     "build": "npx nest build",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
