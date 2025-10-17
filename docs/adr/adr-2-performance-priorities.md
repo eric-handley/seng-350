@@ -12,7 +12,7 @@ The following performance priorites were chosen based on functional requirements
 7. **Scalability** - The scalability of the application is the lowest priority because it will not be gaining users at a great volume or speed due to only being accessible to UVic staff.
 
 ## Status
-Accepted
+Revised
 
 ## Alternatives Considered:
 **Prioritizing Speed and UX over Reliability:**
