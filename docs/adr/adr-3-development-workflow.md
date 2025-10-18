@@ -31,6 +31,11 @@ Accepted
     - Includes minimum code coverage checks based on Jest reports.
 - Merges to main that pass the pipeline are automatically deployed to GitLab container registry.
 - Captured in issue #15 #14 #13 #12
+- Captured metrics about the pipeline can be found here: [Pipeline Metrics](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/pipelines/charts?chart=pipelines)
+    * Goal: 100% of merge requests pass the pipeline
+    * Good: 75% of merge requests pass pipeline
+    * Acceptable: 50% of merge requests pass pipeline
+    * Improvement needed: less than 50% of merge requests pass pipeline
 
 **Issue Management:**
 - All work tracked through GitLab issues as required by course.
