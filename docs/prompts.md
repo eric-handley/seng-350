@@ -2,6 +2,9 @@
 
 Branch: `feature/module-view`
 - ChatGPT conversation on creating initial view and visualizing it: https://chatgpt.com/share/68f3dff1-09d0-8009-b536-8935b5fea64b
+- Cursor prompts:
+  - Please edit my mermaid.html file to correctly reflect the actual structure of the modules in this code base. There should be modules for each page along with their connections to other components in the system. Please make it detailed and comprehensive
+  - There is now a syntax error in the html file. Please look at the code to ensure it matches with mermaid version 10.9.4
 
 
 **Implementation-I**
