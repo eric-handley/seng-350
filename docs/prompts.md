@@ -1,3 +1,9 @@
+**Design-II**
+
+Branch: `feature/module-view`
+- ChatGPT conversation on creating initial view and visualizing it: https://chatgpt.com/share/68f3dff1-09d0-8009-b536-8935b5fea64b
+
+
 **Implementation-I**
 
 Branch: `issue-5/dev-setup`
