@@ -7,7 +7,7 @@ Our team needs a development workflow that supports the course requirements for 
 We will follow a development workflow that uses branches for each project phase, issue/feature branches for individual work, automated CI/CD pipelines for quality assurance and testing, and standardized tooling for consistency across local development environments. 
 
 ## Status
-Accepted
+Revised
 
 ## Consequences
 
