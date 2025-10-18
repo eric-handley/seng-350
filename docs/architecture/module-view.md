@@ -1,105 +1,360 @@
+## Module View (UML Component Diagram)
+
 ```mermaid
 classDiagram
-direction LR
+    direction TB
 
-class Monolith {
-  +HTTP_REST
-  +AuthN_AuthZ_RBAC
-  +Health_and_Metrics
-  +Audit_Logging
-}
+    class ClientApp {
+        ReactRouter
+        AuthContext
+        TabNavigation
+    }
 
-class WebUI {
-  +Sign_in_out
-  +Availability_search
-  +One_click_book_cancel
-  +My_bookings_history
-  +Registrar_console
-  +Admin_health_audit
-}
+    class LoginPage {
+        UserAuthentication
+        FormValidation
+        ErrorHandling
+    }
 
-class AuthRBAC {
-  +Sessions_JWT
-  +Role_checks
-}
+    class BookingPage {
+        RoomSearchFilters
+        AvailabilityDisplay
+        BookingCreation
+        TimeSelection
+    }
 
-class AvailabilityModule {
-  +Search_filters
-  +Pagination
-}
+    class SchedulePage {
+        ScheduleView
+        BuildingFilter
+        DateSelection
+        RoomAvailability
+    }
 
-class BookingModule {
-  +Create_booking
-  +Cancel_booking
-  +Rollback_Undo
-  +Series_weekly_term
-  +Conflict_resolution
-}
+    class HistoryPage {
+        BookingHistory
+        CancelBookings
+        UserBookings
+        AllBookingsAdmin
+    }
 
-class RegistrarModule {
-  +Classroom_timeslot_maintenance
-  +Manual_release_blocks
-  +Integrity_management
-}
+    class UsersPage {
+        UserManagement
+        AddEditUsers
+        RoleManagement
+        UserBlocking
+    }
 
-class AdminModule {
-  +System_config
-  +Health_page
-  +Audit_records
-}
+    class AdminConsole {
+        AuditLogs
+        SystemHealth
+        AdminControls
+        DarkMode
+    }
 
-class AnalyticsModule {
-  +Daily_bookings
-  +Top_N_rooms
-}
+    class AuthContext {
+        LoginLogout
+        SessionManagement
+        RoleValidation
+        UserState
+    }
 
-class CSVIngestModule {
-  +Load_classrooms_csv
-  +Validate_expand_schema
-}
+    class useRooms {
+        RoomDataFetching
+        FilterManagement
+        LoadingStates
+    }
 
-class AcceptanceTests {
-  +API_flow_tests
-  +Concurrency_tests
-  +Docker_run_tests
-}
+    class useSchedule {
+        ScheduleDataFetching
+        AvailabilityQueries
+        BuildingAggregation
+    }
 
-class Postgres
-class Redis
-class SMTP
-class DockerCompose
+    class useBookingHistory {
+        BookingCRUD
+        OptimisticUpdates
+        HistoryManagement
+    }
 
-%% Containment / dependencies
-Monolith *-- WebUI
-Monolith *-- AuthRBAC
-Monolith *-- AvailabilityModule
-Monolith *-- BookingModule
-Monolith *-- RegistrarModule
-Monolith *-- AdminModule
-Monolith *-- AnalyticsModule
-Monolith *-- CSVIngestModule
-Monolith *-- AcceptanceTests
+    class useUsers {
+        UserCRUD
+        RoleManagement
+        UserStateManagement
+    }
 
-AvailabilityModule ..> Postgres : reads availability
-AvailabilityModule ..> Redis : cache lookup/fill
-BookingModule ..> Postgres : tx + row locks
-BookingModule ..> Redis : invalidate availability cache
-RegistrarModule ..> Postgres : manage rooms/timeslots
-AdminModule ..> Postgres : audits/health state
-AnalyticsModule ..> Postgres : stats/queries
-AuthRBAC ..> Postgres : users/roles
+    class ClientAPI {
+        HTTPRequests
+        AuthenticationHeaders
+        ErrorHandling
+        DataTransformation
+    }
 
-Monolith ..> SMTP : send confirmations (optional)
-DockerCompose ..> Monolith
-DockerCompose ..> Postgres
-DockerCompose ..> Redis
-DockerCompose ..> SMTP
+    class ServerApp {
+        NestJSFramework
+        TypeORMIntegration
+        RedisCache
+        SwaggerDocumentation
+    }
 
-note for BookingModule "Concurrency correctness:
-- SERIALIZABLE tx or SELECT ... FOR UPDATE
-- UNIQUE(room_id,start,end) guard
-- On conflict -> return clear failure (409)"
+    class AuthModule {
+        JWTTokens
+        PasswordHashing
+        SessionManagement
+        RoleGuards
+    }
 
-note for CSVIngestModule "Seeds classrooms from CSV at startup or admin action"
+    class UsersController {
+        GETusers
+        POSTusers
+        PUTusers
+        DELETEusers
+        RoleManagement
+    }
 
-note for AcceptanceTests "Run under docker compose up; expose Swagger + health"
+    class BookingsController {
+        GETbookings
+        POSTbookings
+        DELETEbookings
+        SeriesBookings
+        ConflictResolution
+    }
+
+    class RoomsController {
+        GETrooms
+        RoomFiltering
+        CapacityQueries
+        EquipmentFiltering
+    }
+
+    class ScheduleController {
+        GETschedule
+        AvailabilityQueries
+        TimeSlotManagement
+        BuildingOrganization
+    }
+
+    class BuildingsController {
+        GETbuildings
+        BuildingManagement
+        RoomRelationships
+    }
+
+    class EquipmentController {
+        GETequipment
+        EquipmentManagement
+        RoomEquipmentRelations
+    }
+
+    class AuditLogsController {
+        GETauditlogs
+        AuditTrail
+        SystemMonitoring
+    }
+
+    class UsersService {
+        UserCRUDOperations
+        PasswordManagement
+        RoleValidation
+        DatabaseQueries
+    }
+
+    class BookingsService {
+        BookingCRUDOperations
+        ConflictDetection
+        SeriesManagement
+        TransactionHandling
+    }
+
+    class RoomsService {
+        RoomQueries
+        AvailabilityCalculation
+        ScheduleGeneration
+        FilteringLogic
+    }
+
+    class BuildingsService {
+        BuildingManagement
+        RoomAggregation
+        DataOrganization
+    }
+
+    class EquipmentService {
+        EquipmentManagement
+        RoomEquipmentRelations
+        FilteringSupport
+    }
+
+    class AuditLogsService {
+        AuditLogging
+        SystemMonitoring
+        UserActivityTracking
+    }
+
+    class User {
+        id: uuid
+        email: string
+        password_hash: string
+        first_name: string
+        last_name: string
+        role: enum
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class Booking {
+        id: uuid
+        user_id: uuid
+        room_id: string
+        start_time: timestamp
+        end_time: timestamp
+        status: enum
+        booking_series_id: uuid
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class BookingSeries {
+        id: uuid
+        user_id: uuid
+        room_id: string
+        start_time: timestamp
+        end_time: timestamp
+        series_end_date: date
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class Room {
+        room_id: string
+        building_short_name: string
+        room_number: string
+        capacity: number
+        room_type: enum
+        url: string
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class Building {
+        building_short_name: string
+        building_name: string
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class Equipment {
+        id: uuid
+        name: string
+        description: string
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class RoomEquipment {
+        id: uuid
+        room_id: string
+        equipment_id: uuid
+        quantity: number
+        created_at: timestamp
+        updated_at: timestamp
+    }
+
+    class AuditLog {
+        id: uuid
+        user_id: uuid
+        action: string
+        resource_type: string
+        resource_id: string
+        details: json
+        ip_address: string
+        user_agent: string
+        created_at: timestamp
+    }
+
+    class PostgreSQL {
+        PrimaryDatabase
+        ACIDTransactions
+        RelationalData
+        Indexing
+    }
+
+    class Redis {
+        CachingLayer
+        SessionStorage
+        PerformanceOptimization
+    }
+
+    class DockerCompose {
+        ContainerOrchestration
+        ServiceManagement
+        DevelopmentEnvironment
+    }
+
+    ClientApp *-- LoginPage
+    ClientApp *-- BookingPage
+    ClientApp *-- SchedulePage
+    ClientApp *-- HistoryPage
+    ClientApp *-- UsersPage
+    ClientApp *-- AdminConsole
+    ClientApp *-- AuthContext
+
+    AuthContext ..> ClientAPI
+    useRooms ..> ClientAPI
+    useSchedule ..> ClientAPI
+    useBookingHistory ..> ClientAPI
+    useUsers ..> ClientAPI
+
+    BookingPage ..> useRooms
+    BookingPage ..> useBookingHistory
+    SchedulePage ..> useSchedule
+    HistoryPage ..> useBookingHistory
+    UsersPage ..> useUsers
+
+    ServerApp *-- AuthModule
+    ServerApp *-- UsersController
+    ServerApp *-- BookingsController
+    ServerApp *-- RoomsController
+    ServerApp *-- ScheduleController
+    ServerApp *-- BuildingsController
+    ServerApp *-- EquipmentController
+    ServerApp *-- AuditLogsController
+
+    UsersController ..> UsersService
+    BookingsController ..> BookingsService
+    RoomsController ..> RoomsService
+    ScheduleController ..> RoomsService
+    BuildingsController ..> BuildingsService
+    EquipmentController ..> EquipmentService
+    AuditLogsController ..> AuditLogsService
+
+    UsersService ..> User
+    UsersService ..> AuditLog
+    BookingsService ..> Booking
+    BookingsService ..> BookingSeries
+    BookingsService ..> Room
+    BookingsService ..> User
+    RoomsService ..> Room
+    RoomsService ..> Building
+    RoomsService ..> Booking
+    BuildingsService ..> Building
+    BuildingsService ..> Room
+    EquipmentService ..> Equipment
+    EquipmentService ..> RoomEquipment
+    AuditLogsService ..> AuditLog
+
+    User *-- Booking
+    User *-- BookingSeries
+    User *-- AuditLog
+    Room *-- Booking
+    Room *-- BookingSeries
+    Room *-- RoomEquipment
+    Building *-- Room
+    Equipment *-- RoomEquipment
+    BookingSeries *-- Booking
+
+    ClientAPI ..> ServerApp
+    ServerApp ..> PostgreSQL
+    ServerApp ..> Redis
+    DockerCompose ..> ServerApp
+    DockerCompose ..> PostgreSQL
+    DockerCompose ..> Redis
