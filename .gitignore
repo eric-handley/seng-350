@@ -1,4 +1,5 @@
 .npm-install-checksum
+.DS_Store
 *.env
 **/node_modules
 **/dist
