@@ -1,196 +1,314 @@
 ## Module View (UML Component Diagram)
 
+### Legend
+
+```mermaid
+classDiagram
+    class Client:::clientLayer {
+        Client Layer
+        React Components
+        Hooks and API
+    }
+    class Server:::serverLayer {
+        Server Layer
+        NestJS Backend
+        Controllers Services
+    }
+    class Database:::databaseLayer {
+        Database Layer
+        Entities Storage
+    }
+    class Infrastructure:::infraLayer {
+        Infrastructure
+        Deployment
+    }
+
+    classDef clientLayer fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef serverLayer fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef databaseLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef infraLayer fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+```
+
+### Architecture Diagram
+
 ```mermaid
 classDiagram
     direction TB
 
-    class ClientApp {
+    class App:::clientLayer {
         ReactRouter
-        AuthContext
-        TabNavigation
+        AuthProvider
+        BrowserRouter
+        Routes
     }
 
-    class LoginPage {
-        UserAuthentication
+    class LoginPage:::clientLayer {
+        login()
         FormValidation
         ErrorHandling
     }
 
-    class BookingPage {
-        RoomSearchFilters
+    class BookingPage:::clientLayer {
+        RoomFilters
         AvailabilityDisplay
         BookingCreation
         TimeSelection
     }
 
-    class SchedulePage {
+    class SchedulePage:::clientLayer {
         ScheduleView
         BuildingFilter
         DateSelection
         RoomAvailability
     }
 
-    class HistoryPage {
+    class HistoryPage:::clientLayer {
         BookingHistory
-        CancelBookings
+        cancelBooking()
         UserBookings
         AllBookingsAdmin
     }
 
-    class UsersPage {
+    class UsersPage:::clientLayer {
         UserManagement
         AddEditUsers
         RoleManagement
-        UserBlocking
+        deleteUser()
     }
 
-    class AdminConsole {
+    class AdminConsole:::clientLayer {
         AuditLogs
         SystemHealth
-        AdminControls
-        DarkMode
+        BuildingsRooms
+        EquipmentManagement
     }
 
-    class AuthContext {
-        LoginLogout
+    class AuthContext:::clientLayer {
+        login()
+        logout()
         SessionManagement
         RoleValidation
         UserState
     }
 
-    class useRooms {
-        RoomDataFetching
+    class useRooms:::clientLayer {
+        fetchRooms()
         FilterManagement
         LoadingStates
     }
 
-    class useSchedule {
-        ScheduleDataFetching
+    class useSchedule:::clientLayer {
+        fetchSchedule()
         AvailabilityQueries
         BuildingAggregation
     }
 
-    class useBookingHistory {
-        BookingCRUD
+    class useBookingHistory:::clientLayer {
+        createBooking()
+        fetchUserBookings()
+        cancelBooking()
         OptimisticUpdates
-        HistoryManagement
     }
 
-    class useUsers {
-        UserCRUD
-        RoleManagement
-        UserStateManagement
+    class useUsers:::clientLayer {
+        fetchUsers()
+        createUser()
+        updateUser()
+        deleteUser()
     }
 
-    class ClientAPI {
+    class useEquipment:::clientLayer {
+        fetchEquipment()
+        createEquipment()
+        updateEquipment()
+        deleteEquipment()
+    }
+
+    class useAuditLogs:::clientLayer {
+        fetchAuditLogs()
+        FilterManagement
+    }
+
+    class bookings:::clientLayer {
+        createBooking()
+        fetchUserBookings()
+        cancelBooking()
         HTTPRequests
-        AuthenticationHeaders
-        ErrorHandling
-        DataTransformation
     }
 
-    class ServerApp {
+    class schedule:::clientLayer {
+        fetchSchedule()
+        fetchRooms()
+        HTTPRequests
+    }
+
+    class rooms:::clientLayer {
+        fetchRooms()
+        createRoom()
+        updateRoom()
+        deleteRoom()
+    }
+
+    class buildings:::clientLayer {
+        fetchBuildings()
+        createBuilding()
+        updateBuilding()
+        deleteBuilding()
+    }
+
+    class equipment:::clientLayer {
+        fetchEquipment()
+        createEquipment()
+        updateEquipment()
+        deleteEquipment()
+    }
+
+    class AppModule:::serverLayer {
         NestJSFramework
         TypeORMIntegration
-        RedisCache
-        SwaggerDocumentation
+        SessionMiddleware
+        SwaggerDocs
     }
 
-    class AuthModule {
-        JWTTokens
-        PasswordHashing
+    class AuthModule:::serverLayer {
         SessionManagement
-        RoleGuards
+        PasswordHashing
+        AuthGuard
+        RolesGuard
     }
 
-    class UsersController {
+    class AuthController:::serverLayer {
+        POSTlogin
+        GETsession
+        POSTlogout
+        validateUser()
+    }
+
+    class UsersController:::serverLayer {
         GETusers
         POSTusers
-        PUTusers
+        PATCHusers
         DELETEusers
         RoleManagement
     }
 
-    class BookingsController {
+    class BookingsController:::serverLayer {
         GETbookings
         POSTbookings
+        PATCHbookings
         DELETEbookings
-        SeriesBookings
         ConflictResolution
     }
 
-    class RoomsController {
+    class RoomsController:::serverLayer {
         GETrooms
-        RoomFiltering
-        CapacityQueries
-        EquipmentFiltering
+        POSTrooms
+        PATCHrooms
+        DELETErooms
+        FilteringLogic
     }
 
-    class ScheduleController {
+    class ScheduleController:::serverLayer {
         GETschedule
         AvailabilityQueries
         TimeSlotManagement
-        BuildingOrganization
+        BuildingAggregation
     }
 
-    class BuildingsController {
+    class BuildingsController:::serverLayer {
         GETbuildings
-        BuildingManagement
-        RoomRelationships
+        POSTbuildings
+        PATCHbuildings
+        DELETEbuildings
     }
 
-    class EquipmentController {
+    class EquipmentController:::serverLayer {
         GETequipment
-        EquipmentManagement
-        RoomEquipmentRelations
+        POSTequipment
+        PATCHequipment
+        DELETEequipment
     }
 
-    class AuditLogsController {
+    class RoomEquipmentController:::serverLayer {
+        POSTroomequipment
+        PATCHroomequipment
+        DELETEroomequipment
+    }
+
+    class AuditLogsController:::serverLayer {
         GETauditlogs
         AuditTrail
         SystemMonitoring
     }
 
-    class UsersService {
-        UserCRUDOperations
-        PasswordManagement
-        RoleValidation
-        DatabaseQueries
+    class AuthService:::serverLayer {
+        validateUser()
+        login()
+        getSession()
+        PasswordComparison
     }
 
-    class BookingsService {
-        BookingCRUDOperations
-        ConflictDetection
-        SeriesManagement
-        TransactionHandling
+    class UsersService:::serverLayer {
+        create()
+        findAll()
+        findOne()
+        findByEmail()
+        update()
+        remove()
+        PasswordHashing
     }
 
-    class RoomsService {
-        RoomQueries
+    class BookingsService:::serverLayer {
+        create()
+        findAll()
+        findOne()
+        update()
+        remove()
+        checkForConflicts()
+        validateDuration()
+    }
+
+    class RoomsService:::serverLayer {
+        getSchedule()
+        findAll()
+        findOne()
+        create()
+        update()
+        remove()
         AvailabilityCalculation
-        ScheduleGeneration
-        FilteringLogic
     }
 
-    class BuildingsService {
-        BuildingManagement
-        RoomAggregation
-        DataOrganization
+    class BuildingsService:::serverLayer {
+        findAll()
+        findOne()
+        create()
+        update()
+        remove()
     }
 
-    class EquipmentService {
-        EquipmentManagement
-        RoomEquipmentRelations
-        FilteringSupport
+    class EquipmentService:::serverLayer {
+        findAll()
+        findOne()
+        create()
+        update()
+        remove()
     }
 
-    class AuditLogsService {
-        AuditLogging
-        SystemMonitoring
+    class RoomEquipmentService:::serverLayer {
+        create()
+        update()
+        remove()
+        findByRoom()
+    }
+
+    class AuditLogsService:::serverLayer {
+        findAll()
+        createAuditLog()
+        logApiError()
         UserActivityTracking
     }
 
-    class User {
+    class User:::databaseLayer {
         id: uuid
         email: string
         password_hash: string
@@ -201,30 +319,18 @@ classDiagram
         updated_at: timestamp
     }
 
-    class Booking {
+    class Booking:::databaseLayer {
         id: uuid
         user_id: uuid
         room_id: string
         start_time: timestamp
         end_time: timestamp
         status: enum
-        booking_series_id: uuid
         created_at: timestamp
         updated_at: timestamp
     }
 
-    class BookingSeries {
-        id: uuid
-        user_id: uuid
-        room_id: string
-        start_time: timestamp
-        end_time: timestamp
-        series_end_date: date
-        created_at: timestamp
-        updated_at: timestamp
-    }
-
-    class Room {
+    class Room:::databaseLayer {
         room_id: string
         building_short_name: string
         room_number: string
@@ -235,23 +341,21 @@ classDiagram
         updated_at: timestamp
     }
 
-    class Building {
-        building_short_name: string
-        building_name: string
+    class Building:::databaseLayer {
+        short_name: string
+        name: string
         created_at: timestamp
         updated_at: timestamp
     }
 
-    class Equipment {
+    class Equipment:::databaseLayer {
         id: uuid
         name: string
-        description: string
         created_at: timestamp
         updated_at: timestamp
     }
 
-    class RoomEquipment {
-        id: uuid
+    class RoomEquipment:::databaseLayer {
         room_id: string
         equipment_id: uuid
         quantity: number
@@ -259,102 +363,131 @@ classDiagram
         updated_at: timestamp
     }
 
-    class AuditLog {
+    class AuditLog:::databaseLayer {
         id: uuid
         user_id: uuid
         action: string
-        resource_type: string
-        resource_id: string
-        details: json
-        ip_address: string
-        user_agent: string
+        route: string
+        query: jsonb
+        body: jsonb
         created_at: timestamp
+        updated_at: timestamp
     }
 
-    class PostgreSQL {
+    class PostgreSQL:::infraLayer {
         PrimaryDatabase
         ACIDTransactions
         RelationalData
         Indexing
     }
 
-    class Redis {
-        CachingLayer
-        SessionStorage
-        PerformanceOptimization
-    }
-
-    class DockerCompose {
+    class DockerCompose:::infraLayer {
         ContainerOrchestration
         ServiceManagement
         DevelopmentEnvironment
     }
 
-    ClientApp *-- LoginPage
-    ClientApp *-- BookingPage
-    ClientApp *-- SchedulePage
-    ClientApp *-- HistoryPage
-    ClientApp *-- UsersPage
-    ClientApp *-- AdminConsole
-    ClientApp *-- AuthContext
+    App *-- LoginPage
+    App *-- BookingPage
+    App *-- SchedulePage
+    App *-- HistoryPage
+    App *-- UsersPage
+    App *-- AdminConsole
+    App *-- AuthContext
 
-    AuthContext ..> ClientAPI
-    useRooms ..> ClientAPI
-    useSchedule ..> ClientAPI
-    useBookingHistory ..> ClientAPI
-    useUsers ..> ClientAPI
+    LoginPage ..> AppModule
+    AuthContext ..> AppModule
+
+    useRooms ..> schedule
+    useRooms ..> rooms
+    useSchedule ..> schedule
+    useBookingHistory ..> bookings
+    useUsers ..> AppModule
+    useEquipment ..> equipment
+    useAuditLogs ..> AppModule
 
     BookingPage ..> useRooms
+    BookingPage ..> useSchedule
     BookingPage ..> useBookingHistory
     SchedulePage ..> useSchedule
     HistoryPage ..> useBookingHistory
     UsersPage ..> useUsers
+    AdminConsole ..> useAuditLogs
+    AdminConsole ..> useEquipment
 
-    ServerApp *-- AuthModule
-    ServerApp *-- UsersController
-    ServerApp *-- BookingsController
-    ServerApp *-- RoomsController
-    ServerApp *-- ScheduleController
-    ServerApp *-- BuildingsController
-    ServerApp *-- EquipmentController
-    ServerApp *-- AuditLogsController
+    bookings ..> AppModule
+    schedule ..> AppModule
+    rooms ..> AppModule
+    buildings ..> AppModule
+    equipment ..> AppModule
 
+    AppModule *-- AuthModule
+    AppModule *-- AuthController
+    AppModule *-- UsersController
+    AppModule *-- BookingsController
+    AppModule *-- RoomsController
+    AppModule *-- ScheduleController
+    AppModule *-- BuildingsController
+    AppModule *-- EquipmentController
+    AppModule *-- RoomEquipmentController
+    AppModule *-- AuditLogsController
+
+    AuthController ..> AuthService
     UsersController ..> UsersService
     BookingsController ..> BookingsService
     RoomsController ..> RoomsService
     ScheduleController ..> RoomsService
     BuildingsController ..> BuildingsService
     EquipmentController ..> EquipmentService
+    RoomEquipmentController ..> RoomEquipmentService
     AuditLogsController ..> AuditLogsService
 
+    AuthModule *-- AuthGuard
+    AuthModule *-- RolesGuard
+
+    BookingsController ..> AuthGuard
+    RoomsController ..> AuthGuard
+    BuildingsController ..> AuthGuard
+    BuildingsController ..> RolesGuard
+    EquipmentController ..> AuthGuard
+    EquipmentController ..> RolesGuard
+    RoomEquipmentController ..> AuthGuard
+    RoomEquipmentController ..> RolesGuard
+    UsersController ..> AuthGuard
+    UsersController ..> RolesGuard
+    AuditLogsController ..> AuthGuard
+    AuditLogsController ..> RolesGuard
+
+    AuthService ..> UsersService
     UsersService ..> User
-    UsersService ..> AuditLog
     BookingsService ..> Booking
-    BookingsService ..> BookingSeries
-    BookingsService ..> Room
-    BookingsService ..> User
     RoomsService ..> Room
-    RoomsService ..> Building
-    RoomsService ..> Booking
     BuildingsService ..> Building
-    BuildingsService ..> Room
     EquipmentService ..> Equipment
-    EquipmentService ..> RoomEquipment
+    RoomEquipmentService ..> RoomEquipment
     AuditLogsService ..> AuditLog
 
-    User *-- Booking
-    User *-- BookingSeries
-    User *-- AuditLog
-    Room *-- Booking
-    Room *-- BookingSeries
-    Room *-- RoomEquipment
-    Building *-- Room
-    Equipment *-- RoomEquipment
-    BookingSeries *-- Booking
+    User "1" --> "0..*" Booking
+    User "1" --> "0..*" AuditLog
+    Room "1" --> "0..*" Booking
+    Room "1" --> "0..*" RoomEquipment
+    Building "1" --> "0..*" Room
+    Equipment "1" --> "0..*" RoomEquipment
 
-    ClientAPI ..> ServerApp
-    ServerApp ..> PostgreSQL
-    ServerApp ..> Redis
-    DockerCompose ..> ServerApp
+    User ..> PostgreSQL
+    Booking ..> PostgreSQL
+    Room ..> PostgreSQL
+    Building ..> PostgreSQL
+    Equipment ..> PostgreSQL
+    RoomEquipment ..> PostgreSQL
+    AuditLog ..> PostgreSQL
+
+    DockerCompose ..> App
+    DockerCompose ..> AppModule
     DockerCompose ..> PostgreSQL
-    DockerCompose ..> Redis
+
+    classDef clientLayer fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef serverLayer fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef databaseLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef infraLayer fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+```
