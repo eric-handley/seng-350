@@ -7,7 +7,7 @@ Our team needs a development workflow that supports the course requirements for 
 We will follow a development workflow that uses branches for each project phase, issue/feature branches for individual work, automated CI/CD pipelines for quality assurance and testing, and standardized tooling for consistency across local development environments. 
 
 ## Status
-Accepted
+Revised
 
 ## Consequences
 
@@ -28,9 +28,14 @@ Accepted
 **CI/CD & Testing Pipelines:**
 - Pipeline stages: `lint` $\rightarrow$ `build` $\rightarrow$ `test` $\rightarrow$ `publish`
 - Automated Jest tests and Docker container builds run only on merge requests to cycle branches/main.
-    - Includes minimum code coverage checks based on Jest reports.
+    - Includes checks for minimum code coverage of 70% based on Jest reports.
 - Merges to main that pass the pipeline are automatically deployed to GitLab container registry.
 - Captured in issue #15 #14 #13 #12
+- Captured metrics about the pipeline can be found here: [Pipeline Metrics](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/pipelines/charts?chart=pipelines)
+    * Goal: 100% of merge requests pass the pipeline
+    * Good: 75% of merge requests pass pipeline
+    * Acceptable: 50% of merge requests pass pipeline
+    * Improvement needed: less than 50% of merge requests pass pipeline
 
 **Issue Management:**
 - All work tracked through GitLab issues as required by course.
