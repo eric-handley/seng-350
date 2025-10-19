@@ -28,7 +28,7 @@ Revised
 **CI/CD & Testing Pipelines:**
 - Pipeline stages: `lint` $\rightarrow$ `build` $\rightarrow$ `test` $\rightarrow$ `publish`
 - Automated Jest tests and Docker container builds run only on merge requests to cycle branches/main.
-    - Includes minimum code coverage checks based on Jest reports.
+    - Includes checks for minimum code coverage of 70% based on Jest reports.
 - Merges to main that pass the pipeline are automatically deployed to GitLab container registry.
 - Captured in issue #15 #14 #13 #12
 - Captured metrics about the pipeline can be found here: [Pipeline Metrics](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/pipelines/charts?chart=pipelines)
