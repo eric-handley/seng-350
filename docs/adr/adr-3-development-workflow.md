@@ -20,7 +20,7 @@ Revised
 
 **Review & Merge Process:**
 - Merge requests with minimum 1 (non-author) reviewer required for merges into cycle branches or main.
-- Automated testing pipeline (detailed in [Test Plan](../test-plan.md)) must pass for merges into cycle branches or main.
+- Automated testing pipeline (detailed in [Test Plan](../1-design/test-plan.md)) must pass for merges into cycle branches or main.
 - Full commit history preserved (no squashing, enforced) for traceability during grading.
 - Individual work on issue/feature branches can be pushed without review.
 - Captured in issue #17

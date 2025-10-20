@@ -54,9 +54,9 @@ Branch `issue-31/db-setup`
 - `claude-code` prompts:
   - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
   - update @readme.md with the new backend folder structure
-  - implement the schema defined in @docs/db/schema.md in the postgres instance - see @docker-compose.yml
-  - create a seed script in @src/server/src/database/seeds that populates the postgres instance defined in @docker-compose.yml with the data from @src/server/data/uvic_rooms.json . you must respect and follow @docs/db/schema.md and the db setup defined by @src/server/src/database/migrations/1732573200000-InitialSchema.ts
-  - set up basic CRUD endpoints for the server as defined by the project structure in @readme.md . use the schema reference in @docs/db/schema.md . only add endpoints that make sense, eg. buildings and equipment do not need to be updated or created via api. read the docs to get a better understanding of the app and which endpoints are needed
+  - implement the schema defined in @docs/backend/db/database-schema.md in the postgres instance - see @docker-compose.yml
+  - create a seed script in @src/server/src/database/seeds that populates the postgres instance defined in @docker-compose.yml with the data from @src/server/data/uvic_rooms.json . you must respect and follow @docs/backend/db/database-schema.md and the db setup defined by @src/server/src/database/migrations/1732573200000-InitialSchema.ts
+  - set up basic CRUD endpoints for the server as defined by the project structure in @readme.md . use the schema reference in @docs/backend/db/database-schema.md . only add endpoints that make sense, eg. buildings and equipment do not need to be updated or created via api. read the docs to get a better understanding of the app and which endpoints are needed
   - run `npm run lint` and fix linter errors
 
 Branch `feature-7/registrar`
@@ -102,7 +102,7 @@ Branch `feature/staff`
 Branch `issue-46/set-up-audit-logging`
 
 - `claude-code` prompts:
-  - make a plan to implement api logging to the audit_logs table (check @docs/db/schema.md ). this should somehow hook into all api calls so that the active user (authenticated) and the action/object are logged to the db. it should also capture logins and logouts. your changes should only be server-side
+  - make a plan to implement api logging to the audit_logs table (check @docs/backend/db/database-schema.md ). this should somehow hook into all api calls so that the active user (authenticated) and the action/object are logged to the db. it should also capture logins and logouts. your changes should only be server-side
 
 Branch `feature-6/admin-page`
 
