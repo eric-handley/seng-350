@@ -7,6 +7,7 @@
     - Architecture Views
         - [Component & Connector View](docs/2-design/component-connector-view.md)
         - [Module View](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/blob/cycle-2/design/docs/2-design/module-view.svg?ref_type=heads) ([source](docs/2-design/module-view.mmd))
+    - [Technical Debt Issues](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/issues?sort=created_date&state=all&label_name%5B%5D=tag%3A%3Atechnical%20debt&first_page_size=100)
     - Architecture Design Requirements (Updated)
         - [Performance Priorities](docs/adr/adr-2-performance-priorities.md)
         - [Development Workflow](docs/adr/adr-3-development-workflow.md)
