@@ -1,6 +1,6 @@
 # Component and Connector View
 
-## Client-Server View
+## Primary Diagram: Client-Server View
 
 ```mermaid
 graph TB
@@ -29,7 +29,21 @@ graph TB
     class Server serverStyle
     class DB,Redis dataStyle
 ```
-## Runtime Behavior
+
+## Element Catalog
+
+**Components:**
+- **React Client** (Port 5173): UI rendering, form validation, HTTP requests, session cookies
+- **NestJS Server** (Port 3000): Business logic, authentication, validation, session management via Redis, database operations via TypeORM
+- **PostgreSQL Database** (Port 5432): Store users, app data, audit logs
+- **Redis Cache** (Port 6379): Store sessions, fast authentication lookups, cache data
+
+**Connectors:**
+- **HTTP REST API**: Client $\rightarrow$ Server (HTTP/1.1, JSON)
+- **Database Connection**: Server $\rightarrow$ PostgreSQL (TypeORM)
+- **Session Store**: Server $\rightarrow$ Redis (RESP)
+
+## Behavior Sketches
 
 ### User Login
 
