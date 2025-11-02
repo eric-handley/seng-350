@@ -1,4 +1,19 @@
 // src/pages/__tests__/HistoryPage.test.tsx
+/**
+ * HistoryPage.test.tsx
+ *
+ * What this suite covers:
+ * - Loading state: shows a loading placeholder while history is fetched
+ * - Error state: surfaces hook-provided errors to the user
+ * - Empty state: shows a friendly "no bookings" message
+ * - Success state: renders BookingCard for each booking and triggers initial fetch
+ * - Resilience: if BookingCard throws, the page shows a FallbackTile instead (Error Boundary)
+ *
+ * Test strategy:
+ * - useBookingHistory is mocked to drive loading/error/data deterministically
+ * - BookingCard is mocked so we can force a render error to exercise the fallback UI
+ */
+
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { HistoryPage } from '../src/pages/HistoryPage';
@@ -30,26 +45,31 @@ jest.mock('../src/components/BookingCard', () => ({
     BookingCard: jest.fn(({ booking }) => (
         <div data-testid="booking-card">{booking.name}</div>
     )),
-}));
+}))
 
 describe('<HistoryPage />', () => {
-    const mockUseBookingHistory = useBookingHistory as jest.Mock;
-    const mockFetchHistory = jest.fn();
-    const mockCancelBooking = jest.fn();
+    // Cast the imported hook to a jest.Mock so we can set a return value per test
+    const mockUseBookingHistory = useBookingHistory as jest.Mock
+    // Spies used by the hook return value
+    const mockFetchHistory = jest.fn()
+    const mockCancelBooking = jest.fn()
 
+    // Base (non-privileged) user for most tests
     const baseUser: User = {
         id: 'u1',
         email: 'user@example.com',
         first_name: 'Test',
         last_name: 'User',
         role: UserRole.STAFF,
-    };
+    }
 
     beforeEach(() => {
-        jest.clearAllMocks();
-    });
+        // Reset all mocks between tests to avoid leakage
+        jest.clearAllMocks()
+    })
 
-    test('renders loading state', () => {
+    it('renders loading state while history is being fetched', () => {
+        // Arrange: hook reports loading=true
         mockUseBookingHistory.mockReturnValue({
             history: [],
             loading: true,
@@ -58,7 +78,7 @@ describe('<HistoryPage />', () => {
             cancelBooking: mockCancelBooking,
             fetchAllBookings: jest.fn(),
             allBookings: [],
-        });
+        })
 
         try {
             render(<HistoryPage currentUser={baseUser} />);
@@ -71,10 +91,12 @@ describe('<HistoryPage />', () => {
             }
         }
 
-        expect(screen.getByText(/Loading your bookings/i)).toBeInTheDocument();
-    });
+        // Assert: loading placeholder is visible
+        expect(screen.getByText(/Loading your bookings/i)).toBeInTheDocument()
+    })
 
-    test('renders error state', () => {
+    it('renders error state when the hook surfaces an error', () => {
+        // Arrange: hook returns a non-null error
         mockUseBookingHistory.mockReturnValue({
             history: [],
             loading: false,
@@ -83,14 +105,17 @@ describe('<HistoryPage />', () => {
             cancelBooking: mockCancelBooking,
             fetchAllBookings: jest.fn(),
             allBookings: [],
-        });
+        })
 
-        render(<HistoryPage currentUser={baseUser} />);
+        // Act
+        render(<HistoryPage currentUser={baseUser} />)
 
-        expect(screen.getByText(/Error: Something went wrong/i)).toBeInTheDocument();
-    });
+        // Assert: error message is displayed to the user
+        expect(screen.getByText(/Error: Something went wrong/i)).toBeInTheDocument()
+    })
 
-    test('renders empty state', () => {
+    it('renders empty state when the user has no bookings', () => {
+        // Arrange: hook returns an empty history with no loading/error
         mockUseBookingHistory.mockReturnValue({
             history: [],
             loading: false,
@@ -99,14 +124,17 @@ describe('<HistoryPage />', () => {
             cancelBooking: mockCancelBooking,
             fetchAllBookings: jest.fn(),
             allBookings: [],
-        });
+        })
 
-        render(<HistoryPage currentUser={baseUser} />);
+        // Act
+        render(<HistoryPage currentUser={baseUser} />)
 
-        expect(screen.getByText(/You have no bookings yet/i)).toBeInTheDocument();
-    });
+        // Assert: empty-state copy is shown
+        expect(screen.getByText(/You have no bookings yet/i)).toBeInTheDocument()
+    })
 
-    test('renders booking cards when history is present', async () => {
+    it('renders BookingCard items and triggers initial fetch on mount', async () => {
+        // Arrange: one booking in user history
         const mockHistory = [
             {
                 id: 'b1',
@@ -118,8 +146,7 @@ describe('<HistoryPage />', () => {
                 date: '2025-10-05',
                 cancelled: false,
             },
-        ];
-
+        ]
         mockUseBookingHistory.mockReturnValue({
             history: mockHistory,
             loading: false,
@@ -128,22 +155,24 @@ describe('<HistoryPage />', () => {
             cancelBooking: mockCancelBooking,
             fetchAllBookings: jest.fn(),
             allBookings: [],
-        });
+        })
 
-        render(<HistoryPage currentUser={baseUser} />);
+        // Act
+        render(<HistoryPage currentUser={baseUser} />)
 
-        // BookingCard should render
-        expect(await screen.findByTestId('booking-card')).toHaveTextContent('ECS 125');
+        // Assert: BookingCard is rendered with the booking name
+        expect(await screen.findByTestId('booking-card')).toHaveTextContent('ECS 125')
 
-        // fetchHistory should be called once by useEffect
-        await waitFor(() => expect(mockFetchHistory).toHaveBeenCalledTimes(1));
-    });
+        // Assert: fetchHistory is invoked by useEffect on mount
+        await waitFor(() => expect(mockFetchHistory).toHaveBeenCalledTimes(1))
+    })
 
-    test('renders FallbackTile when BookingCard throws error', async () => {
-        // Force BookingCard mock to throw
-        (BookingCard as jest.Mock).mockImplementationOnce(() => {
-            throw new Error('Render failure');
-        });
+    it('falls back to FallbackTile when BookingCard throws during render', async () => {
+        // Arrange: force the BookingCard mock to throw once to simulate a broken child
+        // Cast to jest.Mock so TypeScript understands the mock has mockImplementationOnce
+        ;(BookingCard as unknown as jest.Mock).mockImplementationOnce(() => {
+            throw new Error('Render failure')
+        })
 
         const mockHistory = [
             {
@@ -156,8 +185,7 @@ describe('<HistoryPage />', () => {
                 date: '2025-10-05',
                 cancelled: false,
             },
-        ];
-
+        ]
         mockUseBookingHistory.mockReturnValue({
             history: mockHistory,
             loading: false,
@@ -166,11 +194,12 @@ describe('<HistoryPage />', () => {
             cancelBooking: mockCancelBooking,
             fetchAllBookings: jest.fn(),
             allBookings: [],
-        });
+        })
 
-        render(<HistoryPage currentUser={baseUser} />);
+        // Act
+        render(<HistoryPage currentUser={baseUser} />)
 
-        // Should fall back to FallbackTile text
-        expect(await screen.findByText(/Broken Card/i)).toBeInTheDocument();
-    });
-});
+        // Assert: the fallback tile text (booking name) is rendered instead of the card
+        expect(await screen.findByText(/Broken Card/i)).toBeInTheDocument()
+    })
+})

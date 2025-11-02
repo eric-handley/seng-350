@@ -3,7 +3,10 @@ import { render, screen } from '@testing-library/react'
 import { UsersPage } from '../src/pages/UsersPage'
 import { User, UserRole } from '../src/types'
 
-// Mock child components
+// Child components are mocked to:
+// - Isolate UsersPage conditional rendering logic
+// - Keep tests fast and focused on which branch renders
+// The mocks expose recognizable testids/text to assert against.
 jest.mock('../src/components/UserTab', () => {
     const Mock = () => <div data-testid="users-tab">UsersTab</div>
     Mock.displayName = 'UserTab'
@@ -22,6 +25,7 @@ jest.mock('../src/components/AddUser', () => {
     return Mock
 })
 
+// Base admin user used to validate privileged rendering paths
 const baseUser: User = {
     id: '1',
     email: 'admin@example.com',
@@ -30,12 +34,15 @@ const baseUser: User = {
     role: UserRole.ADMIN,
 }
 
+// Representative user list to pass through to child tabs/forms
 const sampleUsers: User[] = [
     { id: '2', email: 'a@b.com', first_name: 'Jane', last_name: 'Doe', role: UserRole.STAFF },
     { id: '3', email: 'x@y.com', first_name: 'John', last_name: 'Smith', role: UserRole.REGISTRAR },
 ]
 
 describe('UsersPage', () => {
+    // Handlers are mocked so UsersPage can be rendered without real implementations.
+    // Note: calls are not asserted in these tests.
     const mockHandlers = {
         onEditUser: jest.fn(),
         onSaveUser: jest.fn(),
@@ -47,6 +54,7 @@ describe('UsersPage', () => {
     }
 
     it('renders UsersTab for admin user', () => {
+        // Default (no edit/add state) shows the main Users tab for admins
         render(
             <UsersPage
                 users={sampleUsers}
@@ -62,6 +70,7 @@ describe('UsersPage', () => {
     })
 
     it('renders EditUser when editingUser is provided', () => {
+        // Edit mode takes precedence and shows EditUser
         render(
             <UsersPage
                 users={sampleUsers}
@@ -77,6 +86,7 @@ describe('UsersPage', () => {
     })
 
     it('renders AddUser when addingUser is provided', () => {
+        // Add mode shows AddUser with the seed user object
         render(
             <UsersPage
                 users={sampleUsers}
@@ -92,6 +102,8 @@ describe('UsersPage', () => {
     })
 
     it('renders nothing for non-admin users', () => {
+        // Non-admins should not see the Users management UI
+        // (component is expected to short-circuit render)
         const nonAdmin: User = { ...baseUser, role: UserRole.STAFF }
 
         const { container } = render(
