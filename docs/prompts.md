@@ -9,9 +9,11 @@ Branch: `feature/module-view`
     avoid those.
 **Implementation-II**
 Branch: `feature/mcp-agent`
+- ChatGPT Prompts: 
+  - What would a finished product web app look like with MCP integration for a user?
 
-  
-
+- Cursor Prompts:
+  - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
 
 **Implementation-I**
 
