@@ -5,11 +5,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFile, writeFile, readdir, stat } from 'fs/promises';
+import { readFile, writeFile, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -148,26 +147,49 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   };
 });
 
+// Type guards for argument validation
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 // Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
+  if (!args || !isObject(args)) {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'Error: Invalid arguments provided',
+        },
+      ],
+      isError: true,
+    };
+  }
+
   try {
     switch (name) {
       case 'execute_task': {
-        // This is a high-level task - the actual implementation would
-        // use AI to break down the task and execute it
+        const task = isString(args.task) ? args.task : '';
         return {
           content: [
             {
               type: 'text',
-              text: `Task execution initiated for: ${args.task}\n\nThis tool would analyze the codebase, break down the task into steps, and execute them. The actual implementation would integrate with an AI model to plan and execute the task automatically.`,
+              text: `Task execution initiated for: ${task}\n\nThis tool would analyze the codebase, break down the task into steps, and execute them. The actual implementation would integrate with an AI model to plan and execute the task automatically.`,
             },
           ],
         };
       }
 
       case 'read_file': {
+        if (!isString(args.path)) {
+          throw new Error('Path must be a string');
+        }
         const filePath = join(PROJECT_ROOT, args.path);
         const content = await readFile(filePath, 'utf-8');
         return {
@@ -181,6 +203,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'write_file': {
+        if (!isString(args.path)) {
+          throw new Error('Path must be a string');
+        }
+        if (!isString(args.content)) {
+          throw new Error('Content must be a string');
+        }
         const filePath = join(PROJECT_ROOT, args.path);
         await writeFile(filePath, args.content, 'utf-8');
         return {
@@ -194,7 +222,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'run_command': {
-        const cwd = args.cwd ? join(PROJECT_ROOT, args.cwd) : PROJECT_ROOT;
+        if (!isString(args.command)) {
+          throw new Error('Command must be a string');
+        }
+        const cwd = isString(args.cwd) ? join(PROJECT_ROOT, args.cwd) : PROJECT_ROOT;
         const { stdout, stderr } = await execAsync(args.command, { cwd });
         return {
           content: [
@@ -207,9 +238,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'search_codebase': {
+        if (!isString(args.query)) {
+          throw new Error('Query must be a string');
+        }
         // Simple grep-based search
-        const grepCommand = args.file_pattern
-          ? `grep -r "${args.query}" --include="${args.file_pattern}" .`
+        const filePattern = isString(args.file_pattern) ? args.file_pattern : undefined;
+        const grepCommand = filePattern
+          ? `grep -r "${args.query}" --include="${filePattern}" .`
           : `grep -r "${args.query}" .`;
         
         try {
@@ -236,8 +271,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'list_files': {
+        if (!isString(args.path)) {
+          throw new Error('Path must be a string');
+        }
         const dirPath = join(PROJECT_ROOT, args.path);
-        const entries = await readdir(dirPath, { recursive: args.recursive });
+        const recursive = typeof args.recursive === 'boolean' ? args.recursive : false;
+        const entries = await readdir(dirPath, { recursive });
         return {
           content: [
             {
