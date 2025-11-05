@@ -16,6 +16,7 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, '../../..');
+const API_BASE = 'http://localhost:3000';
 
 // Initialize the server
 const server = new Server(
@@ -141,6 +142,79 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
           },
           required: ['path'],
+        },
+      },
+      {
+        name: 'list_rooms',
+        description: 'List available rooms, optionally filtered by building',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            building: {
+              type: 'string',
+              description: 'Optional building short name to filter rooms (e.g., "ECS", "CLE")',
+            },
+          },
+        },
+      },
+      {
+        name: 'check_room_availability',
+        description: 'Check if a room is available for a specific time slot',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            room_id: {
+              type: 'string',
+              description: 'Room ID (e.g., "ECS-124")',
+            },
+            date: {
+              type: 'string',
+              description: 'Date in YYYY-MM-DD format',
+            },
+            start_time: {
+              type: 'string',
+              description: 'Start time in HH:MM format (24-hour)',
+            },
+            end_time: {
+              type: 'string',
+              description: 'End time in HH:MM format (24-hour)',
+            },
+          },
+          required: ['room_id', 'date', 'start_time', 'end_time'],
+        },
+      },
+      {
+        name: 'create_booking',
+        description: 'Create a room booking. Requires authentication via login first.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            room_id: {
+              type: 'string',
+              description: 'Room ID (e.g., "ECS-124")',
+            },
+            date: {
+              type: 'string',
+              description: 'Date in YYYY-MM-DD format',
+            },
+            start_time: {
+              type: 'string',
+              description: 'Start time in HH:MM format (24-hour)',
+            },
+            end_time: {
+              type: 'string',
+              description: 'End time in HH:MM format (24-hour)',
+            },
+            email: {
+              type: 'string',
+              description: 'User email for authentication',
+            },
+            password: {
+              type: 'string',
+              description: 'User password for authentication',
+            },
+          },
+          required: ['room_id', 'date', 'start_time', 'end_time', 'email', 'password'],
         },
       },
     ],
@@ -285,6 +359,240 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
+      }
+
+      case 'list_rooms': {
+        const building = isString(args.building) ? args.building : undefined;
+        const params = building ? `?building_short_name=${encodeURIComponent(building)}` : '';
+        const url = `${API_BASE}/rooms${params}`;
+        
+        try {
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch rooms: ${response.status} ${response.statusText}`);
+          }
+          
+          const rooms = await response.json();
+          const formatted = rooms.map((r: any) => 
+            `${r.room_id} - ${r.building_short_name} ${r.room_number} (Capacity: ${r.capacity}, Type: ${r.room_type})`
+          ).join('\n');
+          
+          return {
+            content: [
+              {
+                type: 'text',
+                text: formatted || 'No rooms found',
+              },
+            ],
+          };
+        } catch (error: any) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Error fetching rooms: ${error.message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
+      case 'check_room_availability': {
+        if (!isString(args.room_id) || !isString(args.date) || !isString(args.start_time) || !isString(args.end_time)) {
+          throw new Error('All parameters (room_id, date, start_time, end_time) must be strings');
+        }
+
+        // Convert time format from HH:MM to HH-MM-SS for API
+        const toApiTime = (time: string) => {
+          const parts = time.split(':');
+          const h = parts[0]?.padStart(2, '0') || '00';
+          const m = parts[1]?.padStart(2, '0') || '00';
+          return `${h}-${m}-00`;
+        };
+
+        const startApi = toApiTime(args.start_time);
+        const endApi = toApiTime(args.end_time);
+        const params = new URLSearchParams({
+          room_id: args.room_id,
+          date: args.date,
+          start_time: startApi,
+          end_time: endApi,
+          slot_type: 'available',
+        });
+
+        try {
+          const response = await fetch(`${API_BASE}/schedule?${params.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to check availability: ${response.status} ${response.statusText}`);
+          }
+
+          const schedule = await response.json();
+          
+          // Find the room in the schedule
+          let roomInfo = null;
+          for (const building of schedule.buildings || []) {
+            for (const room of building.rooms || []) {
+              if (room.room_id === args.room_id) {
+                roomInfo = room;
+                break;
+              }
+            }
+            if (roomInfo) break;
+          }
+
+          if (!roomInfo) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Room ${args.room_id} not found or not available for the requested time slot.`,
+                },
+              ],
+            };
+          }
+
+          const requestedStart = `${args.date}T${args.start_time}:00Z`;
+          const requestedEnd = `${args.date}T${args.end_time}:00Z`;
+          
+          // Check if the requested time slot is in the available slots
+          const isAvailable = roomInfo.slots?.some((slot: any) => {
+            const slotStart = new Date(slot.start_time).getTime();
+            const slotEnd = new Date(slot.end_time).getTime();
+            const reqStart = new Date(requestedStart).getTime();
+            const reqEnd = new Date(requestedEnd).getTime();
+            return reqStart >= slotStart && reqEnd <= slotEnd;
+          });
+
+          if (isAvailable) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Room ${args.room_id} is AVAILABLE from ${args.start_time} to ${args.end_time} on ${args.date}.`,
+                },
+              ],
+            };
+          } else {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Room ${args.room_id} is NOT AVAILABLE from ${args.start_time} to ${args.end_time} on ${args.date}.`,
+                },
+              ],
+            };
+          }
+        } catch (error: any) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Error checking availability: ${error.message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
+      case 'create_booking': {
+        if (!isString(args.room_id) || !isString(args.date) || !isString(args.start_time) || !isString(args.end_time) || !isString(args.email) || !isString(args.password)) {
+          throw new Error('All parameters are required');
+        }
+
+        // Convert time format from HH:MM to ISO 8601
+        const toIsoDateTime = (date: string, time: string) => {
+          const parts = time.split(':');
+          const h = parts[0]?.padStart(2, '0') || '00';
+          const m = parts[1]?.padStart(2, '0') || '00';
+          return `${date}T${h}:${m}:00Z`;
+        };
+
+        const startIso = toIsoDateTime(args.date, args.start_time);
+        const endIso = toIsoDateTime(args.date, args.end_time);
+
+        try {
+          // First, login to get session cookie
+          const loginResponse = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: args.email,
+              password: args.password,
+            }),
+          });
+
+          if (!loginResponse.ok) {
+            const errorData = await loginResponse.json().catch(() => ({ message: 'Login failed' }));
+            throw new Error(`Authentication failed: ${errorData.message || loginResponse.statusText}`);
+          }
+
+          // Extract all cookies from login response and parse them
+          const setCookieHeader = loginResponse.headers.get('set-cookie');
+          let cookieHeader = '';
+          
+          if (setCookieHeader) {
+            // Parse the set-cookie header - it may contain multiple cookies
+            const cookies = setCookieHeader.split(',').map(c => {
+              // Extract the cookie name and value (before the first semicolon)
+              const parts = c.trim().split(';');
+              return parts[0];
+            });
+            cookieHeader = cookies.join('; ');
+          }
+
+          // Now create the booking with the session cookie
+          const bookingResponse = await fetch(`${API_BASE}/bookings`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              ...(cookieHeader ? { 'Cookie': cookieHeader } : {}),
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              room_id: args.room_id,
+              start_time: startIso,
+              end_time: endIso,
+            }),
+          });
+
+          if (!bookingResponse.ok) {
+            const errorData = await bookingResponse.json().catch(() => ({ message: 'Booking failed' }));
+            throw new Error(`Booking failed: ${errorData.message || bookingResponse.statusText}`);
+          }
+
+          const booking = await bookingResponse.json();
+          
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Successfully booked room ${args.room_id} from ${args.start_time} to ${args.end_time} on ${args.date}.\nBooking ID: ${booking.id}`,
+              },
+            ],
+          };
+        } catch (error: any) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Error creating booking: ${error.message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
       }
 
       default:

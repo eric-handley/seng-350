@@ -1,3 +1,13 @@
+**Implementation-II**
+Branch: `feature/mcp-agent`
+- ChatGPT Prompts (conversation link: ): 
+  - I want to add an MCP agent to my classroom booking app. What does this look like and how do I add it? + contents of mcp.qmd file
+  - How should an MCP server work for my app? How should we be able to get the agent to perform actions on the website?
+
+- Cursor Prompts:
+  - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
+
+
 **Design-II**
 
 Branch: `feature/module-view`
@@ -7,13 +17,6 @@ Branch: `feature/module-view`
   - There is now a syntax error in the html file. Please look at the code to ensure it matches with mermaid version 10.9.4
   - I think the issue is to do with the '||--o{' tokens which are only valid in erDiagram. Please edit the file to 
     avoid those.
-**Implementation-II**
-Branch: `feature/mcp-agent`
-- ChatGPT Prompts: 
-  - What would a finished product web app look like with MCP integration for a user?
-
-- Cursor Prompts:
-  - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
 
 **Implementation-I**
 
