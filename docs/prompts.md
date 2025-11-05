@@ -1,11 +1,13 @@
 **Implementation-II**
 Branch: `feature/mcp-agent`
-- ChatGPT Prompts (conversation link: ): 
+- ChatGPT Prompts (conversation link: https://chatgpt.com/share/690a9c3f-a85c-8009-b193-c3861a11f68b): 
   - I want to add an MCP agent to my classroom booking app. What does this look like and how do I add it? + contents of mcp.qmd file
+  - How do I use the MCP server to book a room?
   - How should an MCP server work for my app? How should we be able to get the agent to perform actions on the website?
 
 - Cursor Prompts:
   - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
+  - What is the index.ts file used for for teh mcp-server? Why is that needed? What are the current limitations of the mcp-server and how can I expand on our functionality
 
 
 **Design-II**
