@@ -57,6 +57,11 @@ You can also break it down:
    Book room ECS-124 on 2025-10-05 from 14:00 to 15:00 with credentials staff@uvic.ca / staff
    ```
 
+4. **Cancel a booking:**
+   ```
+   Cancel booking 555ca47f-a1a7-4c32-80da-62545a9e07dc using staff@uvic.ca / staff
+   ```
+
 ## Available Test Users
 
 - `staff@uvic.ca` / `staff` - Regular staff user
@@ -90,6 +95,15 @@ Show me all rooms in the CLE building, then book CLE-A308 for tomorrow from 10am
 Book room ECS-124 for Monday from 9am to 10am, and room CLE-A308 for Tuesday from 2pm to 3pm
 ```
 
+### Canceling a Booking
+```
+Cancel booking 555ca47f-a1a7-4c32-80da-62545a9e07dc using staff@uvic.ca / staff
+```
+
+```
+Cancel my booking for room ECS-124 tomorrow from 2pm to 3pm
+```
+
 ## What Happens Behind the Scenes
 
 When you request a booking, the MCP server:
@@ -98,6 +112,13 @@ When you request a booking, the MCP server:
 2. **Validates** - Checks that the room exists and the time slot is valid
 3. **Books** - Creates the booking through the API
 4. **Confirms** - Returns the booking ID and confirmation
+
+When you cancel a booking, the MCP server:
+
+1. **Authenticates** - Logs in with the provided credentials to get a session cookie
+2. **Validates** - Checks that the booking exists and belongs to the user (staff can only cancel their own bookings)
+3. **Cancels** - Deletes the booking through the API
+4. **Confirms** - Returns confirmation of cancellation
 
 ## Troubleshooting
 

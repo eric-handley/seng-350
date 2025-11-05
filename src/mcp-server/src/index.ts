@@ -217,6 +217,28 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['room_id', 'date', 'start_time', 'end_time', 'email', 'password'],
         },
       },
+      {
+        name: 'cancel_booking',
+        description: 'Cancel an existing room booking. Staff can only cancel their own bookings. Requires authentication.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            booking_id: {
+              type: 'string',
+              description: 'Booking ID (UUID) to cancel',
+            },
+            email: {
+              type: 'string',
+              description: 'User email for authentication',
+            },
+            password: {
+              type: 'string',
+              description: 'User password for authentication',
+            },
+          },
+          required: ['booking_id', 'email', 'password'],
+        },
+      },
     ],
   };
 });
@@ -588,6 +610,86 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               {
                 type: 'text',
                 text: `Error creating booking: ${error.message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
+      case 'cancel_booking': {
+        if (!isString(args.booking_id) || !isString(args.email) || !isString(args.password)) {
+          throw new Error('All parameters (booking_id, email, password) are required');
+        }
+
+        try {
+          // First, login to get session cookie
+          const loginResponse = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: args.email,
+              password: args.password,
+            }),
+          });
+
+          if (!loginResponse.ok) {
+            const errorData = await loginResponse.json().catch(() => ({ message: 'Login failed' }));
+            throw new Error(`Authentication failed: ${errorData.message || loginResponse.statusText}`);
+          }
+
+          // Extract all cookies from login response and parse them
+          const setCookieHeader = loginResponse.headers.get('set-cookie');
+          let cookieHeader = '';
+          
+          if (setCookieHeader) {
+            // Parse the set-cookie header - it may contain multiple cookies
+            const cookies = setCookieHeader.split(',').map(c => {
+              // Extract the cookie name and value (before the first semicolon)
+              const parts = c.trim().split(';');
+              return parts[0];
+            });
+            cookieHeader = cookies.join('; ');
+          }
+
+          // Now cancel the booking with the session cookie
+          const cancelResponse = await fetch(`${API_BASE}/bookings/${encodeURIComponent(args.booking_id)}`, {
+            method: 'DELETE',
+            headers: {
+              'Accept': 'application/json',
+              ...(cookieHeader ? { 'Cookie': cookieHeader } : {}),
+            },
+            credentials: 'include',
+          });
+
+          if (!cancelResponse.ok) {
+            // Handle different error scenarios
+            if (cancelResponse.status === 404) {
+              throw new Error(`Booking ${args.booking_id} not found`);
+            } else if (cancelResponse.status === 403) {
+              throw new Error(`You can only cancel your own bookings`);
+            } else {
+              const errorData = await cancelResponse.json().catch(() => ({ message: 'Cancellation failed' }));
+              throw new Error(`Cancellation failed: ${errorData.message || cancelResponse.statusText}`);
+            }
+          }
+
+          // 204 No Content on success, or 200 with body
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Successfully cancelled booking ${args.booking_id}.`,
+              },
+            ],
+          };
+        } catch (error: any) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Error cancelling booking: ${error.message}`,
               },
             ],
             isError: true,

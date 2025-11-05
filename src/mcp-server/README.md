@@ -125,6 +125,14 @@ Create a room booking. Authenticates the user and creates the booking.
 Book room "ECS-124" on 2025-10-05 from 10:00 to 11:00 with email "staff@uvic.ca" and password "staff"
 ```
 
+### cancel_booking
+Cancel an existing room booking. Staff can only cancel their own bookings. Requires authentication.
+
+**Example:**
+```
+Cancel booking "555ca47f-a1a7-4c32-80da-62545a9e07dc" using email "staff@uvic.ca" and password "staff"
+```
+
 **Note:** The server must be running at `http://localhost:3000` for booking tools to work.
 
 ## Usage
@@ -137,6 +145,7 @@ Once configured, users can interact with the MCP server through Cursor or Claude
 - "Please update the module diagram to match the codebase"
 - "List all available rooms in the ECS building"
 - "Book room ECS-124 for tomorrow from 2pm to 3pm"
+- "Cancel booking 555ca47f-a1a7-4c32-80da-62545a9e07dc"
 
 The MCP server will break down these tasks and execute them using the available tools.
 
@@ -147,6 +156,7 @@ The MCP server includes specialized tools for interacting with the UVic Room Boo
 - **list_rooms**: Query available rooms by building
 - **check_room_availability**: Verify if a room is free for a time slot
 - **create_booking**: Create a booking (requires authentication)
+- **cancel_booking**: Cancel an existing booking (staff can only cancel their own)
 
 These tools connect to the booking API running at `http://localhost:3000`. Make sure the server is running before using booking tools.
 
