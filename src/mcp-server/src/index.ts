@@ -18,6 +18,33 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, '../../..');
 const API_BASE = 'http://localhost:3000';
 
+// Type definitions
+interface Room {
+  room_id: string;
+  building_short_name: string;
+  room_number: string;
+  capacity: number;
+  room_type: string;
+}
+
+interface Slot {
+  start_time: string;
+  end_time: string;
+}
+
+interface RoomWithSlots {
+  room_id: string;
+  slots?: Slot[];
+}
+
+interface Building {
+  rooms?: RoomWithSlots[];
+}
+
+interface Schedule {
+  buildings?: Building[];
+}
+
 // Initialize the server
 const server = new Server(
   {
@@ -353,7 +380,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               },
             ],
           };
-        } catch (error: any) {
+        } catch {
           // grep returns non-zero exit code when no matches found
           return {
             content: [
@@ -398,8 +425,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             throw new Error(`Failed to fetch rooms: ${response.status} ${response.statusText}`);
           }
           
-          const rooms = await response.json();
-          const formatted = rooms.map((r: any) => 
+          const rooms = await response.json() as Room[];
+          const formatted = rooms.map((r: Room) =>
             `${r.room_id} - ${r.building_short_name} ${r.room_number} (Capacity: ${r.capacity}, Type: ${r.room_type})`
           ).join('\n');
           
@@ -407,16 +434,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             content: [
               {
                 type: 'text',
-                text: formatted || 'No rooms found',
+                text: formatted ?? 'No rooms found',
               },
             ],
           };
-        } catch (error: any) {
+        } catch (error: unknown) {
           return {
             content: [
               {
                 type: 'text',
-                text: `Error fetching rooms: ${error.message}`,
+                text: `Error fetching rooms: ${error instanceof Error ? error.message : 'Unknown error'}`,
               },
             ],
             isError: true,
@@ -457,18 +484,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             throw new Error(`Failed to check availability: ${response.status} ${response.statusText}`);
           }
 
-          const schedule = await response.json();
-          
+          const schedule = await response.json() as Schedule;
+
           // Find the room in the schedule
-          let roomInfo = null;
-          for (const building of schedule.buildings || []) {
-            for (const room of building.rooms || []) {
+          let roomInfo: RoomWithSlots | null = null;
+          for (const building of schedule.buildings ?? []) {
+            for (const room of building.rooms ?? []) {
               if (room.room_id === args.room_id) {
                 roomInfo = room;
                 break;
               }
             }
-            if (roomInfo) break;
+            if (roomInfo) {break;}
           }
 
           if (!roomInfo) {
@@ -484,9 +511,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           const requestedStart = `${args.date}T${args.start_time}:00Z`;
           const requestedEnd = `${args.date}T${args.end_time}:00Z`;
-          
+
           // Check if the requested time slot is in the available slots
-          const isAvailable = roomInfo.slots?.some((slot: any) => {
+          const isAvailable = roomInfo.slots?.some((slot: Slot) => {
             const slotStart = new Date(slot.start_time).getTime();
             const slotEnd = new Date(slot.end_time).getTime();
             const reqStart = new Date(requestedStart).getTime();
@@ -513,12 +540,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               ],
             };
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           return {
             content: [
               {
                 type: 'text',
-                text: `Error checking availability: ${error.message}`,
+                text: `Error checking availability: ${error instanceof Error ? error.message : 'Unknown error'}`,
               },
             ],
             isError: true,
@@ -556,7 +583,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           if (!loginResponse.ok) {
             const errorData = await loginResponse.json().catch(() => ({ message: 'Login failed' }));
-            throw new Error(`Authentication failed: ${errorData.message || loginResponse.statusText}`);
+            throw new Error(`Authentication failed: ${errorData.message ?? loginResponse.statusText}`);
           }
 
           // Extract all cookies from login response and parse them
@@ -591,7 +618,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           if (!bookingResponse.ok) {
             const errorData = await bookingResponse.json().catch(() => ({ message: 'Booking failed' }));
-            throw new Error(`Booking failed: ${errorData.message || bookingResponse.statusText}`);
+            throw new Error(`Booking failed: ${errorData.message ?? bookingResponse.statusText}`);
           }
 
           const booking = await bookingResponse.json();
@@ -604,12 +631,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               },
             ],
           };
-        } catch (error: any) {
+        } catch (error: unknown) {
           return {
             content: [
               {
                 type: 'text',
-                text: `Error creating booking: ${error.message}`,
+                text: `Error creating booking: ${error instanceof Error ? error.message : 'Unknown error'}`,
               },
             ],
             isError: true,
@@ -636,7 +663,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           if (!loginResponse.ok) {
             const errorData = await loginResponse.json().catch(() => ({ message: 'Login failed' }));
-            throw new Error(`Authentication failed: ${errorData.message || loginResponse.statusText}`);
+            throw new Error(`Authentication failed: ${errorData.message ?? loginResponse.statusText}`);
           }
 
           // Extract all cookies from login response and parse them
@@ -671,7 +698,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               throw new Error(`You can only cancel your own bookings`);
             } else {
               const errorData = await cancelResponse.json().catch(() => ({ message: 'Cancellation failed' }));
-              throw new Error(`Cancellation failed: ${errorData.message || cancelResponse.statusText}`);
+              throw new Error(`Cancellation failed: ${errorData.message ?? cancelResponse.statusText}`);
             }
           }
 
@@ -684,12 +711,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               },
             ],
           };
-        } catch (error: any) {
+        } catch (error: unknown) {
           return {
             content: [
               {
                 type: 'text',
-                text: `Error cancelling booking: ${error.message}`,
+                text: `Error cancelling booking: ${error instanceof Error ? error.message : 'Unknown error'}`,
               },
             ],
             isError: true,
@@ -700,12 +727,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       content: [
         {
           type: 'text',
-          text: `Error: ${error.message}`,
+          text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         },
       ],
       isError: true,
