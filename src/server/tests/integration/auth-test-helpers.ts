@@ -1,8 +1,3 @@
-// Mock ESM-only module to avoid Jest transform errors
-jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
-}));
-
 // Ensure AppModule connects to the dedicated test services
 (() => {
   process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
@@ -35,6 +30,8 @@ export async function setupTestAppWithAuth() {
   const app = moduleFixture.createNestApplication();
 
   // Configure session middleware (same as main.ts)
+  // AppModule is responsible for all auth configuration (Passport, guards, etc.)
+  // Tests should not configure auth - they should use the real implementation from AppModule
   app.use(
     session({
       secret: 'test-secret',
