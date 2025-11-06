@@ -158,3 +158,8 @@ Branch `feature-6/admin-rooms-system`
 8. "I am working on an authentication and login feature for a webapp, this is my current code + i have a database setup using the following tech stack We will use Typescript with React for frontend, NestJS for the entry layer, NestJS for the backend, PostgreSQL for server-side data store, Redis for cache and minimal messaging, Auth.js for authentication and authorization. please help me by first laying out a step by step process for setting up authentication."
 
 - [Conversation Link](https://chatgpt.com/c/68e06ed2-b4e0-8325-989c-e928475cd206)
+
+**Implementation-II**
+
+Branch `feature/recurring-bookings`
+1. i want to add the options for everyday, every week, or every month

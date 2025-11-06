@@ -23,6 +23,14 @@ export class CreateBookingSeriesDto {
   @IsDateString()
   @Type(() => Date)
   series_end_date!: Date;
+
+  @ApiProperty({
+    example: 'weekly',
+    description: 'Recurrence type: "daily", "weekly", or "monthly"',
+    enum: ['daily', 'weekly', 'monthly'],
+  })
+  @IsNotEmpty()
+  recurrence_type!: 'daily' | 'weekly' | 'monthly';
 }
 
 export class UpdateBookingSeriesDto extends PartialType(CreateBookingSeriesDto) {
@@ -48,6 +56,15 @@ export class UpdateBookingSeriesDto extends PartialType(CreateBookingSeriesDto) 
   @IsDateString()
   @Type(() => Date)
   series_end_date?: Date;
+
+  @ApiProperty({
+    example: 'weekly',
+    description: 'Recurrence type: "daily", "weekly", or "monthly"',
+    enum: ['daily', 'weekly', 'monthly'],
+    required: false,
+  })
+  @IsOptional()
+  recurrence_type?: 'daily' | 'weekly' | 'monthly';
 }
 
 export class BookingSeriesResponseDto {

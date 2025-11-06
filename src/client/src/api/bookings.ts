@@ -1,5 +1,35 @@
 const API_BASE = 'http://localhost:3000';
 
+// Request type for creating a series of recurring bookings
+export type CreateBookingSeriesReq = {
+  room_id: string;
+  start_time: string; // ISO, e.g. "2025-10-05T10:00:00"
+  end_time: string;   // ISO
+  recurrence_rule: string; // e.g. RFC5545 RRULE string, or custom (see backend)
+  user_id?: string; // Optional: for admin/registrar to book for others
+  // Add any other fields required by your backend DTO
+};
+
+/**
+ * Create a series of recurring bookings.
+ * @param body - booking series request
+ * @returns array of created Booking objects
+ */
+export async function createBookingSeries(body: CreateBookingSeriesReq): Promise<Booking[]> {
+  const res = await fetch(`${API_BASE}/bookings/recurring`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const message = errorData?.message ?? `Recurring booking failed: ${res.status} ${res.statusText}`;
+    throw new Error(message);
+  }
+  return res.json() as Promise<Booking[]>;
+}
+
 export type CreateBookingReq = {
   room_id: string;
   start_time: string; // ISO, e.g. "2025-10-05T10:00:00"

@@ -1,3 +1,4 @@
+import { CreateBookingSeriesDto, BookingSeriesResponseDto } from '../dto/booking-series.dto';
 import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,6 +19,92 @@ export class BookingsService {
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
   ) {}
+
+  async createBookingSeries(
+    createBookingSeriesDto: CreateBookingSeriesDto,
+    currentUser: AuthenticatedUser,
+  ): Promise<BookingSeriesResponseDto> {
+    const { room_id, start_time, end_time, series_end_date, recurrence_type } = createBookingSeriesDto;
+    const normalizedRoomId = this.normalizeRoomId(room_id);
+
+    if (!normalizedRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
+
+    if (new Date(start_time) >= new Date(end_time)) {
+      throw new BadRequestException('Start time must be before end time');
+    }
+
+    // Validate booking constraints for the first occurrence
+    this.validateDuration(start_time, end_time);
+    this.validateNotInPast(start_time, currentUser.role);
+    this.validateAdvanceBooking(start_time, currentUser.role);
+
+    const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    // Create the booking series record
+    const bookingSeries = this.bookingSeriesRepository.create({
+      user_id: currentUser.id,
+      room_id: normalizedRoomId,
+      start_time,
+      end_time,
+      series_end_date,
+    });
+    const savedSeries = await this.bookingSeriesRepository.save(bookingSeries);
+
+    // Generate all occurrences
+    const bookings: Booking[] = [];
+    let occurrenceStart = new Date(start_time);
+    let occurrenceEnd = new Date(end_time);
+    const lastDate = new Date(series_end_date);
+
+    while (occurrenceStart <= lastDate) {
+      // Check for conflicts for this occurrence
+      await this.checkForConflicts(normalizedRoomId, occurrenceStart, occurrenceEnd);
+
+      const booking = this.bookingRepository.create({
+        user_id: currentUser.id,
+        room_id: normalizedRoomId,
+        start_time: new Date(occurrenceStart),
+        end_time: new Date(occurrenceEnd),
+        status: BookingStatus.ACTIVE,
+        booking_series_id: savedSeries.id,
+      });
+      const savedBooking = await this.bookingRepository.save(booking);
+      bookings.push(savedBooking);
+
+      // Advance to next occurrence
+      if (recurrence_type === 'daily') {
+        occurrenceStart.setDate(occurrenceStart.getDate() + 1);
+        occurrenceEnd.setDate(occurrenceEnd.getDate() + 1);
+      } else if (recurrence_type === 'weekly') {
+        occurrenceStart.setDate(occurrenceStart.getDate() + 7);
+        occurrenceEnd.setDate(occurrenceEnd.getDate() + 7);
+      } else if (recurrence_type === 'monthly') {
+        occurrenceStart.setMonth(occurrenceStart.getMonth() + 1);
+        occurrenceEnd.setMonth(occurrenceEnd.getMonth() + 1);
+      } else {
+        throw new BadRequestException('Invalid recurrence_type');
+      }
+    }
+
+    // Build response DTO
+    const response: BookingSeriesResponseDto = {
+      id: savedSeries.id,
+      user_id: savedSeries.user_id,
+      room_id: savedSeries.room_id,
+      start_time: savedSeries.start_time,
+      end_time: savedSeries.end_time,
+      series_end_date: savedSeries.series_end_date,
+      bookings: bookings.map(b => this.toResponseDto(b)),
+      created_at: savedSeries.created_at,
+      updated_at: savedSeries.updated_at,
+    };
+    return response;
+  }
 
   async create(createBookingDto: CreateBookingDto, currentUser: AuthenticatedUser): Promise<BookingResponseDto> {
     const { start_time, end_time } = createBookingDto;
@@ -239,70 +326,6 @@ export class BookingsService {
       throw new ConflictException('Room is already booked for this time slot');
     }
   }
-
-  // async createSeries(createSeriesDto: CreateBookingSeriesDto, userId: string): Promise<BookingResponseDto[]> {
-  //   const { start_time, end_time, recurrence, recurrence_count } = createSeriesDto;
-  //   const normalizedRoomId = this.normalizeRoomId(createSeriesDto.room_id);
-
-  //   if (!normalizedRoomId) {
-  //     throw new BadRequestException('Room ID must not be empty');
-  //   }
-
-  //   if (new Date(start_time) >= new Date(end_time)) {
-  //     throw new BadRequestException('Start time must be before end time');
-  //   }
-
-  //   const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
-  //   if (!room) {
-  //     throw new NotFoundException('Room not found');
-  //   }
-
-  //   // Calculate series end date
-  //   const seriesEndDate = new Date(start_time);
-  //   if (recurrence === 'weekly') {
-  //     seriesEndDate.setDate(seriesEndDate.getDate() + (recurrence_count - 1) * 7);
-  //   }
-
-  //   // Create the booking series record
-  //   const bookingSeries = this.bookingSeriesRepository.create({
-  //     user_id: userId,
-  //     room_id: normalizedRoomId,
-  //     start_time,
-  //     end_time,
-  //     series_end_date: seriesEndDate,
-  //   });
-
-  //   const savedSeries = await this.bookingSeriesRepository.save(bookingSeries);
-
-  //   // Generate individual bookings
-  //   const bookings: Booking[] = [];
-  //   for (let i = 0; i < recurrence_count; i++) {
-  //     const bookingStartTime = new Date(start_time);
-  //     const bookingEndTime = new Date(end_time);
-
-  //     if (recurrence === 'weekly') {
-  //       bookingStartTime.setDate(bookingStartTime.getDate() + i * 7);
-  //       bookingEndTime.setDate(bookingEndTime.getDate() + i * 7);
-  //     }
-
-  //     // Check for conflicts for this occurrence
-  //     await this.checkForConflicts(normalizedRoomId, bookingStartTime, bookingEndTime);
-
-  //     const booking = this.bookingRepository.create({
-  //       user_id: userId,
-  //       room_id: normalizedRoomId,
-  //       start_time: bookingStartTime,
-  //       end_time: bookingEndTime,
-  //       status: BookingStatus.ACTIVE,
-  //       booking_series_id: savedSeries.id,
-  //     });
-
-  //     const savedBooking = await this.bookingRepository.save(booking);
-  //     bookings.push(savedBooking);
-  //   }
-
-  //   return bookings.map(booking => this.toResponseDto(booking));
-  // }
 
   async updateSeries(seriesId: string, updateDto: UpdateBookingDto, currentUser: AuthenticatedUser): Promise<void> {
     // Find all bookings in the series
