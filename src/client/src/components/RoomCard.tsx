@@ -73,8 +73,8 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isR
           onClose={() => setShowRecurring(false)}
           onSubmit={handleBookRecurring}
           initialRoomId={room.room_id || room.id}
-          initialStartTime={date + 'T' + start + ':00Z'}
-          initialEndTime={date + 'T' + end + ':00Z'}
+          initialStartTime={date ? `${date}T${start}:00Z` : ''}
+          initialEndTime={date ? `${date}T${end}:00Z` : ''}
         />
       )}
     </article>
