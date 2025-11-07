@@ -1,17 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Room } from '../types'
 import { formatTimeForDisplay } from '../utils/time'
+import RecurringBookingModal, { RecurringBookingFormData } from './RecurringBookingModal'
+
+
 
 interface RoomCardProps {
-  room: Room
-  date: string
-  start: string
-  end: string
-  onBook: (room: Room) => void
-  isReserved?: boolean
+  room: Room & { room_id?: string };
+  date: string;
+  start: string;
+  end: string;
+  onBook: (room: Room) => void;
+  isReserved?: boolean;
+  onBookRecurring?: (data: RecurringBookingFormData) => Promise<void>;
 }
 
-export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isReserved = false }) => {
+
+const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isReserved = false, onBookRecurring }) => {
+  const [showRecurring, setShowRecurring] = useState(false);
+  const [recurringLoading, setRecurringLoading] = useState(false);
+  const [recurringError, setRecurringError] = useState<string | null>(null);
+
+  const handleBookRecurring = async (data: RecurringBookingFormData) => {
+    if (!onBookRecurring) return;
+    setRecurringLoading(true);
+    setRecurringError(null);
+    try {
+      await onBookRecurring(data);
+      setShowRecurring(false); // Close modal immediately after success
+    } catch (err: any) {
+      setRecurringError(err.message || 'Failed to book recurring');
+    } finally {
+      setRecurringLoading(false);
+    }
+  };
+
   return (
     <article className="card">
       <div className="row">
@@ -22,7 +45,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBo
         <span>Building: <strong>{room.building}</strong></span>
         <span>ID: {room.id}</span>
       </div>
-      <div className="row" style={{marginTop:12}}>
+      <div className="row" style={{ marginTop: 12 }}>
         <div className="meta">
           <span>{date}</span>
           <span>{formatTimeForDisplay(start)}–{formatTimeForDisplay(end)}</span>
@@ -35,7 +58,27 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBo
         >
           {isReserved ? 'Reserved' : 'Book'}
         </button>
+        <button
+          className="btn"
+          style={{ marginLeft: 8 }}
+          onClick={() => setShowRecurring(true)}
+          disabled={isReserved}
+        >
+          Book Recurring
+        </button>
       </div>
+      {showRecurring && (
+        <RecurringBookingModal
+          open={showRecurring}
+          onClose={() => setShowRecurring(false)}
+          onSubmit={handleBookRecurring}
+          initialRoomId={room.room_id || room.id}
+          initialStartTime={date + 'T' + start + ':00Z'}
+          initialEndTime={date + 'T' + end + ':00Z'}
+        />
+      )}
     </article>
-  )
-}
+  );
+};
+
+export default RoomCard;

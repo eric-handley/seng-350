@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Room } from '../types';
-import { RoomCard } from '../components/RoomCard';
+import RoomCard from '../components/RoomCard';
+import { createBookingSeries } from '../api/bookings';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
 import { useRooms } from '../hooks/useRooms';
@@ -77,6 +78,20 @@ export const BookingPage: React.FC<BookingPageProps> = ({
     }
   };
 
+  // Recurring booking handler
+  const handleBookRecurring = async (data: any) => {
+    // Ensure series_end_date is a full ISO string
+    const padIsoDate = (d: string) => d.includes('T') ? d : d + 'T00:00:00Z';
+    await createBookingSeries({
+      room_id: data.room_id,
+      start_time: data.start_time,
+      end_time: data.end_time,
+      recurrence_type: data.recurrence_type,
+      series_end_date: padIsoDate(data.series_end_date),
+    });
+    onBookingCreated?.();
+  };
+
   return (
     <section className="panel" aria-labelledby="book-label">
       <h2 id="book-label" style={{ marginTop: 0 }}>Find an available room</h2>
@@ -109,18 +124,20 @@ export const BookingPage: React.FC<BookingPageProps> = ({
             <RoomCard
               key={room.id}
               room={{
-                id: room.id,
+                id: room.room_id, // Use UUID for both id and room_id
+                room_id: room.room_id, // UUID for recurring bookings
                 name: `${room.building_short_name} ${room.room_number}`,
                 number: room.room_number,
                 capacity: room.capacity,
                 type: room.room_type,
                 building: room.building_short_name,
-              } as unknown as Room}
+              } as Room & { room_id: string }}
               date={date}
               start={start}
               end={end}
               onBook={handleBook}
               isReserved={room.isReserved}
+              onBookRecurring={handleBookRecurring}
             />
           ))}
         </div>

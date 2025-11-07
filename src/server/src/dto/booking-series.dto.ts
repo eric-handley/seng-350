@@ -1,12 +1,12 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { BookingResponseDto } from './booking.dto';
 
 export class CreateBookingSeriesDto {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book for the series' })
-  @IsUUID()
+  @ApiProperty({ example: 'ECS-124', description: 'Room code to book for the series' })
   @IsNotEmpty()
+  @IsString()
   room_id!: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)' })
@@ -19,7 +19,7 @@ export class CreateBookingSeriesDto {
   @Type(() => Date)
   end_time!: Date;
 
-  @ApiProperty({ example: '2024-04-30', description: 'Last date for the recurring series (YYYY-MM-DD)' })
+  @ApiProperty({ example: '2024-04-30T00:00:00Z', description: 'Last date for the recurring series (ISO 8601)' })
   @IsDateString()
   @Type(() => Date)
   series_end_date!: Date;
@@ -34,9 +34,9 @@ export class CreateBookingSeriesDto {
 }
 
 export class UpdateBookingSeriesDto extends PartialType(CreateBookingSeriesDto) {
-  @ApiProperty({ example: 'uuid-string', description: 'Room ID to book for the series', required: false })
+  @ApiProperty({ example: 'ECS-124', description: 'Room code to book for the series', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   room_id?: string;
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)', required: false })

@@ -5,7 +5,8 @@ export type CreateBookingSeriesReq = {
   room_id: string;
   start_time: string; // ISO, e.g. "2025-10-05T10:00:00"
   end_time: string;   // ISO
-  recurrence_rule: string; // e.g. RFC5545 RRULE string, or custom (see backend)
+  recurrence_type: 'daily' | 'weekly' | 'monthly';
+  series_end_date: string; // ISO date string
   user_id?: string; // Optional: for admin/registrar to book for others
   // Add any other fields required by your backend DTO
 };
