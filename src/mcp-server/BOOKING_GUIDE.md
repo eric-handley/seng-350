@@ -26,7 +26,7 @@ This guide explains how to use the MCP server to book rooms through Cursor's AI 
 
 Once the MCP server is running and configured, you can book rooms using natural language prompts in Cursor. Here are several ways to do it:
 
-### Method 1: Direct Natural Language Request
+### Use Direct Natural Language Request
 
 Simply ask Cursor to book a room:
 
@@ -35,32 +35,18 @@ Book room ECS-124 for tomorrow from 2pm to 3pm using email staff@uvic.ca and pas
 ```
 
 ```
-Create a booking for room CLE-A308 on 2025-10-05 from 10:00 to 11:00. Use staff@uvic.ca / staff
+Create a booking for room CLE-A308 on 2025-12-01 from 10:00 to 11:00. Use staff@uvic.ca / staff
 ```
 
-### Method 2: Step-by-Step Process
+Cancellation is also available:
 
-You can also break it down:
+```
+Cancel my staff room booking for ECS-124 2pm-3pm tomorrow
+```
 
-1. **First, list available rooms:**
-   ```
-   List all rooms in the ECS building
-   ```
-
-2. **Check availability:**
-   ```
-   Check if room ECS-124 is available on 2025-10-05 from 14:00 to 15:00
-   ```
-
-3. **Then book:**
-   ```
-   Book room ECS-124 on 2025-10-05 from 14:00 to 15:00 with credentials staff@uvic.ca / staff
-   ```
-
-4. **Cancel a booking:**
-   ```
-   Cancel booking 555ca47f-a1a7-4c32-80da-62545a9e07dc using staff@uvic.ca / staff
-   ```
+```
+Cancel my room booking for CLEA308 for 10am-11am on 2025-12-01
+```
 
 ## Available Test Users
 
