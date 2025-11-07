@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from
 import { AuditLogsService } from '../../services/audit-logs.service';
 
 @Injectable()
-export class AuthenticatedGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
   constructor(private readonly auditLogsService: AuditLogsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
