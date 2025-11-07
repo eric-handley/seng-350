@@ -31,18 +31,10 @@ Once the MCP server is running and configured, you can book rooms using natural 
 Simply ask Cursor to book a room:
 
 ```
-Book room ECS-124 for tomorrow from 2pm to 3pm using email staff@uvic.ca and password staff
-```
-
-```
 Create a booking for room CLE-A308 on 2025-12-01 from 10:00 to 11:00. Use staff@uvic.ca / staff
 ```
 
 Cancellation is also available:
-
-```
-Cancel my staff room booking for ECS-124 2pm-3pm tomorrow
-```
 
 ```
 Cancel my room booking for CLEA308 for 10am-11am on 2025-12-01
