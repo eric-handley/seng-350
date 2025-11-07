@@ -188,3 +188,4 @@ start_time
 "timestamp": "2025-11-07T18:54:24.971Z",
 "path": "/bookings/recurring",
 "method": "POST"
+3. can you make the equipment into a collapsable section so it looks less cluttered?

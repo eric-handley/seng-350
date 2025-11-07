@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Room } from '../types'
 import { formatTimeForDisplay } from '../utils/time'
 import RecurringBookingModal, { RecurringBookingFormData } from './RecurringBookingModal'
+import { useEquipment } from '../hooks/useEquipment'
 
 
 
@@ -20,6 +21,9 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isR
   const [showRecurring, setShowRecurring] = useState(false);
   const [recurringLoading, setRecurringLoading] = useState(false);
   const [recurringError, setRecurringError] = useState<string | null>(null);
+  const [showEquipment, setShowEquipment] = useState(false);
+
+  const { equipment, loading: equipmentLoading, error: equipmentError } = useEquipment(room.id);
 
   const handleBookRecurring = async (data: RecurringBookingFormData) => {
     if (!onBookRecurring) return;
@@ -45,6 +49,23 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, date, start, end, onBook, isR
         <span>Building: <strong>{room.building}</strong></span>
         <span>ID: {room.id}</span>
       </div>
+      {equipment.length > 0 && (
+        <div className="meta">
+          <button
+            onClick={() => setShowEquipment(!showEquipment)}
+            style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+          >
+            {showEquipment ? 'Hide Equipment' : 'Show Equipment'}
+          </button>
+          {showEquipment && (
+            <div style={{ marginTop: '4px' }}>
+              Equipment: {equipment.map(e => e.name).join(', ')}
+            </div>
+          )}
+        </div>
+      )}
+      {equipmentLoading && <div className="meta">Loading equipment...</div>}
+      {equipmentError && <div className="meta error">Equipment error: {equipmentError}</div>}
       <div className="row" style={{ marginTop: 12 }}>
         <div className="meta">
           <span>{date}</span>
