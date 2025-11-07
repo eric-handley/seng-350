@@ -14,13 +14,13 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { RoomsService } from '../services/rooms.service';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { ScheduleQueryDto, ScheduleResponseDto } from '../dto/schedule.dto';
 
 @ApiTags('Schedule')
 @ApiBearerAuth()
 @Controller('schedule')
-@UseGuards(AuthGuard)
+@UseGuards(AuthenticatedGuard)
 export class ScheduleController {
   constructor(private readonly roomsService: RoomsService) {}
 

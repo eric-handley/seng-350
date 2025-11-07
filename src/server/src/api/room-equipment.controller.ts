@@ -24,7 +24,7 @@ import {
   CreateRoomEquipmentDto,
   UpdateRoomEquipmentDto,
 } from '../dto/room-equipment.dto';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
@@ -32,7 +32,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Room Equipment')
 @ApiBearerAuth()
 @Controller('room-equipment')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthenticatedGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 export class RoomEquipmentController {
   constructor(private readonly roomEquipmentService: RoomEquipmentService) {}

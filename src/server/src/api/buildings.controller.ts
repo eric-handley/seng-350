@@ -27,7 +27,7 @@ import { BuildingsService } from '../services/buildings.service';
 import { RoomsService } from '../services/rooms.service';
 import { BuildingResponseDto, CreateBuildingDto, UpdateBuildingDto } from '../dto/building.dto';
 import { RoomResponseDto } from '../dto/room.dto';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
@@ -35,7 +35,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Buildings')
 @ApiBearerAuth()
 @Controller('buildings')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthenticatedGuard, RolesGuard)
 export class BuildingsController {
   constructor(
     private readonly buildingsService: BuildingsService,

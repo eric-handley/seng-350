@@ -24,7 +24,7 @@ import {
 import { RoomsService } from '../services/rooms.service';
 import { RoomQueryDto, RoomResponseDto, CreateRoomDto, UpdateRoomDto } from '../dto/room.dto';
 import { RoomType } from '../database/entities/room.entity';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
@@ -32,7 +32,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Rooms')
 @ApiBearerAuth()
 @Controller('rooms')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthenticatedGuard, RolesGuard)
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 

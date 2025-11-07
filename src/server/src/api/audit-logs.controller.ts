@@ -14,7 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { AuditLogsService } from '../services/audit-logs.service';
 import { AuditLogResponseDto } from '../dto/audit-log.dto';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
@@ -22,7 +22,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Audit Logs')
 @ApiBearerAuth()
 @Controller('logs')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthenticatedGuard, RolesGuard)
 export class AuditLogsController {
   constructor(private readonly auditLogsService: AuditLogsService) {}
 

@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { EquipmentService } from '../services/equipment.service';
 import { EquipmentResponseDto, CreateEquipmentDto, UpdateEquipmentDto } from '../dto/equipment.dto';
-import { AuthGuard } from '../shared/guards/auth.guard';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
@@ -29,7 +29,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Equipment')
 @ApiBearerAuth()
 @Controller('equipment')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthenticatedGuard, RolesGuard)
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 
