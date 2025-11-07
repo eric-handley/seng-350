@@ -11,18 +11,18 @@ export class CreateBookingSeriesDto {
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)' })
   @Type(() => Date)
-    @IsDateString()
-  start_time!: string;
+  @IsDate()
+  start_time!: Date;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Series end time (ISO 8601)' })
   @Type(() => Date)
-    @IsDateString()
-  end_time!: string;
+  @IsDate()
+  end_time!: Date;
 
   @ApiProperty({ example: '2024-04-30T00:00:00Z', description: 'Last date for the recurring series (ISO 8601)' })
   @Type(() => Date)
-    @IsDateString()
-  series_end_date!: string;
+  @IsDate()
+  series_end_date!: Date;
 
   @ApiProperty({
     example: 'weekly',
@@ -42,20 +42,20 @@ export class UpdateBookingSeriesDto extends PartialType(CreateBookingSeriesDto) 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)', required: false })
   @IsOptional()
   @Type(() => Date)
-    @IsDateString()
-  start_time?: string;
+  @IsDate()
+  start_time?: Date;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Series end time (ISO 8601)', required: false })
   @IsOptional()
   @Type(() => Date)
-    @IsDateString()
-  end_time?: string;
+  @IsDate()
+  end_time?: Date;
 
   @ApiProperty({ example: '2024-04-30', description: 'Last date for the recurring series (YYYY-MM-DD)', required: false })
   @IsOptional()
   @Type(() => Date)
-    @IsDateString()
-  series_end_date?: string;
+  @IsDate()
+  series_end_date?: Date;
 
   @ApiProperty({
     example: 'weekly',

@@ -163,3 +163,28 @@ Branch `feature-6/admin-rooms-system`
 
 Branch `feature/recurring-bookings`
 1. i want to add the options for everyday, every week, or every month
+2. it seems like the payload is correct, but the post request is failing {room_id: "BWC-A104", start_time: "2025-11-08T10:00:00Z", end_time: "2025-11-08T11:00:00Z",…}
+end_time
+:
+"2025-11-08T11:00:00Z"
+recurrence_type
+:
+"weekly"
+room_id
+:
+"BWC-A104"
+series_end_date
+:
+"2025-11-25T00:00:00Z"
+start_time
+:
+"2025-11-08T10:00:00Z" "statusCode": 400,
+"message": "Validation failed",
+"error": [
+"start_time: start_time must be a valid ISO 8601 date string",
+"end_time: end_time must be a valid ISO 8601 date string",
+"series_end_date: series_end_date must be a valid ISO 8601 date string"
+],
+"timestamp": "2025-11-07T18:54:24.971Z",
+"path": "/bookings/recurring",
+"method": "POST"

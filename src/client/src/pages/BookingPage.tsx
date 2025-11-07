@@ -106,7 +106,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
       start_time: toDateNoMs(startIso),
       end_time: toDateNoMs(endIso),
       recurrence_type: data.recurrence_type,
-      series_end_date: toDateOnly(data.series_end_date),
+      series_end_date: toDateNoMs(data.series_end_date),
     });
     onBookingCreated?.();
   };
