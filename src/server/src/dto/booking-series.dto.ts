@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsOptional, IsString, IsDateString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { BookingResponseDto } from './booking.dto';
@@ -11,18 +11,18 @@ export class CreateBookingSeriesDto {
 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)' })
   @Type(() => Date)
-  @IsDate()
-  start_time!: Date;
+    @IsDateString()
+  start_time!: string;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Series end time (ISO 8601)' })
   @Type(() => Date)
-  @IsDate()
-  end_time!: Date;
+    @IsDateString()
+  end_time!: string;
 
   @ApiProperty({ example: '2024-04-30T00:00:00Z', description: 'Last date for the recurring series (ISO 8601)' })
   @Type(() => Date)
-  @IsDate()
-  series_end_date!: Date;
+    @IsDateString()
+  series_end_date!: string;
 
   @ApiProperty({
     example: 'weekly',
@@ -42,20 +42,20 @@ export class UpdateBookingSeriesDto extends PartialType(CreateBookingSeriesDto) 
   @ApiProperty({ example: '2024-01-01T09:00:00Z', description: 'Series start time (ISO 8601)', required: false })
   @IsOptional()
   @Type(() => Date)
-  @IsDate()
-  start_time?: Date;
+    @IsDateString()
+  start_time?: string;
 
   @ApiProperty({ example: '2024-01-01T10:00:00Z', description: 'Series end time (ISO 8601)', required: false })
   @IsOptional()
   @Type(() => Date)
-  @IsDate()
-  end_time?: Date;
+    @IsDateString()
+  end_time?: string;
 
   @ApiProperty({ example: '2024-04-30', description: 'Last date for the recurring series (YYYY-MM-DD)', required: false })
   @IsOptional()
   @Type(() => Date)
-  @IsDate()
-  series_end_date?: Date;
+    @IsDateString()
+  series_end_date?: string;
 
   @ApiProperty({
     example: 'weekly',
