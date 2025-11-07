@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
 import { AuditLogsService } from '../services/audit-logs.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 interface RequestWithUser extends Request {
   user?: AuthenticatedUser;
@@ -113,7 +113,7 @@ export class AuthController {
   }
 
   @Get('session')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get current session information' })
   @ApiResponse({
     status: HttpStatus.OK,

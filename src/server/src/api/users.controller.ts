@@ -23,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from '../dto/user.dto';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { AuthGuard } from '../shared/guards/auth.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/auth.service';
@@ -33,7 +33,7 @@ import { UserRole } from '../database/entities/user.entity';
 @ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
-@UseGuards(AuthenticatedGuard, RolesGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

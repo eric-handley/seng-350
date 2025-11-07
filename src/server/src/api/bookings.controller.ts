@@ -23,14 +23,14 @@ import {
 } from '@nestjs/swagger';
 import { BookingsService } from '../services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { AuthGuard } from '../shared/guards/auth.guard';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/auth.service';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()
 @Controller('bookings')
-@UseGuards(AuthenticatedGuard)
+@UseGuards(AuthGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
