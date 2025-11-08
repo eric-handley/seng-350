@@ -1,9 +1,3 @@
-// Mock ESM-only module to avoid Jest transform errors
-// Must be declared before imports that transitively load it
-jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
-}));
-
 // Ensure AppModule connects to the dedicated test services
 (() => {
   process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
@@ -26,23 +20,6 @@ import { Repository } from 'typeorm';
 import { Request, Response as ExpressResponse, NextFunction } from 'express';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
-
-// Augment Express Request type to include user property
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        first_name: string;
-        last_name: string;
-        role: UserRole;
-      };
-    }
-  }
-}
-
 import { Building } from '../../src/database/entities/building.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';

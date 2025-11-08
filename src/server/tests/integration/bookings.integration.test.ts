@@ -1,8 +1,3 @@
-// Mock ESM-only module to avoid Jest transform errors
-jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
-}));
-
 // Ensure AppModule connects to the dedicated test services
 (() => {
   process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
