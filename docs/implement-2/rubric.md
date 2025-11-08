@@ -22,7 +22,7 @@
 | Acceptance Tests                                         | /5             |        |                                                                       |
 | Test Coverage                                            | /5             |        |                                                               |
 | **Project Management & Collaboration (9 marks)**         |                | ---    |                                                                                                                                                                   |
-| Version Control                                          | /3             |        |                                           |
-| Issue Tracking & Code Reviews                            | /3             |        |                                                               |
-| Prompting Document                                       | /3             |        |                                                                                      |
+| Version Control                                          | /3             |   DONE     |                 Commit history with meaningful messages and modular Merge Requests for each feature.                      |
+| Issue Tracking & Code Reviews                            | /3             |    DONE    |       Issues tracked and updated on the "Issues" page and code reviews performed on MRs                                                     |
+| Prompting Document                                       | /3             |   DONE     |       Prompts documented in docs/prompts.md                                                                                |
 | **Total**                                                | **/74**        |   ---     |                                                                                                                                   |
