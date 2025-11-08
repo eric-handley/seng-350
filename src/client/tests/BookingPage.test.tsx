@@ -1,17 +1,5 @@
 /**
- * BookingPage.test.tsx
- *
- * What this suite covers:
- * - Loading state: shows a loading placeholder while either data source is loading
- * - Error state: surfaces upstream error messages from useRooms/useSchedule
- * - Empty state: shows a friendly "no rooms available" message when filters yield no rooms
- * - Success state: renders RoomCard items and invokes createBooking on "Book"
- * - Booking error: displays a banner when createBooking reports an error
- *
- * Test strategy:
- * - Hooks (useRooms/useSchedule/useBookingHistory) are mocked to control loading/error/data
- * - FilterPanel is mocked to a minimal stub (we only need building value/handler)
- * - RoomCard is mocked to render the name and expose a button to trigger onBook
+ * BookingPage.test.tsx - Tests room booking UI and availability logic
  */
 
 import React from 'react';
@@ -22,13 +10,10 @@ import { useBookingHistory } from '../src/hooks/useBookingHistory';
 import { useRooms } from '../src/hooks/useRooms';
 import { Room } from '../src/types';
 
-// Mock hooks so tests can deterministically drive component state
 jest.mock('../src/hooks/useSchedule');
 jest.mock('../src/hooks/useBookingHistory');
 jest.mock('../src/hooks/useRooms');
 
-// Mock child components:
-// - FilterPanel: exposes setBuilding click to keep props flow testable without UI complexity
 jest.mock('../src/components/FilterPanel', () => ({
     FilterPanel: ({ building, setBuilding }: { building: string; setBuilding: (b: string) => void }) => (
         <div data-testid="filter-panel">
@@ -37,24 +22,21 @@ jest.mock('../src/components/FilterPanel', () => ({
         </div>
     ),
 }));
-// - RoomCard: shows room name and toggles button label based on reserved state; clicking calls onBook
-type RoomWithReserved = Room & { isReserved: boolean };
+
 jest.mock('../src/components/RoomCard', () => ({
-    RoomCard: ({ room, onBook }: { room: RoomWithReserved; onBook: (room: RoomWithReserved) => void }) => (
+    RoomCard: ({ room, isReserved, onBook }: { room: any; isReserved?: boolean; onBook: (room: any) => void }) => (
         <div data-testid="room-card">
             <h3>{room.name}</h3>
-            <button onClick={() => onBook(room)}>{room.isReserved ? 'Reserved' : 'Book'}</button>
+            <button onClick={() => onBook(room)}>{isReserved ? 'Reserved' : 'Book'}</button>
         </div>
     ),
 }));
 
 describe('<BookingPage />', () => {
-    // Typed handles to the mocked hooks
     const mockUseSchedule = useSchedule as jest.Mock;
     const mockUseBookingHistory = useBookingHistory as jest.Mock;
     const mockUseRooms = useRooms as jest.Mock;
 
-    // Common props used across tests
     const baseProps = {
         currentUserId: '123',
         building: '',
@@ -71,55 +53,40 @@ describe('<BookingPage />', () => {
     };
 
     beforeEach(() => {
-        // Clean all mocks to avoid cross-test interference
         jest.clearAllMocks();
     });
 
     test('renders loading state', async () => {
-        // Arrange: rooms still loading; schedule loaded; no booking error
         mockUseRooms.mockReturnValue({ rooms: [], loading: true, error: null });
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
 
-        // Act
         render(<BookingPage {...baseProps} />);
-
-        // Assert: loading placeholder is visible
         expect(await screen.findByText(/Loading available rooms/i)).toBeInTheDocument();
     });
 
     test('renders error state', async () => {
-        // Arrange: rooms hook reports an error
         mockUseRooms.mockReturnValue({ rooms: [], loading: false, error: 'Rooms fetch failed' });
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
 
-        // Act
         render(<BookingPage {...baseProps} />);
-
-        // Assert: upstream error message is shown
         expect(await screen.findByText(/Error: Rooms fetch failed/i)).toBeInTheDocument();
     });
 
-    test('renders empty state when no rooms are available', async () => {
-        // Arrange: no data errors, but no rooms returned after filters
+    test('renders empty state when no rooms available', async () => {
         mockUseRooms.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
 
-        // Act
         render(<BookingPage {...baseProps} />);
-
-        // Assert: empty copy suggests adjusting filters
         expect(await screen.findByText(/No rooms available/i)).toBeInTheDocument();
     });
 
-    test('renders rooms and can trigger booking', async () => {
-        // Arrange:
-        // - createBooking succeeds
+    test('renders rooms and triggers booking', async () => {
         const mockCreateBooking = jest.fn().mockResolvedValue(undefined);
         mockUseBookingHistory.mockReturnValue({ createBooking: mockCreateBooking, error: null });
-        // - one available room, schedule has no bookings
+
         const mockRooms: Room[] = [
             {
                 room_id: 'room1',
@@ -135,31 +102,173 @@ describe('<BookingPage />', () => {
         mockUseRooms.mockReturnValue({ rooms: mockRooms, loading: false, error: null });
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
 
-        // Act
         render(<BookingPage {...baseProps} />);
-
-        // Assert: RoomCard shows the composed room name
         expect(await screen.findByText(/ECS 125/i)).toBeInTheDocument();
 
-        // Act: user clicks "Book" and triggers booking flow
         fireEvent.click(screen.getByText('Book'));
 
-        // Assert: createBooking called with correct payload and success callback fired
         await waitFor(() => expect(mockCreateBooking).toHaveBeenCalledTimes(1));
         expect(mockCreateBooking).toHaveBeenCalledWith('room1', '2025-10-05', '09:00', '10:00');
         expect(baseProps.onBookingCreated).toHaveBeenCalled();
     });
 
     test('renders booking error message', async () => {
-        // Arrange: booking hook exposes an error banner
         mockUseRooms.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
         mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: 'Booking failed' });
 
-        // Act
+        render(<BookingPage {...baseProps} />);
+        expect(await screen.findByText(/Booking error: Booking failed/i)).toBeInTheDocument();
+    });
+
+    test('marks rooms as reserved when they appear in booked slots', async () => {
+        const allRooms: Room[] = [
+            {
+                room_id: 'avail1',
+                building_short_name: 'ECS',
+                room_number: '101',
+                room_type: 'classroom',
+                capacity: 40,
+                slots: [],
+            } as unknown as Room,
+            {
+                room_id: 'booked1',
+                building_short_name: 'ECS',
+                room_number: '102',
+                room_type: 'classroom',
+                capacity: 35,
+                slots: [],
+            } as unknown as Room,
+        ];
+
+        const bookedRooms: Room[] = [
+            {
+                room_id: 'booked1',
+                building_short_name: 'ECS',
+                room_number: '102',
+                room_type: 'classroom',
+                capacity: 35,
+                slots: [
+                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
+                ],
+            } as unknown as Room,
+        ];
+
+        mockUseRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
+        mockUseSchedule.mockReturnValue({ rooms: bookedRooms, loading: false, error: null });
+        mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
+
         render(<BookingPage {...baseProps} />);
 
-        // Assert: booking error is surfaced to the user
-        expect(await screen.findByText(/Booking error: Booking failed/i)).toBeInTheDocument();
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument();
+        expect(screen.getByText(/ECS 102/i)).toBeInTheDocument();
+
+        const cards = screen.getAllByTestId('room-card');
+        expect(cards).toHaveLength(2);
+    });
+
+    test('shows all rooms as reserved when time filter is incomplete', async () => {
+        const mockRooms: Room[] = [
+            {
+                room_id: 'r1',
+                building_short_name: 'ECS',
+                room_number: '105',
+                room_type: 'classroom',
+                capacity: 30,
+                slots: [],
+            } as unknown as Room,
+        ];
+
+        mockUseRooms.mockReturnValue({ rooms: mockRooms, loading: false, error: null });
+        mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
+        mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
+
+        render(
+            <BookingPage
+                {...baseProps}
+                start=""
+            />
+        );
+
+        expect(screen.getByText(/ECS 105/i)).toBeInTheDocument();
+        const cards = screen.getAllByTestId('room-card');
+        expect(cards).toHaveLength(1);
+    });
+
+    test('filters rooms by room query text', async () => {
+        const allRooms: Room[] = [
+            {
+                room_id: 'r101',
+                building_short_name: 'ECS',
+                room_number: '101',
+                room_type: 'classroom',
+                capacity: 40,
+                slots: [],
+            } as unknown as Room,
+            {
+                room_id: 'r102',
+                building_short_name: 'ECS',
+                room_number: '102',
+                room_type: 'classroom',
+                capacity: 35,
+                slots: [],
+            } as unknown as Room,
+        ];
+
+        mockUseRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
+        mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
+        mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
+
+        const props = {
+            ...baseProps,
+            roomQuery: '101',
+        };
+        render(<BookingPage {...props} />);
+
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument();
+        expect(screen.queryByText(/ECS 102/i)).not.toBeInTheDocument();
+    });
+
+    test('shows available and booked rooms', async () => {
+        const allRooms: Room[] = [
+            {
+                room_id: 'avail',
+                building_short_name: 'ECS',
+                room_number: '201',
+                room_type: 'classroom',
+                capacity: 40,
+                slots: [],
+            } as unknown as Room,
+            {
+                room_id: 'booked',
+                building_short_name: 'ECS',
+                room_number: '202',
+                room_type: 'classroom',
+                capacity: 35,
+                slots: [],
+            } as unknown as Room,
+        ];
+
+        const bookedRooms: Room[] = [
+            {
+                room_id: 'booked',
+                building_short_name: 'ECS',
+                room_number: '202',
+                room_type: 'classroom',
+                capacity: 35,
+                slots: [
+                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
+                ],
+            } as unknown as Room,
+        ];
+
+        mockUseRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
+        mockUseSchedule.mockReturnValue({ rooms: bookedRooms, loading: false, error: null });
+        mockUseBookingHistory.mockReturnValue({ createBooking: jest.fn(), error: null });
+
+        render(<BookingPage {...baseProps} />);
+
+        expect(screen.getByText(/ECS 201/i)).toBeInTheDocument();
+        expect(screen.getByText(/ECS 202/i)).toBeInTheDocument();
     });
 });

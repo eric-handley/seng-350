@@ -6,26 +6,20 @@
  * - Error state: surfaces hook error messages to the user
  * - Empty state: shows a friendly message when there are no bookings for the date
  * - Successful render: displays a schedule table with room labels and booked slots
- * - Initial filtering context: verifies both rooms render when FilterPanel is mocked
+ * - Room query filtering: verifies client-side filtering by room number and building
  *
  * Notes on test strategy:
  * - useSchedule is mocked so each test can control rooms/loading/error explicitly.
- * - FilterPanel is mocked as a dumb component (no interactions), so these tests
- *   focus on SchedulePage’s rendering logic, not filter UI behavior.
+ * - FilterPanel is NOT mocked, allowing us to test actual filtering interactions.
  */
 
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { SchedulePage } from '../src/pages/SchedulePage'
 import { useSchedule } from '../src/hooks/useSchedule'
 
-// Mock the data hook and FilterPanel dependency.
-// - The hook mock lets us drive the component state (loading/error/data) deterministically.
-// - FilterPanel is replaced by a placeholder so tests don't depend on its implementation details.
+// Mock the data hook only; FilterPanel remains unmocked so we can test filtering
 jest.mock('../src/hooks/useSchedule')
-jest.mock('../src/components/FilterPanel', () => ({
-    FilterPanel: jest.fn(() => <div data-testid="filter-panel" />)
-}))
 
 // Cast the imported hook to a jest.Mock so we can set return values per test.
 const mockUseSchedule = useSchedule as jest.Mock
@@ -110,8 +104,8 @@ describe('<SchedulePage />', () => {
         expect(screen.getByRole('table', { name: /Schedule/i })).toBeInTheDocument()
     })
 
-    it('filters booked slots by room query', () => {
-        // Arrange: rooms across two buildings; FilterPanel is mocked so no interactive filtering here.
+    it('filters booked slots by room number query', () => {
+        // Arrange: rooms across two buildings with different room numbers
         const rooms = [
             {
                 room_id: 'r1',
@@ -135,19 +129,109 @@ describe('<SchedulePage />', () => {
             }
         ]
 
-        // Hook returns both rooms, no loading/error
         mockUseSchedule.mockReturnValue({ rooms, loading: false, error: null })
 
-        // Act: render the page. Since FilterPanel is mocked, this verifies initial, unfiltered render.
+        // Act: render the page
         render(
-            <SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />
+            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
         )
 
-        // Note: To test actual filtering behavior, either:
-        //  - use the real FilterPanel and simulate its events, or
-        //  - enhance the mock to call the provided callbacks.
-        // Assert: both rooms are visible initially
+        // Assert: both rooms visible initially
         expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
         expect(screen.getByText(/SCI 102/i)).toBeInTheDocument()
+
+        // Act: filter by room number '101'
+        const roomQueryInput = screen.getByPlaceholderText(/CLE-A308/i) as HTMLInputElement
+        fireEvent.change(roomQueryInput, { target: { value: '101' } })
+
+        // Assert: only ECS 101 is visible; SCI 102 is filtered out
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
+        expect(screen.queryByText(/SCI 102/i)).not.toBeInTheDocument()
+    })
+
+    it('filters booked slots by building short name', () => {
+        // Arrange: rooms across two buildings
+        const rooms = [
+            {
+                room_id: 'r1',
+                room_number: '101',
+                building_short_name: 'ECS',
+                building_name: 'Engineering',
+                capacity: 30,
+                slots: [
+                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                ]
+            },
+            {
+                room_id: 'r2',
+                room_number: '102',
+                building_short_name: 'SCI',
+                building_name: 'Science',
+                capacity: 25,
+                slots: [
+                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                ]
+            }
+        ]
+
+        mockUseSchedule.mockReturnValue({ rooms, loading: false, error: null })
+
+        // Act: render the page
+        render(
+            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
+        )
+
+        // Assert: both rooms visible initially
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
+        expect(screen.getByText(/SCI 102/i)).toBeInTheDocument()
+
+        // Act: filter by building 'ECS'
+        const roomQueryInput = screen.getByPlaceholderText(/CLE-A308/i) as HTMLInputElement
+        fireEvent.change(roomQueryInput, { target: { value: 'ECS' } })
+
+        // Assert: only ECS 101 is visible; SCI 102 is filtered out
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
+        expect(screen.queryByText(/SCI 102/i)).not.toBeInTheDocument()
+    })
+
+    it('filters by concatenated room identifier (e.g., "ECS101")', () => {
+        // Arrange: rooms with different buildings and numbers
+        const rooms = [
+            {
+                room_id: 'r1',
+                room_number: '101',
+                building_short_name: 'ECS',
+                building_name: 'Engineering',
+                capacity: 30,
+                slots: [
+                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                ]
+            },
+            {
+                room_id: 'r2',
+                room_number: '201',
+                building_short_name: 'ECS',
+                building_name: 'Engineering',
+                capacity: 25,
+                slots: [
+                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                ]
+            }
+        ]
+
+        mockUseSchedule.mockReturnValue({ rooms, loading: false, error: null })
+
+        // Act: render the page
+        render(
+            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
+        )
+
+        // Act: filter by concatenated identifier 'ECS101'
+        const roomQueryInput = screen.getByPlaceholderText(/CLE-A308/i) as HTMLInputElement
+        fireEvent.change(roomQueryInput, { target: { value: 'ECS101' } })
+
+        // Assert: only ECS 101 matches; ECS 201 is filtered out
+        expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
+        expect(screen.queryByText(/ECS 201/i)).not.toBeInTheDocument()
     })
 })
