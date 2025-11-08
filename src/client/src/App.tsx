@@ -68,7 +68,11 @@ const HomeComponent: React.FC = () => {
   } = useUsers({ autoLoad: !!canManageUsers });
 
   // Fetch audit logs for admin users
-  const { auditLogs, loading: auditLoading, error: auditError } = useAuditLogs();
+  const {
+    auditLogs,
+    loading: auditLoading,
+    error: auditError,
+  } = useAuditLogs();
   const auditRows = auditLogs.map(convertAuditLogToRow);
 
   // Room filtering state
@@ -95,7 +99,9 @@ const HomeComponent: React.FC = () => {
     <div className="app-shell">
       <div className="header">
         <div className="header-info">
-          <span className="badge">{String(currentUser.role).toUpperCase()}</span>
+          <span className="badge">
+            {String(currentUser.role).toUpperCase()}
+          </span>
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">
@@ -151,12 +157,18 @@ const HomeComponent: React.FC = () => {
           onCancelAdd={() => setAddingUser(null)}
         />
       )}
-      {tab === "audit" && currentUser.role === UserRole.ADMIN && (
-        <AuditTable rows={auditRows} loading={auditLoading} error={auditError} />
-      )}
-      {tab === "health" && (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
-        <SystemHealth />
-      )}
+      {tab === "audit" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && (
+          <AuditTable
+            rows={auditRows}
+            loading={auditLoading}
+            error={auditError}
+          />
+        )}
+      {tab === "health" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && <SystemHealth />}
       {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
         <BuildingsRooms />
       )}
@@ -196,7 +208,6 @@ const AppRouter: React.FC = () => {
     </Routes>
   );
 };
-
 
 export default function App() {
   return (
