@@ -79,26 +79,20 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   };
 
   // Recurring booking handler
-  const handleBookRecurring = async (data: any) => {
+  const handleBookRecurring = async (data: RecurringBookingFormData) => {
     // Convert ISO strings to JS Date objects before sending, remove milliseconds
     const toDateNoMs = (d: string) => {
-      if (!d) return '';
+      if (!d) {return '';}
       const date = new Date(d);
       // Remove milliseconds and format as 'YYYY-MM-DDTHH:mm:ssZ'
       return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
     };
-    // For series_end_date, use only the date part (YYYY-MM-DD)
-    const toDateOnly = (d: string) => {
-      if (!d) return '';
-      const date = new Date(d);
-      return date.toISOString().slice(0, 10);
-    };
     let startIso = data.start_time;
     let endIso = data.end_time;
-    if (!startIso || !startIso.includes('T')) {
+    if (!startIso?.includes('T')) {
       startIso = data.date ? `${data.date}T${data.start_time}:00Z` : '';
     }
-    if (!endIso || !endIso.includes('T')) {
+    if (!endIso?.includes('T')) {
       endIso = data.date ? `${data.date}T${data.end_time}:00Z` : '';
     }
     await createBookingSeries({

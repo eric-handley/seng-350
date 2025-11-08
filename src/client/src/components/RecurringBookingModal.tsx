@@ -31,7 +31,7 @@ const RecurringBookingModal: React.FC<RecurringBookingModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!open) return null;
+  if (!open) {return null;}
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +46,9 @@ const RecurringBookingModal: React.FC<RecurringBookingModalProps> = ({
         recurrence_type: recurrenceType,
         series_end_date: seriesEndDate,
       });
-    } catch (err: any) {
-      setError(err.message || 'Failed to create recurring booking');
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message ?? 'Failed to create recurring booking');
     } finally {
       setSubmitting(false);
     }
@@ -60,7 +61,7 @@ const RecurringBookingModal: React.FC<RecurringBookingModalProps> = ({
         <form onSubmit={handleSubmit}>
           <div>
             <label>Recurrence:</label>
-            <select value={recurrenceType} onChange={e => setRecurrenceType(e.target.value as any)}>
+            <select value={recurrenceType} onChange={e => setRecurrenceType(e.target.value as 'daily' | 'weekly' | 'monthly')}>
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>

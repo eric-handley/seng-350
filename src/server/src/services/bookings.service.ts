@@ -57,8 +57,8 @@ export class BookingsService {
 
     // Generate all occurrences
     const bookings: Booking[] = [];
-    let occurrenceStart = new Date(start_time);
-    let occurrenceEnd = new Date(end_time);
+    const occurrenceStart = new Date(start_time);
+    const occurrenceEnd = new Date(end_time);
     const lastDate = new Date(series_end_date);
 
     while (occurrenceStart <= lastDate) {
