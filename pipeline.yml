@@ -36,8 +36,7 @@ jest-tests:
     - echo "Seeding test database..."
     - docker compose run --rm test-db-setup
     - echo "Running test suites..."
-    - npm test
-    # - npm run test:coverage - Will reenable later
+    - npm run test:coverage
   after_script:
     - docker compose down -v
   timeout: 10 minutes
