@@ -33,7 +33,7 @@ services:
     healthcheck:
       # Again, really stupid, works great!
       test: ["CMD-SHELL", "test -f /tmp/deps-ready"]
-      interval: 1s
+      interval: 5s
       timeout: 1s
       retries: 300
 
