@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { formatISO } from 'date-fns'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'
@@ -42,7 +43,7 @@ export function useBookingHistory(userId: string) {
     const tempId = `temp-${Date.now()}`
     const startIso = toIsoDateTimeUTC(date, startApi)
     const endIso = toIsoDateTimeUTC(date, endApi)
-    const nowIso = new Date().toISOString()
+    const nowIso = formatISO(new Date())
 
     const temp: ApiBooking = {
       id: tempId,

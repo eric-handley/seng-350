@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { parseISO, format } from 'date-fns';
 import { AuditRow } from "../../types/admin";
 import { Badge } from "./AdminComponents";
 import { filterAudits } from "../../utils/adminUtils";
@@ -134,7 +135,7 @@ export const AuditTable = ({
                 <td className="mono" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.id}>
                   {r.id}
                 </td>
-                <td className="mono">{new Date(r.time).toLocaleString()}</td>
+                <td className="mono">{format(parseISO(r.time), 'Ppp')}</td>
                 <td>{r.actor}</td>
                 <td className="mono">{r.action}</td>
                 <td className="mono">{r.target}</td>

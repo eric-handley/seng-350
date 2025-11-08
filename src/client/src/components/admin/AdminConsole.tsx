@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getYear } from 'date-fns';
 import { useAuditLogs } from "../../hooks/useAuditLogs";
 import { useDarkModePref } from "../../hooks/useDarkMode";
 import { convertAuditLogToRow } from "../../types/admin";
@@ -87,7 +88,7 @@ export default function AdminConsole({ onLogout }: AdminConsoleProps = {}) {
       </section>
 
       <footer className="footer">
-        <div>© {new Date().getFullYear()} UVic • Admin • Demo UI</div>
+        <div>© {getYear(new Date())} UVic • Admin • Demo UI</div>
         <div className="links">
           <a href="#">Docs</a>
           <a href="#">Status</a>
