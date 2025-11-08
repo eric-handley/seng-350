@@ -8,12 +8,12 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    // Check if user is authenticated (Passport sets req.isAuthenticated())
-    if (!request.isAuthenticated()) {
+    // Check if user is authenticated (Passport sets req.user via session)
+    if (!request.user) {
       // Log 401 error before throwing
       await this.auditLogsService.logApiError(request, 401);
-      throw new UnauthorizedException('Authentication required');
-    }
+      throw new UnauthorizedException('Not authenticated');
+   }
 
     return true;
   }

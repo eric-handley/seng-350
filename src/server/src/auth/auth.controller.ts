@@ -4,7 +4,6 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
 import { AuditLogsService } from '../services/audit-logs.service';
-import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthGuard } from '../shared/guards/auth.guard';
 
 interface RequestWithUser extends Request {
@@ -32,7 +31,6 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
@@ -48,9 +46,16 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Req() req: RequestWithUser,
   ): Promise<AuthenticatedUser> {
-    // Passport has already authenticated the user via LocalAuthGuard
-    // and set req.user
-    const user = req.user!;
+    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Persist session via Passport
+    await new Promise<void>((resolve, reject) => {
+      req.logIn(user, (err) => (err ? reject(err) : resolve()));
+    });
 
     // Log the login event
     await this.auditLogsService.createAuditLog(
