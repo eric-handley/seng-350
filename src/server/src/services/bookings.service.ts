@@ -28,7 +28,9 @@ export class BookingsService {
       throw new BadRequestException('Room ID must not be empty');
     }
 
-    if (!isBefore(parseISO(start_time as string), parseISO(end_time as string))) {
+    const startDate = typeof start_time === 'string' ? parseISO(start_time) : (start_time instanceof Date ? start_time : parseISO(start_time as unknown as string));
+    const endDate = typeof end_time === 'string' ? parseISO(end_time) : (end_time instanceof Date ? end_time : parseISO(end_time as unknown as string));
+    if (!isBefore(startDate, endDate)) {
       throw new BadRequestException('Start time must be before end time');
     }
 
@@ -142,7 +144,9 @@ export class BookingsService {
     }
 
     if (updateBookingDto.start_time && updateBookingDto.end_time) {
-      if (!isBefore(parseISO(updateBookingDto.start_time as string), parseISO(updateBookingDto.end_time as string))) {
+      const startDate = typeof updateBookingDto.start_time === 'string' ? parseISO(updateBookingDto.start_time) : (updateBookingDto.start_time instanceof Date ? updateBookingDto.start_time : parseISO(updateBookingDto.start_time as unknown as string));
+      const endDate = typeof updateBookingDto.end_time === 'string' ? parseISO(updateBookingDto.end_time) : (updateBookingDto.end_time instanceof Date ? updateBookingDto.end_time : parseISO(updateBookingDto.end_time as unknown as string));
+      if (!isBefore(startDate, endDate)) {
         throw new BadRequestException('Start time must be before end time');
       }
     }
@@ -332,7 +336,9 @@ export class BookingsService {
       }
 
       if (updateDto.start_time && updateDto.end_time) {
-        if (!isBefore(parseISO(updateDto.start_time as string), parseISO(updateDto.end_time as string))) {
+        const startDate = typeof updateDto.start_time === 'string' ? parseISO(updateDto.start_time) : updateDto.start_time;
+        const endDate = typeof updateDto.end_time === 'string' ? parseISO(updateDto.end_time) : updateDto.end_time;
+        if (!isBefore(startDate, endDate)) {
           throw new BadRequestException('Start time must be before end time');
         }
       }
@@ -394,7 +400,8 @@ export class BookingsService {
   }
 
   private validateNotInPast(startTime: Date, userRole: UserRole): void {
-    if (userRole === UserRole.STAFF && isBefore(parseISO(startTime as unknown as string), new Date())) {
+    const start = typeof startTime === 'string' ? parseISO(startTime) : (startTime instanceof Date ? startTime : parseISO(startTime as unknown as string));
+    if (userRole === UserRole.STAFF && isBefore(start, new Date())) {
       throw new BadRequestException('Cannot create bookings in the past');
     }
   }
