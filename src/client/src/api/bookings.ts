@@ -7,8 +7,7 @@ export type CreateBookingSeriesReq = {
   end_time: string;   // ISO
   recurrence_type: 'daily' | 'weekly' | 'monthly';
   series_end_date: string; // ISO date string
-  user_id?: string; // Optional: for admin/registrar to book for others
-  // Add any other fields required by your backend DTO
+  user_id?: string;
 };
 
 /**
@@ -93,7 +92,6 @@ export async function cancelBooking(id: string): Promise<void> {
     credentials: 'include',
     headers: { 'Accept': 'application/json' },
   })
-  // Swagger shows 204 No Content on success
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(`DELETE /bookings/${id} failed: ${res.status} ${res.statusText} ${text}`)
