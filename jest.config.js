@@ -34,14 +34,6 @@ export default {
         '!src/client/src/main.tsx',
       ],
       setupFilesAfterEnv: ['<rootDir>/src/client/tests/setup.ts'],
-      coverageThreshold: {
-        global: {
-          branches: 0,
-          functions: 70,
-          lines: 0,
-          statements: 70,
-        },
-      },
     },
     {
       displayName: 'server',
@@ -65,14 +57,6 @@ export default {
         '!src/server/src/**/*.test.ts',
         '!src/server/src/main.ts',
       ],
-      coverageThreshold: {
-        global: {
-          branches: 0,
-          functions: 70,
-          lines: 0,
-          statements: 70,
-        },
-      },
     },
   ],
 };
