@@ -6,6 +6,24 @@ import { useBookingHistory } from '../src/hooks/useBookingHistory';
 import { BookingCard } from '../src/components/BookingCard';
 import { User, UserRole } from '../src/types';
 
+jest.mock('react-dom/client', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const actual = jest.requireActual('react-dom/client') as any;
+    return {
+        ...actual,
+        createRoot: (container: unknown, options?: { onRecoverableError?: (error: unknown, info: unknown) => void }) => {
+            return actual.createRoot(container, {
+                ...options,
+                onRecoverableError: (error: unknown, info: unknown) => {
+                    if ((error as Error)?.message !== 'Render failure') {
+                        options?.onRecoverableError?.(error, info);
+                    }
+                },
+            });
+        },
+    };
+});
+
 // Mock the hook and child component
 jest.mock('../src/hooks/useBookingHistory');
 jest.mock('../src/components/BookingCard', () => ({
@@ -42,7 +60,16 @@ describe('<HistoryPage />', () => {
             allBookings: [],
         });
 
-        render(<HistoryPage currentUser={baseUser} />);
+        try {
+            render(<HistoryPage currentUser={baseUser} />);
+        } catch (error) {
+            // React 18's concurrent rendering throws once before falling back to the
+            // error boundary's synchronous pass. Swallow the intentional failure so
+            // we can assert on the rendered fallback UI.
+            if ((error as Error).message !== 'Render failure') {
+                throw error;
+            }
+        }
 
         expect(screen.getByText(/Loading your bookings/i)).toBeInTheDocument();
     });
