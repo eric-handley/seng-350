@@ -1,0 +1,21 @@
+{
+  "name": "uvic-booking-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for UVic Room Booking System",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.8",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}
+
