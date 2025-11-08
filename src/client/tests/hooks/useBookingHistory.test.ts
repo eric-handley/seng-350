@@ -1,23 +1,30 @@
-// @ts-nocheck
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useBookingHistory } from '../../src/hooks/useBookingHistory';
 import * as bookingsApi from '../../src/api/bookings';
 import * as timeUtils from '../../src/utils/time';
+import type { UiBooking } from '../../src/types';
 
 jest.mock('../../src/api/bookings');
 jest.mock('../../src/utils/time');
 jest.mock('../../src/utils/bookings', () => ({
-  mapApiBookingToUi: (booking: any) => ({
+  mapApiBookingToUi: (booking: bookingsApi.Booking): UiBooking => ({
     id: booking.id,
     roomId: booking.room_id,
     start: booking.start_time,
     end: booking.end_time,
+    user: booking.user_id,
   }),
-  mergeBookings: jest.fn((opt, srv) => [...opt, ...srv]),
-  reconcileTemp: jest.fn((prev: any[], tempId, real) =>
-    prev.map((b: any) => (b.id === tempId && real ? real : b))
+  mergeBookings: jest.fn(
+    (optimistic: bookingsApi.Booking[], server: bookingsApi.Booking[]) => [
+      ...optimistic,
+      ...server,
+    ]
   ),
-  toIsoDateTimeUTC: jest.fn((date, time) => `${date}T${time}Z`),
+  reconcileTemp: jest.fn(
+    (prev: bookingsApi.Booking[], tempId: string, real?: bookingsApi.Booking) =>
+      prev.map((booking) => (booking.id === tempId && real ? real : booking))
+  ),
+  toIsoDateTimeUTC: jest.fn((date: string, time: string) => `${date}T${time}Z`),
 }));
 
 const mockFetchUserBookings = jest.mocked(bookingsApi.fetchUserBookings);

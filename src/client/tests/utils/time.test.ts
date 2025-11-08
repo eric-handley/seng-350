@@ -23,7 +23,7 @@ describe('time utils', () => {
     });
 
     it('returns undefined for null or undefined', () => {
-      expect(timeUtils.toApiTime(null as any)).toBeUndefined();
+      expect(timeUtils.toApiTime(null as unknown as string)).toBeUndefined();
       expect(timeUtils.toApiTime(undefined)).toBeUndefined();
     });
   });
@@ -40,7 +40,7 @@ describe('time utils', () => {
     });
 
     it('returns empty string for null or undefined', () => {
-      expect(timeUtils.fromApiTime(null as any)).toBe('');
+      expect(timeUtils.fromApiTime(null as unknown as string)).toBe('');
       expect(timeUtils.fromApiTime(undefined)).toBe('');
     });
   });
@@ -98,8 +98,8 @@ describe('time utils', () => {
     });
 
     it('returns null for non-string input', () => {
-      expect(timeUtils.parseUserTimeInput(null as any)).toBeNull();
-      expect(timeUtils.parseUserTimeInput(undefined as any)).toBeNull();
+      expect(timeUtils.parseUserTimeInput(null as unknown as string)).toBeNull();
+      expect(timeUtils.parseUserTimeInput(undefined as unknown as string)).toBeNull();
     });
 
     it('handles mixed delimiters', () => {

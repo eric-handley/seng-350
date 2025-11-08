@@ -1,5 +1,6 @@
 import * as bookingsUtils from '../../src/utils/bookings';
 import * as bookingsApi from '../../src/api/bookings';
+import type { UiBooking } from '../../src/types';
 
 describe('bookings utils', () => {
   describe('toIsoDateTimeUTC', () => {
@@ -126,7 +127,13 @@ describe('bookings utils', () => {
         },
       };
 
-      const result = bookingsUtils.mapApiBookingToUi(booking) as any;
+      type UiBookingWithUser = UiBooking & {
+        user_name: string;
+        user_email: string;
+        user_role: string;
+      };
+
+      const result = bookingsUtils.mapApiBookingToUi(booking) as UiBookingWithUser;
 
       expect(result.user_name).toBe('John Doe');
       expect(result.user_email).toBe('john@uvic.ca');

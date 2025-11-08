@@ -62,7 +62,7 @@ describe('useSchedule', () => {
   it('refetches when query changes', async () => {
     mockFetchSchedule.mockResolvedValueOnce(mockSchedule);
 
-    const { result, rerender } = renderHook(
+    const { rerender } = renderHook(
       ({ query }: { query: scheduleApi.ScheduleQuery }) => useSchedule(query),
       { initialProps: { query: { date: '2025-01-15' } } }
     );

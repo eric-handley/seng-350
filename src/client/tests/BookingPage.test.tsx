@@ -24,7 +24,7 @@ jest.mock('../src/components/FilterPanel', () => ({
 }));
 
 jest.mock('../src/components/RoomCard', () => ({
-    RoomCard: ({ room, isReserved, onBook }: { room: any; isReserved?: boolean; onBook: (room: any) => void }) => (
+    RoomCard: ({ room, isReserved, onBook }: { room: Room; isReserved?: boolean; onBook: (room: Room) => void }) => (
         <div data-testid="room-card">
             <h3>{room.name}</h3>
             <button onClick={() => onBook(room)}>{isReserved ? 'Reserved' : 'Book'}</button>
