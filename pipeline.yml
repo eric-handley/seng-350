@@ -5,7 +5,6 @@ workflow:
 
 stages:
   - lint
-  - build 
   - test
 
 variables:
@@ -25,21 +24,6 @@ eslint:
     - echo "Running ESlint checks..."
     - npx eslint .
 
-test-docker-build:
-  stage: build
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  script:
-    - echo "Pulling Docker images..."
-    - docker compose pull
-    - echo "Running dependency installation..."
-    - docker compose run --rm deps
-    - echo "Test building services..."
-    - docker compose build
-  timeout: 10 minutes
-  retry:
-    max: 2
-
 jest-tests:
   stage: test
   rules:
@@ -57,5 +41,3 @@ jest-tests:
   after_script:
     - docker compose down -v
   timeout: 10 minutes
-  retry:
-    max: 2

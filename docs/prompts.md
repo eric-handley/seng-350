@@ -1,3 +1,12 @@
+**Date Library Refactoring**
+Branch: `issue-64/registrar-stat-logs`
+- `claude-code` prompts:
+  - scan the entire codebase for usages of JS/TS's default Date lib. this will include some skipped tests. come up with a modern choice of a lightweight replacement time library
+  - come up with a comprehensive plan to switch into date-fns
+  - implement the above changes
+
+---
+
 **Implementation-II**
 Branch: `feature/mcp-agent`
 - ChatGPT Prompts (conversation link: https://chatgpt.com/share/690a9c3f-a85c-8009-b193-c3861a11f68b): 
@@ -9,7 +18,6 @@ Branch: `feature/mcp-agent`
   - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
   - What is the index.ts file used for for teh mcp-server? Why is that needed? What are the current limitations of the mcp-server and how can I expand on our functionality
 
-
 **Design-II**
 
 Branch: `feature/module-view`
@@ -17,8 +25,7 @@ Branch: `feature/module-view`
 - Cursor prompts:
   - Please edit my mermaid.html file to correctly reflect the actual structure of the modules in this code base. There should be modules for each page along with their connections to other components in the system. Please make it detailed and comprehensive
   - There is now a syntax error in the html file. Please look at the code to ensure it matches with mermaid version 10.9.4
-  - I think the issue is to do with the '||--o{' tokens which are only valid in erDiagram. Please edit the file to 
-    avoid those.
+  - I think the issue is to do with the '||--o{' tokens which are only valid in erDiagram. Please edit the file to avoid those.
 
 **Implementation-I**
 

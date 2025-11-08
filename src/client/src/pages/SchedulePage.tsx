@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { parseISO, format } from 'date-fns'
 import { FilterPanel } from '../components/FilterPanel'
 import { useSchedule } from '../hooks/useSchedule'
 import { toApiTime } from '../utils/time'
@@ -124,9 +125,8 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
             </thead>
             <tbody>
               {bookedSlots.map((slot, idx) => {
-                // Format times to "HH:MM" in the user's locale
-                const start = new Date(slot.start_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-                const end = new Date(slot.end_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+                const start = format(parseISO(slot.start_time), 'HH:mm')
+                const end = format(parseISO(slot.end_time), 'HH:mm')
                 return (
                   <tr key={`${slot.room_id}-${idx}`}>
                     <td>{start}–{end}</td>
