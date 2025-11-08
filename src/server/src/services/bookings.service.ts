@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { isBefore, isAfter, differenceInMilliseconds, addMonths } from 'date-fns';
 import { Booking, BookingStatus } from '../database/entities/booking.entity';
 import { BookingSeries } from '../database/entities/booking-series.entity';
 import { Room } from '../database/entities/room.entity';
@@ -27,7 +28,8 @@ export class BookingsService {
       throw new BadRequestException('Room ID must not be empty');
     }
 
-    if (new Date(start_time) >= new Date(end_time)) {
+    // Validate start_time is before end_time
+    if (!isBefore(start_time, end_time)) {
       throw new BadRequestException('Start time must be before end time');
     }
 
@@ -141,7 +143,7 @@ export class BookingsService {
     }
 
     if (updateBookingDto.start_time && updateBookingDto.end_time) {
-      if (new Date(updateBookingDto.start_time) >= new Date(updateBookingDto.end_time)) {
+      if (!isBefore(updateBookingDto.start_time, updateBookingDto.end_time)) {
         throw new BadRequestException('Start time must be before end time');
       }
     }
@@ -331,7 +333,7 @@ export class BookingsService {
       }
 
       if (updateDto.start_time && updateDto.end_time) {
-        if (new Date(updateDto.start_time) >= new Date(updateDto.end_time)) {
+        if (!isBefore(updateDto.start_time, updateDto.end_time)) {
           throw new BadRequestException('Start time must be before end time');
         }
       }
@@ -393,13 +395,13 @@ export class BookingsService {
   }
 
   private validateNotInPast(startTime: Date, userRole: UserRole): void {
-    if (userRole === UserRole.STAFF && new Date(startTime) < new Date()) {
+    if (userRole === UserRole.STAFF && isBefore(startTime, new Date())) {
       throw new BadRequestException('Cannot create bookings in the past');
     }
   }
 
   private validateDuration(startTime: Date, endTime: Date): void {
-    const durationMs = new Date(endTime).getTime() - new Date(startTime).getTime();
+    const durationMs = differenceInMilliseconds(endTime, startTime);
     const durationMinutes = durationMs / (1000 * 60);
 
     if (durationMinutes < 15) {
@@ -415,17 +417,16 @@ export class BookingsService {
   private validateAdvanceBooking(startTime: Date, userRole: UserRole): void {
     if (userRole === UserRole.STAFF) {
       const now = new Date();
-      const threeMonthsFromNow = new Date(now);
-      threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
+      const threeMonthsFromNow = addMonths(now, 3);
 
-      if (new Date(startTime) > threeMonthsFromNow) {
+      if (isAfter(startTime, threeMonthsFromNow)) {
         throw new BadRequestException('Staff cannot book more than 3 months in advance');
       }
     }
   }
 
   private validateNotStarted(booking: Booking, userRole: UserRole): void {
-    if (userRole === UserRole.STAFF && new Date(booking.start_time) < new Date()) {
+    if (userRole === UserRole.STAFF && isBefore(booking.start_time, new Date())) {
       throw new BadRequestException('Cannot modify bookings that have already started');
     }
   }
