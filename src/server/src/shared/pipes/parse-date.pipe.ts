@@ -10,7 +10,7 @@ import { parseISO, isValid } from 'date-fns';
  */
 @Injectable()
 export class ParseDatePipe implements PipeTransform {
-  transform(value: any): Date | undefined {
+  transform(value: unknown): Date | undefined {
     if (!value) {
       return undefined;
     }

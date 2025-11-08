@@ -17,7 +17,7 @@ import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Repository } from 'typeorm';
-import { addDays, addMonths, addHours, set, formatISO } from 'date-fns';
+import { addDays, addMonths, addHours, set } from 'date-fns';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
 import { Room } from '../../src/database/entities/room.entity';
@@ -437,9 +437,9 @@ describe('Bookings Integration Tests', () => {
   describe('Validation Rules', () => {
     describe('Past Bookings', () => {
       it('should block STAFF from creating bookings in the past', async () => {
-        let yesterday = setTime(addDays(new Date(), -1), 9);
+        const yesterday = setTime(addDays(new Date(), -1), 9);
 
-        let endTime = setTime(yesterday, 10);
+        const endTime = setTime(yesterday, 10);
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -455,9 +455,9 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should allow ADMIN to create bookings in the past', async () => {
-        let yesterday = setTime(addDays(new Date(), -1), 9);
+        const yesterday = setTime(addDays(new Date(), -1), 9);
 
-        let endTime = setTime(yesterday, 10);
+        const endTime = setTime(yesterday, 10);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -555,9 +555,9 @@ describe('Bookings Integration Tests', () => {
 
     describe('Advance Booking Limits', () => {
       it('should block STAFF from booking more than 3 months in advance', async () => {
-        let fourMonthsAhead = setTime(addMonths(new Date(), 4), 9);
+        const fourMonthsAhead = setTime(addMonths(new Date(), 4), 9);
 
-        let endTime = setTime(fourMonthsAhead, 10);
+        const endTime = setTime(fourMonthsAhead, 10);
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -574,9 +574,9 @@ describe('Bookings Integration Tests', () => {
 
       // TODO: Flaky and not actually based on solid requirements
       it.skip('should allow STAFF to book exactly 3 months in advance', async () => {
-        let threeMonthsAhead = setTime(addMonths(new Date(), 3), 9);
+        const threeMonthsAhead = setTime(addMonths(new Date(), 3), 9);
 
-        let endTime = setTime(threeMonthsAhead, 10);
+        const endTime = setTime(threeMonthsAhead, 10);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -590,7 +590,7 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should allow ADMIN to book more than 3 months in advance', async () => {
-        let sixMonthsAhead = setTime(addMonths(new Date(), 6), 9);
+        const sixMonthsAhead = setTime(addMonths(new Date(), 6), 9);
 
         let endTime = setTime(sixMonthsAhead, 10);
         endTime = setTime(endTime, 10, 0);
@@ -609,9 +609,9 @@ describe('Bookings Integration Tests', () => {
 
     describe('Post-Start Modifications', () => {
       it('should block STAFF from updating booking after start_time', async () => {
-        let twoHoursAgo = addHours(new Date(), -2);
+        const twoHoursAgo = addHours(new Date(), -2);
 
-        let fourHoursLater = addHours(new Date(), 4);
+        const fourHoursLater = addHours(new Date(), 4);
 
         // Admin creates a booking that has started but not ended (duration: 6 hours)
         const createRes = await request(app.getHttpServer())

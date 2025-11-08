@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { parseISO, set, getTime, isValid } from 'date-fns';
+import { parseISO, set, isValid } from 'date-fns';
 import { User, UserRole } from '../src/database/entities/user.entity';
 import { Building } from '../src/database/entities/building.entity';
 import { Room, RoomType } from '../src/database/entities/room.entity';

@@ -5,7 +5,7 @@ export const isoAt = (dateStr: string, timeStr: string) => {
 }
 
 export const overlap = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
-  isBefore(aStart, aEnd) && isBefore(bStart, aEnd)
+  isBefore(aStart, bEnd) && isBefore(bStart, aEnd)
 
 export const formatDate = (date: Date) => formatISO(date)
 
