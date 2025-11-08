@@ -1,10 +1,11 @@
+import { formatISO, subHours, format, parseISO } from 'date-fns'
 import { AuditRow } from "../types/admin";
 
 // Sample data (replace with real API data)
 export const SAMPLE_AUDITS: AuditRow[] = Array.from({ length: 42 }).map(
   (_, i) => ({
     id: `AUD-${1000 + i}`,
-    time: new Date(Date.now() - i * 36_00_000).toISOString(),
+    time: formatISO(subHours(new Date(), i)),
     actor: [
       "system",
       "admin@uvic.ca",
@@ -49,7 +50,7 @@ export function filterAudits(
       r.action,
       r.target,
       r.ip,
-      new Date(r.time).toLocaleString(),
+      format(parseISO(r.time), 'Ppp'),
     ].some((v) => String(v).toLowerCase().includes(q))
   );
 }
