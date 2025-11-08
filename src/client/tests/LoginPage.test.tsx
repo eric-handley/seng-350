@@ -111,7 +111,7 @@ describe('LoginPage', () => {
         })
 
         // Assert: body contains the typed credentials
-        const parsed = JSON.parse((options as any).body)
+        const parsed = JSON.parse(options.body as string)
         expect(parsed).toEqual({ email: 'admin@uvic.ca', password: 'password123' })
 
         // Assert: onLogin is called with the returned user and navigation goes to /book
@@ -215,9 +215,13 @@ describe('LoginPage', () => {
         )
     })
 
+    interface CircularError {
+        self?: CircularError;
+    }
+
     it('uses fallback "Login failed" when fetch rejects with a non-serializable object', async () => {
         // Arrange: create a circular object; useful to simulate "unstringifiable" errors
-        const circular: any = {}
+        const circular: CircularError = {}
         circular.self = circular
         mockFetch.mockRejectedValueOnce(circular)
 
