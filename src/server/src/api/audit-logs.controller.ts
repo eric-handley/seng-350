@@ -12,6 +12,7 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
+import { parseISO } from 'date-fns';
 import { AuditLogsService } from '../services/audit-logs.service';
 import { AuditLogResponseDto } from '../dto/audit-log.dto';
 import { AuthGuard } from '../shared/guards/auth.guard';
@@ -58,8 +59,8 @@ export class AuditLogsController {
       action,
       route,
       userId,
-      startTime: startTime ? new Date(startTime) : undefined,
-      endTime: endTime ? new Date(endTime) : undefined,
+      startTime: startTime ? parseISO(startTime) : undefined,
+      endTime: endTime ? parseISO(endTime) : undefined,
       offset: offset ? parseInt(offset, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,
     });

@@ -21,6 +21,7 @@ import {
   ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { parseISO } from 'date-fns';
 import { BookingsService } from '../services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
 import { AuthGuard } from '../shared/guards/auth.guard';
@@ -84,8 +85,8 @@ export class BookingsController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ): Promise<BookingResponseDto[]> {
-    const startDateObj = startDate ? new Date(startDate) : undefined;
-    const endDateObj = endDate ? new Date(endDate) : undefined;
+    const startDateObj = startDate ? parseISO(startDate) : undefined;
+    const endDateObj = endDate ? parseISO(endDate) : undefined;
 
     return this.bookingsService.findAll(user, userId, roomId, startDateObj, endDateObj);
   }
