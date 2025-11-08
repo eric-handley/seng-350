@@ -129,7 +129,10 @@ export class AuthController {
     description: 'Not authenticated',
   })
   async getSession(@Req() req: RequestWithUser): Promise<{ user: AuthenticatedUser }> {
-    // User is guaranteed to exist due to AuthenticatedGuard
-    return { user: req.user! };
+    if (!req.user) {
+      throw new UnauthorizedException('Not authenticated');
+    }
+
+    return { user: req.user };
   }
 }
