@@ -7,6 +7,7 @@ import { useSchedule } from '../hooks/useSchedule';
 import { useRooms } from '../hooks/useRooms';
 import { toApiTime } from '../utils/time';
 import { useBookingHistory } from '../hooks/useBookingHistory';
+import { RecurringBookingFormData } from '../components/RecurringBookingModal';
 
 interface BookingPageProps {
   currentUserId: string
@@ -87,18 +88,10 @@ export const BookingPage: React.FC<BookingPageProps> = ({
       // Remove milliseconds and format as 'YYYY-MM-DDTHH:mm:ssZ'
       return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
     };
-    let startIso = data.start_time;
-    let endIso = data.end_time;
-    if (!startIso?.includes('T')) {
-      startIso = data.date ? `${data.date}T${data.start_time}:00Z` : '';
-    }
-    if (!endIso?.includes('T')) {
-      endIso = data.date ? `${data.date}T${data.end_time}:00Z` : '';
-    }
     await createBookingSeries({
       room_id: data.room_id,
-      start_time: toDateNoMs(startIso),
-      end_time: toDateNoMs(endIso),
+      start_time: toDateNoMs(data.start_time),
+      end_time: toDateNoMs(data.end_time),
       recurrence_type: data.recurrence_type,
       series_end_date: toDateNoMs(data.series_end_date),
     });
