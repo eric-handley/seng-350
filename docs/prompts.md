@@ -1,4 +1,40 @@
 **Implementation-II**
+
+Branch `feature/recurring-bookings`
+1. i want to add the options for everyday, every week, or every month
+2. it seems like the payload is correct, but the post request is failing {room_id: "BWC-A104", start_time: "2025-11-08T10:00:00Z", end_time: "2025-11-08T11:00:00Z",…}
+end_time
+:
+"2025-11-08T11:00:00Z"
+recurrence_type
+:
+"weekly"
+room_id
+:
+"BWC-A104"
+series_end_date
+:
+"2025-11-25T00:00:00Z"
+start_time
+:
+"2025-11-08T10:00:00Z" "statusCode": 400,
+"message": "Validation failed",
+"error": [
+"start_time: start_time must be a valid ISO 8601 date string",
+"end_time: end_time must be a valid ISO 8601 date string",
+"series_end_date: series_end_date must be a valid ISO 8601 date string"
+],
+"timestamp": "2025-11-07T18:54:24.971Z",
+"path": "/bookings/recurring",
+"method": "POST"
+3. can you make the equipment into a collapsable section so it looks less cluttered?
+
+Branch: `issue-64/registrar-stat-logs`
+- `claude-code` prompts:
+  - scan the entire codebase for usages of JS/TS's default Date lib. this will include some skipped tests. come up with a modern choice of a lightweight replacement time library
+  - come up with a comprehensive plan to switch into date-fns
+  - implement the above changes
+
 Branch: `feature/mcp-agent`
 - ChatGPT Prompts (conversation link: https://chatgpt.com/share/690a9c3f-a85c-8009-b193-c3861a11f68b): 
   - I want to add an MCP agent to my classroom booking app. What does this look like and how do I add it? + contents of mcp.qmd file
@@ -9,6 +45,7 @@ Branch: `feature/mcp-agent`
   - Please create MCP agent capability such that a user can simply prompt and have the MCP agent be able to complete a task for them
   - What is the index.ts file used for for teh mcp-server? Why is that needed? What are the current limitations of the mcp-server and how can I expand on our functionality
 
+---
 
 **Design-II**
 
@@ -17,13 +54,13 @@ Branch: `feature/module-view`
 - Cursor prompts:
   - Please edit my mermaid.html file to correctly reflect the actual structure of the modules in this code base. There should be modules for each page along with their connections to other components in the system. Please make it detailed and comprehensive
   - There is now a syntax error in the html file. Please look at the code to ensure it matches with mermaid version 10.9.4
-  - I think the issue is to do with the '||--o{' tokens which are only valid in erDiagram. Please edit the file to 
-    avoid those.
+  - I think the issue is to do with the '||--o{' tokens which are only valid in erDiagram. Please edit the file to avoid those.
+
+---
 
 **Implementation-I**
 
 Branch: `issue-5/dev-setup`
-
 - `claude-code` prompts
   - create docker-compose for a typescript react client (esbuild) and a typescript server with postgres, set server env to connect to db
   - scaffold the client in ./client: react + typescript using esbuild, add package.json dev/build scripts, tsconfig etc.
@@ -52,7 +89,6 @@ Branch: `issue-5/dev-setup`
   - stop jest from generating coverage folder on runs
 
 Branch: `feature-35/better-web-scraper`
-
 - `claude-code` prompts
   - work with me on @src/scripts/scraper.py to extract room data from https://www.uvic.ca/search/rooms/ (room links on this page) to @data/uvic_rooms.json . we need some way of cleaning of the room equipment as many will have slight variations but functionally mean the same thing. also quantities need to be extracted
   - add paralellism so it runs faster
@@ -61,7 +97,6 @@ Branch: `feature-35/better-web-scraper`
   - that normalize_equipment_name function is crazy, there MUST be a less messy way of writing that
 
 Branch `issue-31/db-setup`
-
 - `claude-code` prompts:
   - organize/name files in the @src/server/src/ folder better for a small team project, put empty template files inside any folders that don't exist yet
   - update @readme.md with the new backend folder structure
@@ -71,7 +106,6 @@ Branch `issue-31/db-setup`
   - run `npm run lint` and fix linter errors
 
 Branch `feature-7/registrar`
-
 - ChatGPT prompts:
     - how can i break up a .tsx file into multiple files for better code quality?
     - how can I edit this function to properly add the submitted information to the table? const handleSaveNewUser = (updated: User) => {
@@ -86,6 +120,7 @@ Branch `feature-7/registrar`
   { id: '3', name: 'Charlie Doe', role: 'registrar' as const, email: 'charliedoe@uvic.ca'},
 ]
 - how can i create a confimation page for blocking a user?
+
 Branch `feature/init-ui`
 - ChatGPT Conversation (involved some longer form prompt for debugging, etc.): 
   https://chatgpt.com/share/68df2d60-12b4-8009-be76-51cd8625a89a
@@ -111,18 +146,15 @@ Branch `feature/staff`
         ```
 
 Branch `issue-46/set-up-audit-logging`
-
 - `claude-code` prompts:
   - make a plan to implement api logging to the audit_logs table (check @docs/backend/db/database-schema.md ). this should somehow hook into all api calls so that the active user (authenticated) and the action/object are logged to the db. it should also capture logins and logouts. your changes should only be server-side
 
 Branch `feature-6/admin-page`
-
 - `Cursor` prompts:
   - Make an admin console that shows audit logs and system health using University of Victoria colours.
   - Integrate the existing backend api endpoints for audits and system health to the admin console.
 
 Branch `feature-6/admin-rooms-system`
-
 - `Cursor` prompts:
   - Make the admin console look like the page in App.tsx file. Make the banner the same. Make it look the same.
   - get the audit logs in Admin console using the existing endpoints.
@@ -139,6 +171,8 @@ Branch `feature-6/admin-rooms-system`
   - Fix the Manage rooms page's css. The tables are out of the screen.
   - Add a new page to admin for managing equipments for individual rooms. (Creating, editing, deleting.)
   - Make the add equipment really clear which building and room it is adding to.
+
+---
 
 **Design-I**
 
@@ -169,3 +203,7 @@ Branch `feature-6/admin-rooms-system`
 8. "I am working on an authentication and login feature for a webapp, this is my current code + i have a database setup using the following tech stack We will use Typescript with React for frontend, NestJS for the entry layer, NestJS for the backend, PostgreSQL for server-side data store, Redis for cache and minimal messaging, Auth.js for authentication and authorization. please help me by first laying out a step by step process for setting up authentication."
 
 - [Conversation Link](https://chatgpt.com/c/68e06ed2-b4e0-8325-989c-e928475cd206)
+
+9. "what are some good test scenarios for front-end booking software?"
+
+- [Conversation Link](https://chatgpt.com/c/69025dcd-4d60-8320-8fed-5936e8713c23)

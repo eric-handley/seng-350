@@ -5,9 +5,7 @@ workflow:
 
 stages:
   - lint
-  - build 
   - test
-  - deploy
 
 variables:
   npm_config_cache: ".npm"
@@ -26,21 +24,6 @@ eslint:
     - echo "Running ESlint checks..."
     - npx eslint .
 
-test-docker-build:
-  stage: build
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  script:
-    - echo "Pulling Docker images..."
-    - docker compose pull
-    - echo "Running dependency installation..."
-    - docker compose run --rm deps
-    - echo "Test building services..."
-    - docker compose build
-  timeout: 10 minutes
-  retry:
-    max: 2
-
 jest-tests:
   stage: test
   rules:
@@ -53,28 +36,7 @@ jest-tests:
     - echo "Seeding test database..."
     - docker compose run --rm test-db-setup
     - echo "Running test suites..."
-    - npm test
-    # - npm run test:coverage - Will reenable later
+    - npm run test:coverage
   after_script:
     - docker compose down -v
   timeout: 10 minutes
-  retry:
-    max: 2
-
-push-container-registry:
-  stage: deploy
-  rules:
-    - if: '$CI_COMMIT_TAG && $CI_COMMIT_BRANCH == "main"'
-  script:
-    - echo "Port 5050 is blocked for gitlab.csc.uvic.ca, but otherwise the following would build and push images to the container registry."
-    - echo "I've left the following job in the pipeline to demonstrate understanding of how this would be done:"
-    - echo "Logging into GitLab Container Registry..."
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY || true
-    - echo "Building and pushing client image..."
-    - docker build -t gitlab.csc.uvic.ca:5050/courses/2025091/seng350_cosi/teams/group_1_proj/client:$CI_COMMIT_TAG -f docker/Dockerfile.client . || true
-    - docker push gitlab.csc.uvic.ca:5050/courses/2025091/seng350_cosi/teams/group_1_proj/client:$CI_COMMIT_TAG || true
-    - echo "Building and pushing server image..."
-    - docker build -t gitlab.csc.uvic.ca:5050/courses/2025091/seng350_cosi/teams/group_1_proj/server:$CI_COMMIT_TAG -f docker/Dockerfile.server . || true
-    - docker push gitlab.csc.uvic.ca:5050/courses/2025091/seng350_cosi/teams/group_1_proj/server:$CI_COMMIT_TAG || true
-  timeout: 15 minutes
-  allow_failure: true

@@ -11,6 +11,7 @@ import { promisify } from 'util';
 import { readFile, writeFile, readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { parseISO, getTime } from 'date-fns';
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -514,10 +515,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Check if the requested time slot is in the available slots
           const isAvailable = roomInfo.slots?.some((slot: Slot) => {
-            const slotStart = new Date(slot.start_time).getTime();
-            const slotEnd = new Date(slot.end_time).getTime();
-            const reqStart = new Date(requestedStart).getTime();
-            const reqEnd = new Date(requestedEnd).getTime();
+            const slotStart = getTime(parseISO(slot.start_time));
+            const slotEnd = getTime(parseISO(slot.end_time));
+            const reqStart = getTime(parseISO(requestedStart));
+            const reqEnd = getTime(parseISO(requestedEnd));
             return reqStart >= slotStart && reqEnd <= slotEnd;
           });
 

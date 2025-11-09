@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { parseISO, format } from 'date-fns';
 import { useEquipment } from "../../hooks/useEquipment";
 import { fetchBuildings, Building, Room } from "../../api/buildings";
 import { fetchAllEquipment } from "../../api/equipment";
@@ -282,7 +283,7 @@ export default function EquipmentManagement() {
                     <div className="equipment-info">
                       <h3>{eq.name}</h3>
                       <p className="equipment-meta">
-                        Created: {new Date(eq.created_at).toLocaleDateString()}
+                        Created: {format(parseISO(eq.created_at), 'yyyy-MM-dd')}
                       </p>
                       {eq.room_equipment && eq.room_equipment.length > 0 && (
                         <div className="room-equipment-info">
