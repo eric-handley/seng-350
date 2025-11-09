@@ -1,4 +1,6 @@
 export default {
+  verbose: false,
+  silent: true,
   coverageReporters: ['text'],
   projects: [
     {
@@ -40,6 +42,7 @@ export default {
       preset: 'ts-jest',
       testEnvironment: 'node',
       globalTeardown: '<rootDir>/src/server/tests/global-teardown.ts',
+      setupFilesAfterEnv: ['<rootDir>/src/server/tests/setup.ts'],
       transform: {
         '^.+\\.ts$': ['ts-jest', {
           tsconfig: './src/server/tsconfig.json',

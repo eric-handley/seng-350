@@ -19,16 +19,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    // Log the error for debugging
-    this.logger.error(
-      `${exception.name} for ${request.method} ${request.url}`,
-      {
-        body: request.body,
-        query: request.query,
-        params: request.params,
-        error: exceptionResponse,
-      },
-    );
+    // Log the error for debugging (skip in test environment)
+    if (process.env.SUPPRESS_LOGS !== 'true') {
+      this.logger.error(
+        `${exception.name} for ${request.method} ${request.url}`,
+        {
+          body: request.body,
+          query: request.query,
+          params: request.params,
+          error: exceptionResponse,
+        },
+      );
+    }
 
     // Format the error response for consistent format across all exceptions
     let errorMessage: string;

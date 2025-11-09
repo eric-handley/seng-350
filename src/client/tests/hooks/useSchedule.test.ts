@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useSchedule } from '../../src/hooks/useSchedule';
 import * as scheduleApi from '../../src/api/schedule';
 import type { ScheduleResponse } from '../../src/types/schedule';
@@ -43,7 +43,9 @@ describe('useSchedule', () => {
       useSchedule({ building_short_name: 'ECS', date: '2025-01-15' })
     );
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchSchedule).toHaveBeenCalledWith({
@@ -67,7 +69,9 @@ describe('useSchedule', () => {
       { initialProps: { query: { date: '2025-01-15' } } }
     );
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchSchedule).toHaveBeenCalledTimes(1);
@@ -77,7 +81,9 @@ describe('useSchedule', () => {
 
     rerender({ query: { date: '2025-01-16' } });
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchSchedule).toHaveBeenCalledTimes(2);
@@ -85,29 +91,37 @@ describe('useSchedule', () => {
     });
   });
 
-  it('debounces fetch by 250ms', () => {
+  it('debounces fetch by 250ms', async () => {
     mockFetchSchedule.mockResolvedValueOnce(mockSchedule);
 
     renderHook(() => useSchedule({ date: '2025-01-15' }));
 
-    jest.advanceTimersByTime(100);
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
     expect(mockFetchSchedule).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(150);
-    jest.runAllTimers();
+    await act(async () => {
+      jest.advanceTimersByTime(150);
+      jest.runAllTimers();
+    });
 
     expect(mockFetchSchedule).toHaveBeenCalledTimes(1);
   });
 
-  it('cancels fetch on unmount', () => {
+  it('cancels fetch on unmount', async () => {
     mockFetchSchedule.mockImplementation(() => new Promise(() => {}));
 
     const { unmount } = renderHook(() => useSchedule({ date: '2025-01-15' }));
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     unmount();
-    jest.runAllTimers();
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     expect(mockFetchSchedule).toHaveBeenCalledTimes(1);
   });
@@ -120,7 +134,9 @@ describe('useSchedule', () => {
       { initialProps: { query: { date: '2025-01-15' } } }
     );
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(result.current.rooms.length).toBe(1);
@@ -130,7 +146,9 @@ describe('useSchedule', () => {
 
     rerender({ query: { date: '2025-01-16' } });
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchSchedule).toHaveBeenCalledTimes(2);
