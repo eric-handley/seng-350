@@ -85,6 +85,38 @@ export default [
     },
   },
   {
+    files: ['src/mcp-server/**/*.ts'],
+    ignores: ['**/*.d.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './src/mcp-server/tsconfig.json',
+        sourceType: 'module',
+      },
+      globals: {
+        node: true,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsEslint,
+    },
+    rules: {
+      ...tsEslint.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'eqeqeq': 'error',
+      'curly': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
+      'no-alert': 'error',
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       globals: {

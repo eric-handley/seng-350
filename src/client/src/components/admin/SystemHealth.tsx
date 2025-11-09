@@ -1,4 +1,5 @@
 import React from "react";
+import { parseISO, format } from 'date-fns';
 import { useHealthCheck } from "../../hooks/useHealthCheck";
 import { Badge, StatCard } from "./AdminComponents";
 
@@ -35,7 +36,7 @@ export const SystemHealth = () => {
             sub={
               isChecking
                 ? "Checking..."
-                : `Last checked: ${lastChecked.toLocaleTimeString()}`
+                : `Last checked: ${format(lastChecked, 'HH:mm:ss')}`
             }
           />
           <StatCard
@@ -46,7 +47,7 @@ export const SystemHealth = () => {
           <StatCard
             title="Last Response"
             value={
-              backend.now ? new Date(backend.now).toLocaleTimeString() : "N/A"
+              backend.now ? format(parseISO(backend.now), 'HH:mm:ss') : "N/A"
             }
             sub="Server time"
           />

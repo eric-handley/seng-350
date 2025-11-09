@@ -1,8 +1,3 @@
-// Mock ESM-only module to avoid Jest transform errors
-jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
-}));
-
 // Ensure AppModule connects to the dedicated test services
 (() => {
   process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
@@ -22,11 +17,17 @@ import { INestApplication, ValidationPipe, BadRequestException, ExecutionContext
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Repository } from 'typeorm';
+import { addDays, addMonths, addHours, set } from 'date-fns';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
 import { Room } from '../../src/database/entities/room.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { GlobalExceptionFilter } from '../../src/filters/global-exception.filter';
+
+// Helper functions for date manipulation in tests
+const createTomorrow = () => addDays(new Date(), 1);
+const setTime = (date: Date, hours: number, minutes = 0, seconds = 0) =>
+  set(date, { hours, minutes, seconds, milliseconds: 0 });
 
 describe('Bookings Integration Tests', () => {
   let app: INestApplication;
@@ -156,12 +157,12 @@ describe('Bookings Integration Tests', () => {
 
   describe('Overlap Prevention', () => {
     it('should prevent overlapping bookings via API-level conflict check', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(10, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 10, 0);
 
       // Create first booking
       await request(app.getHttpServer())
@@ -189,12 +190,12 @@ describe('Bookings Integration Tests', () => {
     });
 
     it('should prevent partial overlaps (start during existing booking)', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(11, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 11, 0);
 
       await request(app.getHttpServer())
         .post('/bookings')
@@ -206,10 +207,10 @@ describe('Bookings Integration Tests', () => {
         .set('X-Test-User-Id', staffUser.id)
         .expect(201);
 
-      const overlapStart = new Date(tomorrow);
-      overlapStart.setHours(10, 0, 0, 0);
-      const overlapEnd = new Date(tomorrow);
-      overlapEnd.setHours(12, 0, 0, 0);
+      let overlapStart = new Date(tomorrow);
+      overlapStart = setTime(overlapStart, 10);
+      let overlapEnd = new Date(tomorrow);
+      overlapEnd = setTime(overlapEnd, 12);
 
       const res = await request(app.getHttpServer())
         .post('/bookings')
@@ -225,12 +226,12 @@ describe('Bookings Integration Tests', () => {
     });
 
     it('should prevent partial overlaps (end during existing booking)', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(10, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 10, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(12, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 12, 0);
 
       await request(app.getHttpServer())
         .post('/bookings')
@@ -242,10 +243,10 @@ describe('Bookings Integration Tests', () => {
         .set('X-Test-User-Id', staffUser.id)
         .expect(201);
 
-      const overlapStart = new Date(tomorrow);
-      overlapStart.setHours(9, 0, 0, 0);
-      const overlapEnd = new Date(tomorrow);
-      overlapEnd.setHours(11, 0, 0, 0);
+      let overlapStart = new Date(tomorrow);
+      overlapStart = setTime(overlapStart, 9);
+      let overlapEnd = new Date(tomorrow);
+      overlapEnd = setTime(overlapEnd, 11);
 
       const res = await request(app.getHttpServer())
         .post('/bookings')
@@ -261,12 +262,12 @@ describe('Bookings Integration Tests', () => {
     });
 
     it('should prevent bookings that completely contain an existing booking', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(10, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 10, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(11, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 11, 0);
 
       await request(app.getHttpServer())
         .post('/bookings')
@@ -278,10 +279,10 @@ describe('Bookings Integration Tests', () => {
         .set('X-Test-User-Id', staffUser.id)
         .expect(201);
 
-      const wrapStart = new Date(tomorrow);
-      wrapStart.setHours(9, 0, 0, 0);
-      const wrapEnd = new Date(tomorrow);
-      wrapEnd.setHours(12, 0, 0, 0);
+      let wrapStart = new Date(tomorrow);
+      wrapStart = setTime(wrapStart, 9);
+      let wrapEnd = new Date(tomorrow);
+      wrapEnd = setTime(wrapEnd, 12);
 
       const res = await request(app.getHttpServer())
         .post('/bookings')
@@ -297,15 +298,15 @@ describe('Bookings Integration Tests', () => {
     });
 
     it('should allow adjacent bookings (back-to-back)', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const midTime = new Date(tomorrow);
-      midTime.setHours(10, 0, 0, 0);
+      let midTime = new Date(tomorrow);
+      midTime = setTime(midTime, 10);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(11, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 11, 0);
 
       await request(app.getHttpServer())
         .post('/bookings')
@@ -334,12 +335,12 @@ describe('Bookings Integration Tests', () => {
         throw new Error('Need at least 2 rooms for this test');
       }
 
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(10, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 10, 0);
 
       await request(app.getHttpServer())
         .post('/bookings')
@@ -363,12 +364,12 @@ describe('Bookings Integration Tests', () => {
     });
 
     it('should allow overlapping with cancelled bookings', async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(10, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 10, 0);
 
       const createRes = await request(app.getHttpServer())
         .post('/bookings')
@@ -404,12 +405,12 @@ describe('Bookings Integration Tests', () => {
       // overlapping Active bookings, but TypeORM's save() is succeeding when it should fail.
       // This needs investigation into test database setup and migration execution.
       // The API-level overlap prevention (tested above) is working correctly.
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
+      let tomorrow = createTomorrow();
+      // already set by createTomorrow()
+      tomorrow = setTime(tomorrow, 9, 0);
 
-      const endTime = new Date(tomorrow);
-      endTime.setHours(10, 0, 0, 0);
+      let endTime = new Date(tomorrow);
+      endTime = setTime(endTime, 10, 0);
 
       await bookingRepository.save({
         user_id: staffUser.id,
@@ -436,12 +437,9 @@ describe('Bookings Integration Tests', () => {
   describe('Validation Rules', () => {
     describe('Past Bookings', () => {
       it('should block STAFF from creating bookings in the past', async () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        yesterday.setHours(9, 0, 0, 0);
+        const yesterday = setTime(addDays(new Date(), -1), 9);
 
-        const endTime = new Date(yesterday);
-        endTime.setHours(10, 0, 0, 0);
+        const endTime = setTime(yesterday, 10);
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -457,12 +455,9 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should allow ADMIN to create bookings in the past', async () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        yesterday.setHours(9, 0, 0, 0);
+        const yesterday = setTime(addDays(new Date(), -1), 9);
 
-        const endTime = new Date(yesterday);
-        endTime.setHours(10, 0, 0, 0);
+        const endTime = setTime(yesterday, 10);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -478,12 +473,12 @@ describe('Bookings Integration Tests', () => {
 
     describe('Duration Limits', () => {
       it('should reject bookings shorter than 15 minutes', async () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(9, 0, 0, 0);
+        let tomorrow = createTomorrow();
+        // already set by createTomorrow()
+        tomorrow = setTime(tomorrow, 9, 0);
 
-        const endTime = new Date(tomorrow);
-        endTime.setHours(9, 10, 0, 0); // Only 10 minutes
+        let endTime = new Date(tomorrow);
+        endTime = setTime(endTime, 9, 10); // Only 10 minutes
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -499,12 +494,12 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should accept bookings exactly 15 minutes long', async () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(9, 0, 0, 0);
+        let tomorrow = createTomorrow();
+        // already set by createTomorrow()
+        tomorrow = setTime(tomorrow, 9, 0);
 
-        const endTime = new Date(tomorrow);
-        endTime.setHours(9, 15, 0, 0);
+        let endTime = new Date(tomorrow);
+        endTime = setTime(endTime, 9, 15);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -518,12 +513,12 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should reject bookings longer than 8 hours', async () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(9, 0, 0, 0);
+        let tomorrow = createTomorrow();
+        // already set by createTomorrow()
+        tomorrow = setTime(tomorrow, 9, 0);
 
-        const endTime = new Date(tomorrow);
-        endTime.setHours(18, 0, 0, 0); // 9 hours
+        let endTime = new Date(tomorrow);
+        endTime = setTime(endTime, 18, 0); // 9 hours
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -539,12 +534,12 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should accept bookings exactly 8 hours long', async () => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(9, 0, 0, 0);
+        let tomorrow = createTomorrow();
+        // already set by createTomorrow()
+        tomorrow = setTime(tomorrow, 9, 0);
 
-        const endTime = new Date(tomorrow);
-        endTime.setHours(17, 0, 0, 0);
+        let endTime = new Date(tomorrow);
+        endTime = setTime(endTime, 17, 0);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -560,12 +555,9 @@ describe('Bookings Integration Tests', () => {
 
     describe('Advance Booking Limits', () => {
       it('should block STAFF from booking more than 3 months in advance', async () => {
-        const fourMonthsAhead = new Date();
-        fourMonthsAhead.setMonth(fourMonthsAhead.getMonth() + 4);
-        fourMonthsAhead.setHours(9, 0, 0, 0);
+        const fourMonthsAhead = setTime(addMonths(new Date(), 4), 9);
 
-        const endTime = new Date(fourMonthsAhead);
-        endTime.setHours(10, 0, 0, 0);
+        const endTime = setTime(fourMonthsAhead, 10);
 
         const res = await request(app.getHttpServer())
           .post('/bookings')
@@ -582,12 +574,9 @@ describe('Bookings Integration Tests', () => {
 
       // TODO: Flaky and not actually based on solid requirements
       it.skip('should allow STAFF to book exactly 3 months in advance', async () => {
-        const threeMonthsAhead = new Date();
-        threeMonthsAhead.setMonth(threeMonthsAhead.getMonth() + 3);
-        threeMonthsAhead.setHours(9, 0, 0, 0);
+        const threeMonthsAhead = setTime(addMonths(new Date(), 3), 9);
 
-        const endTime = new Date(threeMonthsAhead);
-        endTime.setHours(10, 0, 0, 0);
+        const endTime = setTime(threeMonthsAhead, 10);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -601,12 +590,10 @@ describe('Bookings Integration Tests', () => {
       });
 
       it('should allow ADMIN to book more than 3 months in advance', async () => {
-        const sixMonthsAhead = new Date();
-        sixMonthsAhead.setMonth(sixMonthsAhead.getMonth() + 6);
-        sixMonthsAhead.setHours(9, 0, 0, 0);
+        const sixMonthsAhead = setTime(addMonths(new Date(), 6), 9);
 
-        const endTime = new Date(sixMonthsAhead);
-        endTime.setHours(10, 0, 0, 0);
+        let endTime = setTime(sixMonthsAhead, 10);
+        endTime = setTime(endTime, 10, 0);
 
         await request(app.getHttpServer())
           .post('/bookings')
@@ -622,11 +609,9 @@ describe('Bookings Integration Tests', () => {
 
     describe('Post-Start Modifications', () => {
       it('should block STAFF from updating booking after start_time', async () => {
-        const twoHoursAgo = new Date();
-        twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+        const twoHoursAgo = addHours(new Date(), -2);
 
-        const fourHoursLater = new Date();
-        fourHoursLater.setHours(fourHoursLater.getHours() + 4);
+        const fourHoursLater = addHours(new Date(), 4);
 
         // Admin creates a booking that has started but not ended (duration: 6 hours)
         const createRes = await request(app.getHttpServer())
@@ -643,7 +628,7 @@ describe('Bookings Integration Tests', () => {
         await bookingRepository.update(createRes.body.id, { user_id: staffUser.id });
 
         // Staff tries to update
-        const newEndTime = new Date(fourHoursLater.getTime() + 3600000);
+        const newEndTime = addHours(fourHoursLater, 1);
         const res = await request(app.getHttpServer())
           .patch(`/bookings/${createRes.body.id}`)
           .send({

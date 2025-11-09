@@ -27,6 +27,7 @@ import { CreateBookingSeriesDto, BookingSeriesResponseDto } from '../dto/booking
 import { AuthGuard } from '../shared/guards/auth.guard';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/auth.service';
+import { ParseDatePipe } from '../shared/pipes/parse-date.pipe';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()
@@ -110,13 +111,10 @@ export class BookingsController {
     @CurrentUser() user: AuthenticatedUser,
     @Query('userId') userId?: string,
     @Query('roomId') roomId?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query('startDate', ParseDatePipe) startDate?: Date,
+    @Query('endDate', ParseDatePipe) endDate?: Date,
   ): Promise<BookingResponseDto[]> {
-    const startDateObj = startDate ? new Date(startDate) : undefined;
-    const endDateObj = endDate ? new Date(endDate) : undefined;
-
-    return this.bookingsService.findAll(user, userId, roomId, startDateObj, endDateObj);
+    return this.bookingsService.findAll(user, userId, roomId, startDate, endDate);
   }
 
   @Get(':id')

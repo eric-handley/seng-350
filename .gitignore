@@ -6,4 +6,4 @@
 **/.fuse_hidden*
 **/.venv
 **/build
-CRUSH.md
+coverage/

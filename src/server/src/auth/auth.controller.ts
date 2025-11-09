@@ -1,14 +1,13 @@
-import { Controller, Post, Get, Body, Req, Res, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, Res, HttpCode, HttpStatus, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Request, Response } from 'express';
 import { AuthService, AuthenticatedUser } from './auth.service';
-import { Session } from 'express-session';
 import { AuditLogsService } from '../services/audit-logs.service';
+import { AuthGuard } from '../shared/guards/auth.guard';
 
 interface RequestWithUser extends Request {
   user?: AuthenticatedUser;
-  session: Session & Partial<{ user?: AuthenticatedUser }>;
 }
 
 class LoginDto {
@@ -47,15 +46,16 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Req() req: RequestWithUser,
   ): Promise<AuthenticatedUser> {
-    const user = await this.authService.login(loginDto.email, loginDto.password);
+    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
 
-    // Store user in session
-    if (req.session) {
-      req.session.user = user;
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Also attach to request for immediate use
-    req.user = user;
+    // Persist session via Passport
+    await new Promise<void>((resolve, reject) => {
+      req.logIn(user, (err) => (err ? reject(err) : resolve()));
+    });
 
     // Log the login event
     await this.auditLogsService.createAuditLog(
@@ -77,7 +77,7 @@ export class AuthController {
     description: 'Logout successful',
   })
   async logout(@Req() req: RequestWithUser, @Res() res: Response): Promise<void> {
-    const user = req.session?.user ?? req.user;
+    const user = req.user;
 
     return new Promise((resolve, reject) => {
       // Log the logout event before destroying session
@@ -96,25 +96,29 @@ export class AuthController {
           console.error('Failed to log logout event:', err);
         })
         .finally(() => {
-          if (req.session) {
-            req.session.destroy((err) => {
-              if (err) {
-                reject(err);
-              } else {
-                res.clearCookie('connect.sid');
-                res.status(HttpStatus.NO_CONTENT).send();
-                resolve();
-              }
-            });
-          } else {
-            res.status(HttpStatus.NO_CONTENT).send();
-            resolve();
-          }
+          // Use Passport's logout method
+          req.logout((err) => {
+            if (err) {
+              reject(err);
+            } else {
+              // Destroy session
+              req.session?.destroy((sessionErr) => {
+                if (sessionErr) {
+                  reject(sessionErr);
+                } else {
+                  res.clearCookie('connect.sid');
+                  res.status(HttpStatus.NO_CONTENT).send();
+                  resolve();
+                }
+              });
+            }
+          });
         });
     });
   }
 
   @Get('session')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get current session information' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -125,12 +129,10 @@ export class AuthController {
     description: 'Not authenticated',
   })
   async getSession(@Req() req: RequestWithUser): Promise<{ user: AuthenticatedUser }> {
-    const user = req.session?.user ?? req.user;
-
-    if (!user) {
+    if (!req.user) {
       throw new UnauthorizedException('Not authenticated');
     }
 
-    return { user };
+    return { user: req.user };
   }
 }

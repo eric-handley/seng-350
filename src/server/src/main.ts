@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { GlobalExceptionFilter } from "./filters/global-exception.filter";
 import { AuditLoggingInterceptor } from "./shared/interceptors/audit-logging.interceptor";
 import session from "express-session";
+import passport from "passport";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +25,10 @@ async function bootstrap() {
       },
     })
   );
+
+  // Initialize Passport
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.useGlobalPipes(
     new ValidationPipe({

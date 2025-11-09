@@ -50,6 +50,9 @@ export function parseUserTimeInput(value: string): string | null {
     working = trimmed.slice(0, trimmed.length - meridiemMatch[0].length).trim();
   }
 
+  // Check for negative numbers before sanitizing
+  if (/-\d/.test(working)) {return null;}
+
   const cleaned = working
     .replace(/[^0-9:]/g, ' ')
     .replace(/\s+/g, ' ')
