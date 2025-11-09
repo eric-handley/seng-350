@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { BookingsService } from '../services/bookings.service';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
+import { CreateBookingSeriesDto, BookingSeriesResponseDto } from '../dto/booking-series.dto';
 import { AuthGuard } from '../shared/guards/auth.guard';
 import { CurrentUser } from '../shared/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/auth.service';
@@ -34,6 +35,34 @@ import { ParseDatePipe } from '../shared/pipes/parse-date.pipe';
 @UseGuards(AuthGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
+
+  @Post('recurring')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new recurring booking series' })
+  @ApiBody({ type: CreateBookingSeriesDto })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Booking series created successfully',
+    type: BookingSeriesResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Room is already booked for one or more time slots in the series',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Room or user not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid booking series data',
+  })
+  async createBookingSeries(
+    @Body() createBookingSeriesDto: CreateBookingSeriesDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<BookingSeriesResponseDto> {
+    return this.bookingsService.createBookingSeries(createBookingSeriesDto, user);
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

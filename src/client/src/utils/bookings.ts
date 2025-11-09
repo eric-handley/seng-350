@@ -42,6 +42,7 @@ export function mapApiBookingToUi(b: ApiBooking): UiBooking {
     roomNumber,
     room: { id: b.room_id, name: roomName },
     date: (b.start_time ?? '').split('T')[0],
+    booking_series_id: b.booking_series_id,
   }
 
   // Include user details if present (for registrars/admins)

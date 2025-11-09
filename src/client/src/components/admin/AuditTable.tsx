@@ -110,7 +110,7 @@ export const AuditTable = ({
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-          <button className="btn btn--ghost" onClick={exportCSV}>
+          <button className="btn btn--secondary" onClick={exportCSV}>
             Export CSV
           </button>
         </div>
@@ -170,7 +170,7 @@ export const AuditTable = ({
 
       <div className="pager">
         <button
-          className="btn btn--ghost"
+          className="btn btn--secondary"
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
         >
@@ -180,7 +180,7 @@ export const AuditTable = ({
           Page {page} / {totalPages}
         </div>
         <button
-          className="btn btn--ghost"
+          className="btn btn--secondary"
           disabled={page === totalPages}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
         >

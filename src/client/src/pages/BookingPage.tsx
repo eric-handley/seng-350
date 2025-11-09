@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Room } from '../types';
-import { RoomCard } from '../components/RoomCard';
+import RoomCard from '../components/RoomCard';
+import { createBookingSeries } from '../api/bookings';
 import { FilterPanel } from '../components/FilterPanel';
 import { useSchedule } from '../hooks/useSchedule';
 import { useRooms } from '../hooks/useRooms';
 import { toApiTime } from '../utils/time';
 import { useBookingHistory } from '../hooks/useBookingHistory';
+import { RecurringBookingFormData } from '../components/RecurringBookingModal';
 
 /**
  * BookingPage
@@ -110,6 +112,25 @@ export const BookingPage: React.FC<BookingPageProps> = ({
     }
   };
 
+  // Recurring booking handler
+  const handleBookRecurring = async (data: RecurringBookingFormData) => {
+    // Convert ISO strings to JS Date objects before sending, remove milliseconds
+    const toDateNoMs = (d: string) => {
+      if (!d) {return '';}
+      const date = new Date(d);
+      // Remove milliseconds and format as 'YYYY-MM-DDTHH:mm:ssZ'
+      return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    };
+    await createBookingSeries({
+      room_id: data.room_id,
+      start_time: toDateNoMs(data.start_time),
+      end_time: toDateNoMs(data.end_time),
+      recurrence_type: data.recurrence_type,
+      series_end_date: toDateNoMs(data.series_end_date),
+    });
+    onBookingCreated?.();
+  };
+
   return (
     <section className="panel" aria-labelledby="book-label">
       {/* Page section title for screen readers and visual users */}
@@ -136,16 +157,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
       {loading && <div className="empty">Loading available rooms…</div>}
       {error && <div className="empty">Error: {error}</div>}
       {bookingError && (
-        <div
-          className="empty error"
-          style={{
-            color: '#d32f2f',
-            backgroundColor: '#ffebee',
-            padding: '1rem',
-            borderRadius: '4px',
-            marginBottom: '1rem'
-          }}
-        >
+        <div className="empty error" style={{ marginBottom: '1rem' }}>
           Booking error: {bookingError}
         </div>
       )}
@@ -155,24 +167,26 @@ export const BookingPage: React.FC<BookingPageProps> = ({
         <div className="empty">No rooms available for the selected time. Try adjusting filters.</div>
       ) : (
         // Grid of cards: each card represents a room and its booking action
-        <div className="grid">
+        <div className="grid grid--rooms">
           {rooms.map((room) => (
             <RoomCard
               key={room.id}
               room={{
-                id: room.id,
+                id: room.room_id, // Use UUID for both id and room_id
+                room_id: room.room_id, // UUID for recurring bookings
                 name: `${room.building_short_name} ${room.room_number}`,
                 number: room.room_number,
                 capacity: room.capacity,
                 type: room.room_type,
                 building: room.building_short_name,
-              } as unknown as Room /* Cast to Room to satisfy RoomCard typing */}
+              } as Room & { room_id: string }}
               date={date}
               start={start}
               end={end}
               onBook={handleBook}
               // Used by RoomCard to indicate unavailability and disable booking action
               isReserved={room.isReserved}
+              onBookRecurring={handleBookRecurring}
             />
           ))}
         </div>

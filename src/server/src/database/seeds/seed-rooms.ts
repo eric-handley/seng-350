@@ -76,6 +76,7 @@ async function main() {
     const existingRoomsCount = await roomRepository.count();
     const existingEquipmentCount = await equipmentRepository.count();
     if (existingBuildingsCount > 0 && existingRoomsCount > 0 && existingEquipmentCount > 0) {
+      console.warn('Seed data already exists, skipping...');
       return;
     }
 

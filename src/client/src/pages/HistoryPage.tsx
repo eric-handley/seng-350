@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { User, UserRole } from '../types'
 import { BookingCard } from '../components/BookingCard'
+import { RecurringBookingGroup } from '../components/RecurringBookingGroup'
 import type { UiBooking } from '../types'
 import { useBookingHistory } from '../hooks/useBookingHistory'
 
@@ -74,7 +75,7 @@ const FallbackTile: React.FC<{
         )}
       </div>
       {booking.cancelled && onRebook && (
-        <button className="btn ghost" onClick={() => onRebook(booking.id)}>
+        <button className="btn secondary" onClick={() => onRebook(booking.id)}>
           Rebook
         </button>
       )}
@@ -98,6 +99,33 @@ const GuardedBookingCard: React.FC<{
   </CardBoundary>
 );
 
+/**
+ * Groups bookings by their booking_series_id.
+ * Returns an array of groups, where each group contains bookings with the same series ID.
+ * Single bookings (with unique series IDs that match their own booking ID) are returned as individual groups.
+ */
+function groupBookingsBySeries(bookings: UiBooking[]): Array<{ seriesId: string; bookings: UiBooking[]; isRecurring: boolean }> {
+  const seriesMap = new Map<string, UiBooking[]>();
+
+  // Group bookings by their series ID
+  for (const booking of bookings) {
+    const seriesId = booking.booking_series_id ?? booking.id;
+    const group = seriesMap.get(seriesId);
+    if (group) {
+      group.push(booking);
+    } else {
+      seriesMap.set(seriesId, [booking]);
+    }
+  }
+
+  // Convert to array and mark recurring groups
+  return Array.from(seriesMap.entries()).map(([seriesId, bookings]) => ({
+    seriesId,
+    bookings,
+    isRecurring: bookings.length > 1
+  }));
+}
+
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   currentUser,
 }) => {
@@ -115,6 +143,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     error,
     fetchHistory,
     cancelBooking,
+    cancelBookingSeries,
     allBookings = [],
     fetchAllBookings
   } = useBookingHistory(currentUser.id) as {
@@ -123,6 +152,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     error: string | null,
     fetchHistory: () => Promise<void>,
     cancelBooking: (id: string) => Promise<void>,
+    cancelBookingSeries: (seriesId: string) => Promise<void>,
     allBookings: UiBooking[],
     fetchAllBookings: () => Promise<void>
   }
@@ -182,6 +212,24 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     }
   }
 
+  /**
+   * Cancel all bookings in a series by their series ID.
+   */
+  const handleCancelSeries = async (seriesId: string) => {
+    try {
+      await cancelBookingSeries(seriesId)
+
+      // Refresh all bookings list if user has access
+      if (currentUser?.role === UserRole.REGISTRAR || currentUser?.role === UserRole.ADMIN) {
+        await fetchAllBookings()
+      }
+
+      setMessage({ text: 'Series cancelled successfully!', type: 'success' })
+    } catch {
+      setMessage({ text: 'Failed to cancel series. Please try again later.', type: 'error' })
+    }
+  }
+
   // Loading state: show a friendly placeholder while data is fetched
   if (loading) {
     return (
@@ -200,15 +248,16 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     )
   }
 
+  // Group bookings by series ID
+  const userGroups = groupBookingsBySeries(userHistory);
+  const allBookingsGroups = groupBookingsBySeries(allBookings);
+
   // Render user section and, for privileged roles, a global section
   return (
     <div>
       {/* Toast message for rebook outcomes */}
       {message && (
-        <div className="toast" style={{
-          background: message.type === 'success' ? '#22c55e' : '#ef4444',
-          marginBottom: '1rem'
-        }}>
+        <div className={`toast ${message.type}`} style={{ marginBottom: '1rem' }}>
           {message.text}
         </div>
       )}
@@ -220,15 +269,24 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           <div className="empty">You have no bookings yet.</div>
         ) : (
           <div className="grid">
-            {userHistory.map(booking => (
-              <GuardedBookingCard
-                key={booking.id}
-                booking={booking}
-                onCancel={handleCancel}
-                onRebook={handleRebook}
-                showUser={false}
-              />
-            ))}
+            {userGroups.map(group =>
+              group.isRecurring ? (
+                <RecurringBookingGroup
+                  key={group.seriesId}
+                  bookings={group.bookings}
+                  onCancelSeries={handleCancelSeries}
+                  showUser={false}
+                />
+              ) : (
+                <GuardedBookingCard
+                  key={group.bookings[0].id}
+                  booking={group.bookings[0]}
+                  onCancel={handleCancel}
+                  onRebook={handleRebook}
+                  showUser={false}
+                />
+              )
+            )}
           </div>
         )}
       </section>
@@ -241,15 +299,24 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
             <div className="empty">There are no current bookings.</div>
           ) : (
             <div className="grid">
-              {allBookings.map(booking => (
-                <GuardedBookingCard
-                  key={booking.id}
-                  booking={booking}
-                  onCancel={handleCancel}
-                  onRebook={handleRebook}
-                  showUser={true}
-                />
-              ))}
+              {allBookingsGroups.map(group =>
+                group.isRecurring ? (
+                  <RecurringBookingGroup
+                    key={group.seriesId}
+                    bookings={group.bookings}
+                    onCancelSeries={handleCancelSeries}
+                    showUser={true}
+                  />
+                ) : (
+                  <GuardedBookingCard
+                    key={group.bookings[0].id}
+                    booking={group.bookings[0]}
+                    onCancel={handleCancel}
+                    onRebook={handleRebook}
+                    showUser={true}
+                  />
+                )
+              )}
             </div>
           )}
         </section>

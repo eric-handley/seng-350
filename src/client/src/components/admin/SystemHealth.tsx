@@ -22,7 +22,7 @@ export const SystemHealth = () => {
         <div className="panel-head">
           <div className="panel-title">System Health</div>
           <button
-            className="btn btn--ghost"
+            className="btn btn--secondary"
             onClick={() => window.location.reload()}
             disabled={isChecking}
           >
@@ -31,7 +31,7 @@ export const SystemHealth = () => {
         </div>
         <div className="stats">
           <StatCard
-            title="Backend Status"
+            title="Status"
             value={getStatusText(backend.ok)}
             sub={
               isChecking
