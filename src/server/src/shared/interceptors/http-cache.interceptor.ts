@@ -80,7 +80,13 @@ export class HttpCacheInterceptor implements NestInterceptor {
     );
 
     // Use custom prefix if provided, otherwise derive from route
-    const prefix = customPrefix || this.extractRoutePrefix(request.route?.path || request.url);
+    let prefix = customPrefix || this.extractRoutePrefix(request.route?.path || request.url);
+
+    // Include path parameters (e.g., building short_name, room_id)
+    if (request.params && Object.keys(request.params).length > 0) {
+      const paramValues = Object.values(request.params).join(':');
+      prefix = `${prefix}:${paramValues}`;
+    }
 
     // Include query parameters in cache key for differentiation
     const queryString = new URLSearchParams(
