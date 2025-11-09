@@ -20,7 +20,7 @@ export const RecurringBookingGroup: React.FC<Props> = ({
   onCancelSeries,
   showUser = false
 }) => {
-  if (bookings.length === 0) return null
+  if (bookings.length === 0) {return null}
 
   // Sort bookings by date
   const sortedBookings = [...bookings].sort((a, b) => {

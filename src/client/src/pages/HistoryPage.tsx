@@ -110,10 +110,12 @@ function groupBookingsBySeries(bookings: UiBooking[]): Array<{ seriesId: string;
   // Group bookings by their series ID
   for (const booking of bookings) {
     const seriesId = booking.booking_series_id ?? booking.id;
-    if (!seriesMap.has(seriesId)) {
-      seriesMap.set(seriesId, []);
+    const group = seriesMap.get(seriesId);
+    if (group) {
+      group.push(booking);
+    } else {
+      seriesMap.set(seriesId, [booking]);
     }
-    seriesMap.get(seriesId)!.push(booking);
   }
 
   // Convert to array and mark recurring groups
