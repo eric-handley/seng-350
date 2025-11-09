@@ -26,6 +26,7 @@ export type UiBooking = Booking & {
   roomNumber?: string;
   room?: { id: string; name?: string };
   date?: string; // "YYYY-MM-DD"
+  booking_series_id?: string;
 };
 
 export type User = {

@@ -273,7 +273,10 @@ main.theme {
 }
 /* Inputs */
 .card-title {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 0.75rem;
+  min-height: 30px;
 }
 
 a,
