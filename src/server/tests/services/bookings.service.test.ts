@@ -602,7 +602,19 @@ describe('BookingsService', () => {
   describe('booking series', () => {
     it('should create a series of recurring bookings', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
-      const mockSeries = { id: 'series-uuid' };
+      const startDate = generateMockDate(9);
+      const endDate = generateMockDate(10);
+      const seriesEndDate = new Date(startDate);
+      seriesEndDate.setDate(seriesEndDate.getDate() + 28); // 4 weeks
+
+      const mockSeries = { id: 'series-uuid', user_id: mockUser.id, room_id: mockUUID, start_time: startDate, end_time: endDate, series_end_date: seriesEndDate, recurrence_type: 'weekly' };
+      const seriesDto = {
+        room_id: mockUUID,
+        start_time: startDate,
+        end_time: endDate,
+        series_end_date: seriesEndDate,
+        recurrence_type: 'weekly' as const,
+      };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
       mockBookingSeriesRepository.create.mockReturnValue(mockSeries);
@@ -618,11 +630,11 @@ describe('BookingsService', () => {
       mockBookingRepository.create.mockReturnValue(mockBooking);
       mockBookingRepository.save.mockResolvedValue(mockBooking);
 
-      // const result = await service.createSeries(seriesDto, mockUUID);
+      const result = await service.createBookingSeries(seriesDto, mockUser);
 
-      // expect(result).toBeDefined();
-      // expect(result.length).toBe(4);
-      // expect(bookingRepository.save).toHaveBeenCalledTimes(4);
+      expect(result).toBeDefined();
+      expect(result.id).toBe('series-uuid');
+      expect(mockBookingSeriesRepository.save).toHaveBeenCalled();
     });
 
     it('should update a single booking in a series', async () => {
@@ -692,13 +704,17 @@ describe('BookingsService', () => {
     });
 
     it('should delete all bookings in a series when specified', async () => {
+      const startDate = generateMockDate(9, 0);
+      const seriesEndDate = new Date(startDate);
+      seriesEndDate.setDate(seriesEndDate.getDate() + 28);
+
       const mockSeries = {
         id: 'series-uuid',
         user_id: mockUser.id,
         room_id: mockUUID,
-        start_time: generateMockDate(9, 0),
+        start_time: startDate,
         end_time: generateMockDate(10, 0),
-        series_end_date: generateMockDate(9, 0),
+        series_end_date: seriesEndDate,
       };
 
       mockBookingSeriesRepository.findOne.mockResolvedValue(mockSeries);
@@ -715,6 +731,17 @@ describe('BookingsService', () => {
     it('should detect conflicts when creating booking series', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
       const mockSeries = { id: 'series-uuid' };
+      const startDate = generateMockDate(9);
+      const seriesEndDate = new Date(startDate);
+      seriesEndDate.setDate(seriesEndDate.getDate() + 28);
+
+      const seriesDto = {
+        room_id: mockUUID,
+        start_time: startDate,
+        end_time: generateMockDate(10),
+        series_end_date: seriesEndDate,
+        recurrence_type: 'weekly' as const,
+      };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
       mockBookingSeriesRepository.create.mockReturnValue(mockSeries);
@@ -731,7 +758,7 @@ describe('BookingsService', () => {
       };
       mockBookingRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      // await expect(service.createSeries(seriesDto, mockUUID)).rejects.toThrow(ConflictException);
+      await expect(service.createBookingSeries(seriesDto, mockUser)).rejects.toThrow(ConflictException);
     });
   });
 
