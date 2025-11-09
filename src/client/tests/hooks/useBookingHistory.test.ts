@@ -117,7 +117,7 @@ describe('useBookingHistory', () => {
   });
 
   // Fix later lmao
-  it.skip('throws error and removes optimistic booking when creation fails', async () => {
+  it('throws error and removes optimistic booking when creation fails', async () => {
     mockToApiTime.mockReturnValue('14-30-00');
     mockCreateBooking.mockRejectedValueOnce(new Error('Room unavailable'));
 
@@ -174,7 +174,7 @@ describe('useBookingHistory', () => {
     expect(result.current.error).toBe(null);
   });
 
-  it.skip('sets error when cancellation fails', async () => {
+  it('sets error when cancellation fails', async () => {
     mockFetchUserBookings.mockResolvedValueOnce([mockBooking1]);
     mockCancelBooking.mockRejectedValueOnce(new Error('Permission denied'));
 
@@ -197,7 +197,7 @@ describe('useBookingHistory', () => {
     expect(result.current.error).toBe('Permission denied');
   });
 
-  it.skip('handles non-Error rejection when cancelling', async () => {
+  it('handles non-Error rejection when cancelling', async () => {
     mockFetchUserBookings.mockResolvedValueOnce([mockBooking1]);
     mockCancelBooking.mockRejectedValueOnce('String error');
 

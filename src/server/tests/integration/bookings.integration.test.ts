@@ -399,12 +399,7 @@ describe('Bookings Integration Tests', () => {
         .expect(201);
     });
 
-    it.skip('should enforce overlap prevention at database level (exclusion constraint)', async () => {
-      // TODO: This test is currently skipped because the database exclusion constraint
-      // may not be properly applied in the test environment. The constraint should prevent
-      // overlapping Active bookings, but TypeORM's save() is succeeding when it should fail.
-      // This needs investigation into test database setup and migration execution.
-      // The API-level overlap prevention (tested above) is working correctly.
+    it('should enforce overlap prevention at database level (exclusion constraint)', async () => {
       let tomorrow = createTomorrow();
       // already set by createTomorrow()
       tomorrow = setTime(tomorrow, 9, 0);
@@ -572,8 +567,7 @@ describe('Bookings Integration Tests', () => {
         expect(res.body.message).toContain('3 months');
       });
 
-      // TODO: Flaky and not actually based on solid requirements
-      it.skip('should allow STAFF to book exactly 3 months in advance', async () => {
+      it('should allow STAFF to book exactly 3 months in advance', async () => {
         const threeMonthsAhead = setTime(addMonths(new Date(), 3), 9);
 
         const endTime = setTime(threeMonthsAhead, 10);
