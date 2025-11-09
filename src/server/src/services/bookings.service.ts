@@ -9,6 +9,7 @@ import { Room } from '../database/entities/room.entity';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
 import { AuthenticatedUser } from '../auth/auth.service';
 import { UserRole } from '../database/entities/user.entity';
+import { CacheService } from '../shared/cache/cache.service';
 
 @Injectable()
 export class BookingsService {
@@ -19,6 +20,7 @@ export class BookingsService {
     private readonly bookingSeriesRepository: Repository<BookingSeries>,
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async createBookingSeries(
@@ -104,6 +106,10 @@ export class BookingsService {
       created_at: savedSeries.created_at,
       updated_at: savedSeries.updated_at,
     };
+
+    // Invalidate schedule cache since bookings have been created
+    await this.cacheService.clearScheduleCache();
+
     return response;
   }
 
@@ -140,6 +146,10 @@ export class BookingsService {
     });
 
     const savedBooking = await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been created
+    await this.cacheService.clearScheduleCache();
+
     return this.toResponseDto(savedBooking);
   }
 
@@ -275,6 +285,10 @@ export class BookingsService {
       ...(normalizedUpdateRoomId ? { room_id: normalizedUpdateRoomId } : {}),
     });
     const savedBooking = await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been updated
+    await this.cacheService.clearScheduleCache();
+
     return this.toResponseDto(savedBooking);
   }
 
@@ -296,6 +310,9 @@ export class BookingsService {
 
     booking.status = BookingStatus.CANCELLED;
     await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been removed
+    await this.cacheService.clearScheduleCache();
   }
 
   private async checkForConflicts(
@@ -387,6 +404,9 @@ export class BookingsService {
       });
       await this.bookingRepository.save(booking);
     }
+
+    // Invalidate schedule cache since bookings in the series have been updated
+    await this.cacheService.clearScheduleCache();
   }
 
   async removeSeries(seriesId: string, currentUser: AuthenticatedUser): Promise<void> {
@@ -406,6 +426,9 @@ export class BookingsService {
 
     // Delete the series (cascade will delete associated bookings)
     await this.bookingSeriesRepository.remove(series);
+
+    // Invalidate schedule cache since bookings in the series have been removed
+    await this.cacheService.clearScheduleCache();
   }
 
   private normalizeRoomId(value?: string): string | undefined {
