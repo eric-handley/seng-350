@@ -157,16 +157,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
       {loading && <div className="empty">Loading available rooms…</div>}
       {error && <div className="empty">Error: {error}</div>}
       {bookingError && (
-        <div
-          className="empty error"
-          style={{
-            color: '#d32f2f',
-            backgroundColor: '#ffebee',
-            padding: '1rem',
-            borderRadius: '4px',
-            marginBottom: '1rem'
-          }}
-        >
+        <div className="empty error" style={{ marginBottom: '1rem' }}>
           Booking error: {bookingError}
         </div>
       )}
@@ -176,7 +167,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
         <div className="empty">No rooms available for the selected time. Try adjusting filters.</div>
       ) : (
         // Grid of cards: each card represents a room and its booking action
-        <div className="grid">
+        <div className="grid grid--rooms">
           {rooms.map((room) => (
             <RoomCard
               key={room.id}

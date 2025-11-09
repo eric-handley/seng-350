@@ -117,7 +117,7 @@ export const BookingCard: React.FC<Props> = ({
 
       {cancelled && onRebook && (
         <div style={{ marginTop: 10 }}>
-          <button className="btn ghost" onClick={() => onRebook(String(booking.id))}>
+          <button className="btn secondary" onClick={() => onRebook(String(booking.id))}>
             Rebook
           </button>
         </div>

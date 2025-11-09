@@ -74,7 +74,7 @@ const FallbackTile: React.FC<{
         )}
       </div>
       {booking.cancelled && onRebook && (
-        <button className="btn ghost" onClick={() => onRebook(booking.id)}>
+        <button className="btn secondary" onClick={() => onRebook(booking.id)}>
           Rebook
         </button>
       )}
@@ -205,10 +205,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     <div>
       {/* Toast message for rebook outcomes */}
       {message && (
-        <div className="toast" style={{
-          background: message.type === 'success' ? '#22c55e' : '#ef4444',
-          marginBottom: '1rem'
-        }}>
+        <div className={`toast ${message.type}`} style={{ marginBottom: '1rem' }}>
           {message.text}
         </div>
       )}

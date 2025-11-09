@@ -114,7 +114,7 @@ const HomeComponent: React.FC = () => {
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">
-          <button className="btn ghost" onClick={handleLogout}>
+          <button className="btn secondary" onClick={handleLogout}>
             Log out
           </button>
         </div>

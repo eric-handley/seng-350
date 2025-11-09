@@ -322,7 +322,7 @@ export default function BuildingsRooms(): JSX.Element {
                         Save
                       </button>
                       <button
-                        className="btn btn--small ghost"
+                        className="btn btn--small secondary"
                         onClick={() => {
                           setEditingBuildingShort(null);
                           setEditingBuildingName("");
@@ -457,7 +457,7 @@ export default function BuildingsRooms(): JSX.Element {
                                     Save
                                   </button>
                                   <button
-                                    className="btn btn--small ghost"
+                                    className="btn btn--small secondary"
                                     onClick={() =>
                                       setEditingRoom((prev) => {
                                         const next = { ...prev };
