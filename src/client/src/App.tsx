@@ -110,7 +110,9 @@ const HomeComponent: React.FC = () => {
       {/* App header with current role badge and logout */}
       <div className="header">
         <div className="header-info">
-          <span className="badge">{String(currentUser.role).toUpperCase()}</span>
+          <span className="badge">
+            {String(currentUser.role).toUpperCase()}
+          </span>
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">

@@ -21,7 +21,7 @@
     "lint": "eslint . --fix",
     "test": "jest --runInBand",
     "test:retry": "jest --runInBand -f",
-    "test:coverage": "jest --runInBand --coverage --coverageThreshold='{\"global\":{\"branches\":50,\"functions\":70,\"statements\":70}}'"
+    "test:coverage": "jest --runInBand --coverage --coverageThreshold='{\"global\":{\"branches\":50,\"functions\":70,\"statements\":70,\"lines\":80}}'"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.7.0",
