@@ -3,6 +3,20 @@
 ## Links
 
 **Cycle 2**
+- Implementation 2 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-2/implement))
+    - Updated Features
+        - Staff Functionality (issue [#1](courses/2025091/SENG350_COSI/teams/group_1_proj#1))
+            - Reoccuring bookings (issues [#14](courses/2025091/SENG350_COSI/teams/group_1_proj#14) and [#47](courses/2025091/SENG350_COSI/teams/group_1_proj#47))
+            - View equipment in room (issue [#56](courses/2025091/SENG350_COSI/teams/group_1_proj#56))
+        - Registrar Functionality (issue [#7](courses/2025091/SENG350_COSI/teams/group_1_proj#7))
+            - View stats/logs (issue [#64](courses/2025091/SENG350_COSI/teams/group_1_proj#64))
+        - Testing
+            - Fix skipped tests (issue [#63](courses/2025091/SENG350_COSI/teams/group_1_proj#63))
+            - More comprehensive frontend tests (issue [#52](courses/2025091/SENG350_COSI/teams/group_1_proj#52))
+        - Improve comments (issues [#60](courses/2025091/SENG350_COSI/teams/group_1_proj#60), [#61](courses/2025091/SENG350_COSI/teams/group_1_proj#61), and [#58](courses/2025091/SENG350_COSI/teams/group_1_proj#58))
+    - New Features
+        - MCP Endpoint (issue [#53](courses/2025091/SENG350_COSI/teams/group_1_proj#53))
+        - Swap a major library (issue [#59](courses/2025091/SENG350_COSI/teams/group_1_proj#59))
 - Design 2 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-2/design))
     - Architecture Views
         - [Component & Connector View](docs/2-design/component-connector-view.md)
