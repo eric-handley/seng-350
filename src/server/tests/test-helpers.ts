@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { parseISO, set, isValid } from 'date-fns';
+import { parseISO, set, isValid, addDays } from 'date-fns';
 import { User, UserRole } from '../src/database/entities/user.entity';
 import { Building } from '../src/database/entities/building.entity';
 import { Room, RoomType } from '../src/database/entities/room.entity';
@@ -49,11 +49,13 @@ export class TestDataFactory {
   }
 
   static createBooking(user?: User, room?: Room, overrides?: Partial<Booking>): Partial<Booking> {
+    const futureStart = set(addDays(new Date(), 100), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
+    const futureEnd = set(addDays(new Date(), 100), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
     return {
       user,
       room,
-      start_time: parseISO('2024-12-01T09:00:00Z'),
-      end_time: parseISO('2024-12-01T10:00:00Z'),
+      start_time: futureStart,
+      end_time: futureEnd,
       status: BookingStatus.ACTIVE,
       ...overrides,
     };

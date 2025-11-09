@@ -3,6 +3,7 @@ import request from 'supertest';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { addDays, set } from 'date-fns';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
@@ -197,10 +198,11 @@ describe('Cross-user authorization (e2e)', () => {
       .send({ email: staffUser1.email, password: 'password123' })
       .expect(200);
 
+    const bookingDate = set(addDays(new Date(), 23), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = {
       room_id: room.room_id,
-      start_time: '2025-12-01T10:00:00Z',
-      end_time: '2025-12-01T11:00:00Z',
+      start_time: bookingDate.toISOString(),
+      end_time: set(addDays(new Date(), 23), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
     };
 
     const createdBooking = await agent1
@@ -217,7 +219,7 @@ describe('Cross-user authorization (e2e)', () => {
     // Staff user 2 should NOT be able to update staff user 1's booking
     await agent2
       .patch(`/bookings/${createdBooking.body.id}`)
-      .send({ start_time: '2025-12-01T14:00:00Z' })
+      .send({ start_time: set(addDays(new Date(), 23), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString() })
       .expect(403);
 
     // Staff user 2 should NOT be able to delete staff user 1's booking
@@ -241,8 +243,8 @@ describe('Cross-user authorization (e2e)', () => {
 
     const booking = {
       room_id: room.room_id,
-      start_time: '2025-12-01T12:00:00Z',
-      end_time: '2025-12-01T13:00:00Z',
+      start_time: set(addDays(new Date(), 23), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
+      end_time: set(addDays(new Date(), 23), { hours: 13, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
     };
 
     return agent
@@ -306,11 +308,13 @@ describe('User deletion with bookings (e2e)', () => {
     }
 
     // Create future booking
+    const futureStart = set(addDays(new Date(), 570), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
+    const futureEnd = set(addDays(new Date(), 570), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 });
     const futureBooking = bookingRepository.create({
       user: userToDelete,
       room: room,
-      start_time: new Date('2027-06-01T10:00:00Z'),
-      end_time: new Date('2027-06-01T11:00:00Z'),
+      start_time: futureStart,
+      end_time: futureEnd,
       status: BookingStatus.ACTIVE,
     });
     await bookingRepository.save(futureBooking);
@@ -349,11 +353,13 @@ describe('User deletion with bookings (e2e)', () => {
       throw new Error('No rooms found for testing');
     }
 
+    const futureStart = set(addDays(new Date(), 600), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
+    const futureEnd = set(addDays(new Date(), 600), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = bookingRepository.create({
       user: userToDelete,
       room: room,
-      start_time: new Date('2027-07-01T10:00:00Z'),
-      end_time: new Date('2027-07-01T11:00:00Z'),
+      start_time: futureStart,
+      end_time: futureEnd,
       status: BookingStatus.ACTIVE,
     });
     await bookingRepository.save(booking);

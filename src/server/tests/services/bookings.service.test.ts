@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { subYears, set } from 'date-fns';
 
 import { BookingsService } from '../../src/services/bookings.service';
 import { CacheService } from '../../src/shared/cache/cache.service';
@@ -176,10 +177,11 @@ describe('BookingsService', () => {
     });
 
     it('should block STAFF from creating bookings in the past', async () => {
+      const pastDate = set(subYears(new Date(), 5), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
       const pastBookingDto = {
         ...createBookingDto,
-        start_time: new Date('2020-01-01T09:00:00Z'), // Past date
-        end_time: new Date('2020-01-01T10:00:00Z'),
+        start_time: pastDate, // Past date
+        end_time: set(subYears(new Date(), 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
       };
 
       await expect(service.create(pastBookingDto, mockUser)).rejects.toThrow(BadRequestException);
@@ -187,10 +189,11 @@ describe('BookingsService', () => {
 
     it('should allow ADMIN to create bookings in the past', async () => {
       const mockRoom = TestDataFactory.createRoom(undefined, { room_id: mockUUID });
+      const pastDate = set(subYears(new Date(), 5), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
       const pastBookingDto = {
         ...createBookingDto,
-        start_time: new Date('2020-01-01T09:00:00Z'),
-        end_time: new Date('2020-01-01T10:00:00Z'),
+        start_time: pastDate,
+        end_time: set(subYears(new Date(), 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
       };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);
@@ -220,10 +223,11 @@ describe('BookingsService', () => {
         last_name: 'User',
         role: UserRole.REGISTRAR,
       };
+      const pastDate = set(subYears(new Date(), 5), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
       const pastBookingDto = {
         ...createBookingDto,
-        start_time: new Date('2020-01-01T09:00:00Z'),
-        end_time: new Date('2020-01-01T10:00:00Z'),
+        start_time: pastDate,
+        end_time: set(subYears(new Date(), 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
       };
 
       mockRoomRepository.findOne.mockResolvedValue(mockRoom);

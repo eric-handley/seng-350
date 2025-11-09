@@ -18,6 +18,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import request, { Response } from 'supertest';
 import { Repository } from 'typeorm';
 import { Request, Response as ExpressResponse, NextFunction } from 'express';
+import { addDays, set } from 'date-fns';
 
 import { User, UserRole } from '../../src/database/entities/user.entity';
 import { Building } from '../../src/database/entities/building.entity';
@@ -388,11 +389,13 @@ describe('/bookings (e2e)', () => {
   });
 
   it('/bookings (GET) should return all bookings', async () => {
+    const bookingStart = set(addDays(new Date(), 387), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 387), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T09:00:00Z'),
-      end_time: new Date('2026-12-01T10:00:00Z'),
+      start_time: bookingStart,
+      end_time: bookingEnd,
       status: BookingStatus.ACTIVE,
     });
     await bookingRepository.save(booking);
@@ -407,11 +410,13 @@ describe('/bookings (e2e)', () => {
   });
 
   it('/bookings (GET) with filters should filter results', async () => {
+    const bookingStart = set(addDays(new Date(), 387), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 387), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T11:00:00Z'),
-      end_time: new Date('2026-12-01T12:00:00Z'),
+      start_time: bookingStart,
+      end_time: bookingEnd,
       status: BookingStatus.ACTIVE,
     });
     await bookingRepository.save(booking);
@@ -429,11 +434,13 @@ describe('/bookings (e2e)', () => {
   });
 
   it('/bookings/:id (GET) should return a specific booking', async () => {
+    const bookingStart = set(addDays(new Date(), 387), { hours: 13, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 387), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T13:00:00Z'),
-      end_time: new Date('2026-12-01T14:00:00Z'),
+      start_time: bookingStart,
+      end_time: bookingEnd,
       status: BookingStatus.ACTIVE,
     });
     const savedBooking = await bookingRepository.save(booking);
@@ -449,18 +456,22 @@ describe('/bookings (e2e)', () => {
   });
 
   it('/bookings/:id (PATCH) should update a booking', async () => {
+    const bookingStart = set(addDays(new Date(), 387), { hours: 15, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 387), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = bookingRepository.create({
       user: testUser,
       room: testRoom,
-      start_time: new Date('2026-12-01T15:00:00Z'),
-      end_time: new Date('2026-12-01T16:00:00Z'),
+      start_time: bookingStart,
+      end_time: bookingEnd,
       status: BookingStatus.ACTIVE,
     });
     const savedBooking = await bookingRepository.save(booking);
 
+    const updateStart = set(addDays(new Date(), 387), { hours: 16, minutes: 0, seconds: 0, milliseconds: 0 });
+    const updateEnd = set(addDays(new Date(), 387), { hours: 17, minutes: 0, seconds: 0, milliseconds: 0 });
     const updateData = {
-      start_time: '2026-12-01T16:00:00Z',
-      end_time: '2026-12-01T17:00:00Z',
+      start_time: updateStart.toISOString(),
+      end_time: updateEnd.toISOString(),
     };
 
     return request(app.getHttpServer())

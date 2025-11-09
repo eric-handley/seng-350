@@ -9,11 +9,12 @@ describe('EquipmentController', () => {
   let controller: EquipmentController;
   let service: EquipmentService;
 
+  const now = new Date();
   const mockEquipmentResponse: EquipmentResponseDto = {
     id: 'equipment-uuid',
     name: 'Projector',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockEquipmentService = {
