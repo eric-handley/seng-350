@@ -89,7 +89,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       // Gracefully convert any thrown value into a message
       setError(getErrorMessage(err, "Login failed"));
     }
-    // console.warn("Logging in with:", { email, password });
   };
 
   /**
