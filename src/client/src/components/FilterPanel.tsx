@@ -116,7 +116,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     display: 'flex',
     flexDirection: 'column',
     gap: 6,
-    minWidth: 0,             // So inputs can shrink
+    minWidth: 0, // So inputs can shrink
   }
 
   const labelStyle: React.CSSProperties = {

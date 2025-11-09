@@ -195,21 +195,6 @@ export default function EquipmentManagement() {
     setNewEquipmentName(equipment.name);
   };
 
-  // Commented out - functionality incomplete/disabled
-  // const startEditRoomEquipment = (equipment: Equipment) => {
-  //   const roomEquipment = equipment.room_equipment?.find(
-  //     (re) => re.room.room === selectedRoom.split("-")[1]
-  //   );
-  //   if (roomEquipment) {
-  //     setEditingRoomEquipment({
-  //       roomId: selectedRoom,
-  //       equipmentId: equipment.id,
-  //       quantity: roomEquipment.quantity ?? null,
-  //     });
-  //     setNewRoomEquipmentQuantity(roomEquipment.quantity ?? 1);
-  //   }
-  // };
-
   const cancelEdit = () => {
     setEditingEquipment(null);
     setEditingRoomEquipment(null);

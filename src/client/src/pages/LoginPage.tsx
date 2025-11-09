@@ -57,7 +57,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Login failed"));
     }
-    //console.warn("Logging in with:", { email, password });
   };
 
   const handleDevLogin = (role: UserRole) => {
