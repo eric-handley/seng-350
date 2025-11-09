@@ -197,8 +197,6 @@ describe('Cross-user authorization (e2e)', () => {
       .send({ email: staffUser1.email, password: 'password123' })
       .expect(200);
 
-    // TODO: Add date library (e.g., date-fns) and replace hardcoded dates with dynamic dates relative to current time
-    
     const booking = {
       room_id: room.room_id,
       start_time: '2025-12-01T10:00:00Z',
