@@ -132,7 +132,9 @@ describe('useBookingHistory', () => {
 
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
-    await result.current.createBooking('ECS-124', '2025-01-15', '14:30:00', '15:30:00');
+    await act(async () => {
+      await result.current.createBooking('ECS-124', '2025-01-15', '14:30:00', '15:30:00');
+    });
 
     expect(result.current.error).toBe(null);
   });
@@ -161,7 +163,9 @@ describe('useBookingHistory', () => {
 
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
-    await result.current.fetchAllBookings();
+    await act(async () => {
+      await result.current.fetchAllBookings();
+    });
 
     expect(global.fetch).toHaveBeenCalledWith(
       'http://localhost:3000/bookings',
@@ -175,7 +179,9 @@ describe('useBookingHistory', () => {
 
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
-    await result.current.fetchAllBookings();
+    await act(async () => {
+      await result.current.fetchAllBookings();
+    });
 
     expect(consoleSpy).toHaveBeenCalled();
     expect(result.current.allBookings).toEqual([]);

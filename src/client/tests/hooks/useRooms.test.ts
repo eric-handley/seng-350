@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useRooms } from '../../src/hooks/useRooms';
 import * as scheduleApi from '../../src/api/schedule';
 
@@ -43,7 +43,9 @@ describe('useRooms', () => {
 
     expect(result.current.loading).toBe(false);
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchRooms).toHaveBeenCalledWith({ building_short_name: 'ECS' });
@@ -56,23 +58,29 @@ describe('useRooms', () => {
 
     const { result } = renderHook(() => useRooms({ building_short_name: 'ECS' }));
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(result.current.error).toBe('Network error');
     });
   });
 
-  it('debounces fetch by 250ms', () => {
+  it('debounces fetch by 250ms', async () => {
     mockFetchRooms.mockResolvedValueOnce(mockRooms);
 
     renderHook(() => useRooms({ building_short_name: 'ECS' }));
 
-    jest.advanceTimersByTime(100);
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
     expect(mockFetchRooms).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(150);
-    jest.runAllTimers();
+    await act(async () => {
+      jest.advanceTimersByTime(150);
+      jest.runAllTimers();
+    });
 
     expect(mockFetchRooms).toHaveBeenCalledTimes(1);
   });
@@ -85,7 +93,9 @@ describe('useRooms', () => {
       { initialProps: { query: { building_short_name: 'ECS' } } }
     );
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchRooms).toHaveBeenCalledTimes(1);
@@ -95,7 +105,9 @@ describe('useRooms', () => {
 
     rerender({ query: { building_short_name: 'CLE' } });
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchRooms).toHaveBeenCalledTimes(2);
@@ -103,15 +115,19 @@ describe('useRooms', () => {
     });
   });
 
-  it('cancels fetch on unmount', () => {
+  it('cancels fetch on unmount', async () => {
     mockFetchRooms.mockImplementation(() => new Promise(() => {}));
 
     const { unmount } = renderHook(() => useRooms({ building_short_name: 'ECS' }));
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     unmount();
-    jest.runAllTimers();
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     expect(mockFetchRooms).toHaveBeenCalledTimes(1);
   });
@@ -124,7 +140,9 @@ describe('useRooms', () => {
       { initialProps: { query: { building_short_name: 'ECS' } } }
     );
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(result.current.rooms).toEqual(mockRooms);
@@ -134,7 +152,9 @@ describe('useRooms', () => {
 
     rerender({ query: { building_short_name: 'CLE' } });
 
-    jest.advanceTimersByTime(250);
+    await act(async () => {
+      jest.advanceTimersByTime(250);
+    });
 
     await waitFor(() => {
       expect(mockFetchRooms).toHaveBeenCalledTimes(2);
