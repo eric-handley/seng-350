@@ -32,8 +32,8 @@ export const RecurringBookingGroup: React.FC<Props> = ({
   const firstBooking = sortedBookings[0]
   const lastBooking = sortedBookings[sortedBookings.length - 1]
 
-  const roomId = firstBooking.roomId ?? firstBooking.room_id ?? firstBooking.room?.id ?? ''
-  const roomName = firstBooking.name ?? firstBooking.roomName ?? firstBooking.room?.name ?? roomId ?? 'Room'
+  const roomId = firstBooking.roomId ?? firstBooking.room?.id ?? ''
+  const roomName = firstBooking.name ?? firstBooking.room?.name ?? roomId ?? 'Room'
 
   const startDate = firstBooking.date
   const endDate = lastBooking.date
@@ -51,12 +51,10 @@ export const RecurringBookingGroup: React.FC<Props> = ({
   const seriesId = firstBooking.booking_series_id ?? ''
 
   // Optional user details from first booking
-  const userName = firstBooking.user_name ??
-    (firstBooking.user?.first_name && firstBooking.user?.last_name
-      ? `${firstBooking.user.first_name} ${firstBooking.user.last_name}`
-      : undefined)
-  const userEmail = firstBooking.user_email ?? firstBooking.user?.email
-  const userRole = firstBooking.user_role ?? firstBooking.user?.role
+  // Note: user is a string (user ID) in UiBooking type
+  const userName = firstBooking.user
+  const userEmail = undefined
+  const userRole = undefined
 
   return (
     <article className="card">
