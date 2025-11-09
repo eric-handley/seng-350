@@ -28,7 +28,7 @@ export class HttpCacheInterceptor implements NestInterceptor {
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Promise<Observable<any>> {
+  ): Promise<Observable<unknown>> {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
 
@@ -84,7 +84,9 @@ export class HttpCacheInterceptor implements NestInterceptor {
     );
 
     // Use custom prefix if provided, otherwise derive from route
-    let prefix = customPrefix || this.extractRoutePrefix(request.route?.path || request.url);
+    let prefix =
+      customPrefix ??
+      this.extractRoutePrefix(request.route?.path ?? request.url);
 
     // Include path parameters (e.g., building short_name, room_id)
     if (request.params && Object.keys(request.params).length > 0) {
