@@ -333,6 +333,22 @@ describe('REGISTRAR role (e2e)', () => {
 
     return agent.post('/users').send(newAdminUser).expect(403);
   });
+
+  it('should allow Registrar to access /logs', async () => {
+    const agent = request.agent(app.getHttpServer());
+
+    await agent
+      .post('/api/auth/login')
+      .send({ email: registrarUser.email, password: 'password123' })
+      .expect(200);
+
+    return agent
+      .get('/logs')
+      .expect(200)
+      .expect((res) => {
+        expect(Array.isArray(res.body)).toBe(true);
+      });
+  });
 });
 
 describe('Role update restrictions (e2e)', () => {
