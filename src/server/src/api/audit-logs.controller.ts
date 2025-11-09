@@ -5,13 +5,14 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
-} from "@nestjs/swagger";
-import { AuditLogsService } from "../services/audit-logs.service";
-import { AuditLogResponseDto } from "../dto/audit-log.dto";
-import { AuthGuard } from "../shared/guards/auth.guard";
-import { RolesGuard } from "../shared/guards/roles.guard";
-import { Roles } from "../shared/decorators/roles.decorator";
-import { UserRole } from "../database/entities/user.entity";
+} from '@nestjs/swagger';
+import { AuditLogsService } from '../services/audit-logs.service';
+import { AuditLogResponseDto } from '../dto/audit-log.dto';
+import { AuthGuard } from '../shared/guards/auth.guard';
+import { RolesGuard } from '../shared/guards/roles.guard';
+import { Roles } from '../shared/decorators/roles.decorator';
+import { UserRole } from '../database/entities/user.entity';
+import { ParseDatePipe } from '../shared/pipes/parse-date.pipe';
 
 @ApiTags("Audit Logs")
 @ApiBearerAuth()
@@ -70,20 +71,20 @@ export class AuditLogsController {
     description: "Access denied - Admin role required",
   })
   async findAll(
-    @Query("action") action?: string,
-    @Query("route") route?: string,
-    @Query("userId") userId?: string,
-    @Query("startTime") startTime?: string,
-    @Query("endTime") endTime?: string,
-    @Query("offset") offset?: string,
-    @Query("limit") limit?: string
+    @Query('action') action?: string,
+    @Query('route') route?: string,
+    @Query('userId') userId?: string,
+    @Query('startTime', ParseDatePipe) startTime?: Date,
+    @Query('endTime', ParseDatePipe) endTime?: Date,
+    @Query('offset') offset?: string,
+    @Query('limit') limit?: string,
   ): Promise<AuditLogResponseDto[]> {
     return this.auditLogsService.findAll({
       action,
       route,
       userId,
-      startTime: startTime ? new Date(startTime) : undefined,
-      endTime: endTime ? new Date(endTime) : undefined,
+      startTime,
+      endTime,
       offset: offset ? parseInt(offset, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,
     });

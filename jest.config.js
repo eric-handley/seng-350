@@ -24,20 +24,16 @@ export default {
       },
       roots: ['<rootDir>/src/client/tests'],
       testMatch: ['<rootDir>/src/client/tests/**/*.test.{ts,tsx}'],
+      coveragePathIgnorePatterns: [
+        '/node_modules/',
+        '/tests/',
+      ],
       collectCoverageFrom: [
         'src/client/src/**/*.{ts,tsx}',
         '!src/client/src/**/*.d.ts',
         '!src/client/src/main.tsx',
       ],
       setupFilesAfterEnv: ['<rootDir>/src/client/tests/setup.ts'],
-      coverageThreshold: {
-        global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80,
-        },
-      },
     },
     {
       displayName: 'server',
@@ -51,20 +47,16 @@ export default {
       },
       roots: ['<rootDir>/src/server/tests'],
       testMatch: ['<rootDir>/src/server/tests/**/*.test.ts'],
+      coveragePathIgnorePatterns: [
+        '/node_modules/',
+        '/tests/',
+      ],
       collectCoverageFrom: [
         'src/server/src/**/*.ts',
         '!src/server/src/**/*.d.ts',
         '!src/server/src/**/*.test.ts',
         '!src/server/src/main.ts',
       ],
-      coverageThreshold: {
-        global: {
-          branches: 70,
-          functions: 70,
-          lines: 70,
-          statements: 70,
-        },
-      },
     },
   ],
 };

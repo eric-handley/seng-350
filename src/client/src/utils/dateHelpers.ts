@@ -1,14 +1,14 @@
+import { parseISO, formatISO, isBefore, startOfMinute, format } from 'date-fns'
+
 export const isoAt = (dateStr: string, timeStr: string) => {
-  return new Date(`${dateStr}T${timeStr}:00`)
+  return parseISO(`${dateStr}T${timeStr}:00`)
 }
 
 export const overlap = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
-  aStart < bEnd && bStart < aEnd
+  isBefore(aStart, bEnd) && isBefore(bStart, aEnd)
 
-export const formatDate = (date: Date) => date.toISOString()
+export const formatDate = (date: Date) => formatISO(date)
 
 export const getCurrentDate = () => {
-  const d = new Date()
-  d.setSeconds(0, 0)
-  return d.toISOString().slice(0, 10)
+  return format(startOfMinute(new Date()), 'yyyy-MM-dd')
 }

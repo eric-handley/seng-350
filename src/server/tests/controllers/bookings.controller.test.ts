@@ -110,8 +110,8 @@ describe('BookingsController', () => {
     it('should return bookings with all filters', async () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
-      const startDate = '2024-01-01T00:00:00Z';
-      const endDate = '2024-01-02T00:00:00Z';
+      const startDate = new Date('2024-01-01T00:00:00Z');
+      const endDate = new Date('2024-01-02T00:00:00Z');
 
       const result = await controller.findAll(mockUser, 'user-uuid', 'room-uuid', startDate, endDate);
 
@@ -119,8 +119,8 @@ describe('BookingsController', () => {
         mockUser,
         'user-uuid',
         'room-uuid',
-        new Date(startDate),
-        new Date(endDate)
+        startDate,
+        endDate
       );
       expect(result).toEqual(mockBookings);
     });
@@ -128,14 +128,15 @@ describe('BookingsController', () => {
     it('should handle date parsing correctly', async () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
+      const startDate = new Date('2024-01-01T00:00:00Z');
 
-      await controller.findAll(mockUser, undefined, undefined, '2024-01-01T00:00:00Z');
+      await controller.findAll(mockUser, undefined, undefined, startDate);
 
       expect(service.findAll).toHaveBeenCalledWith(
         mockUser,
         undefined,
         undefined,
-        new Date('2024-01-01T00:00:00Z'),
+        startDate,
         undefined
       );
     });

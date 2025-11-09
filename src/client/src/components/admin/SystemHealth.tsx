@@ -1,4 +1,5 @@
 import React from "react";
+import { parseISO, format } from 'date-fns';
 import { useHealthCheck } from "../../hooks/useHealthCheck";
 import { Badge, StatCard } from "./AdminComponents";
 
@@ -21,7 +22,7 @@ export const SystemHealth = () => {
         <div className="panel-head">
           <div className="panel-title">System Health</div>
           <button
-            className="btn btn--ghost"
+            className="btn btn--secondary"
             onClick={() => window.location.reload()}
             disabled={isChecking}
           >
@@ -30,12 +31,12 @@ export const SystemHealth = () => {
         </div>
         <div className="stats">
           <StatCard
-            title="Backend Status"
+            title="Status"
             value={getStatusText(backend.ok)}
             sub={
               isChecking
                 ? "Checking..."
-                : `Last checked: ${lastChecked.toLocaleTimeString()}`
+                : `Last checked: ${format(lastChecked, 'HH:mm:ss')}`
             }
           />
           <StatCard
@@ -46,7 +47,7 @@ export const SystemHealth = () => {
           <StatCard
             title="Last Response"
             value={
-              backend.now ? new Date(backend.now).toLocaleTimeString() : "N/A"
+              backend.now ? format(parseISO(backend.now), 'HH:mm:ss') : "N/A"
             }
             sub="Server time"
           />

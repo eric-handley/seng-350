@@ -2,22 +2,40 @@ import React, { useState } from "react"
 import { User, UserRole } from "../types"
 
 type AddUserProps = {
+  // Seed user object to prefill the form (e.g., defaults). Password is entered by the admin.
   user: User;
+  // The currently authenticated user (used for permission-based UI, e.g., available roles).
   currentUser: User;
+  // Called when the form is valid and submitted. Password is guaranteed to be present here.
   onSave: (user: User & { password: string }) => void;
+  // Called when the admin cancels user creation.
   onCancel: () => void;
 }
 
+/**
+ * AddUser
+ * - Controlled form for creating a new user account.
+ * - Performs client-side validation and exposes accessible error messages.
+ * - Limits role selection based on the current admin's permissions.
+ */
 export default function AddUser({ user, currentUser, onSave, onCancel }: AddUserProps) {
+  // Local form state; password is optional while typing but required on submit.
   const [formData, setFormData] = useState<User & { password?: string }>(user)
+  // Field-level error messages keyed by input name.
   const [errors, setErrors] = useState<Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>>>({});
 
+  /**
+   * Generic change handler for inputs and selects:
+   * - Casts 'role' to UserRole
+   * - Clears per-field error on change
+   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
     if (name === 'role') {
+      // Cast to enum type for TS safety
       setFormData(prev => ({ ...prev, role: value as UserRole }));
     } else if (
       name === 'first_name' ||
@@ -26,10 +44,17 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
       name === 'password'
     ) {
       setFormData(prev => ({ ...prev, [name]: value }));
+      // Clear error for the field the user is editing
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
+  /**
+   * Synchronous client-side validation:
+   * - First/last name required
+   * - Email required and must match basic pattern
+   * - Password required and min length 6
+   */
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<'first_name' | 'last_name' | 'email' | 'password', string>> = {};
 
@@ -55,10 +80,14 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Submit handler:
+   * - Prevents browser navigation
+   * - Validates and forwards sanitized payload to onSave
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Remove id if present before sending
       const { ...userData } = formData;
       onSave(userData as User & { password: string });
     }
@@ -68,6 +97,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
     <form className="panel" onSubmit={handleSubmit}>
       <h2 style={{ marginBottom: '1rem' }}>Add User</h2>
 
+      {/* First name field with inline error messaging and ARIA wiring */}
       <label htmlFor="add-user-first-name" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>First Name:</div>
         <input
@@ -88,6 +118,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
+      {/* Last name field */}
       <label htmlFor="add-user-last-name" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Last Name:</div>
         <input
@@ -107,6 +138,8 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
           </span>
         )}
       </label>
+
+      {/* Email field; type=email enables native validation hints */}
       <label htmlFor="add-user-email" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Email:</div>
         <input
@@ -128,6 +161,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
+      {/* Role picker; options are constrained by currentUser's privileges */}
       <label htmlFor="add-user-role" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Role:</div>
         <select
@@ -149,6 +183,7 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         </select>
       </label>
 
+      {/* Password field with min-length validation surfaced via errors */}
       <label htmlFor="add-user-password" style={{ display: 'block', marginBottom: '1rem' }}>
         <div style={{ marginBottom: '0.5rem', fontWeight: 500 }}>Password:</div>
         <input
@@ -170,10 +205,13 @@ export default function AddUser({ user, currentUser, onSave, onCancel }: AddUser
         )}
       </label>
 
+      {/* Primary/secondary actions */}
       <div style={{ marginTop: "1rem", display: 'flex', gap: '0.5rem' }}>
+        {/* Submits the form; disabled state could be added if you wire async saving */}
         <button type="submit" className="btn primary">
           Save
         </button>
+        {/* Non-submitting action to abandon changes */}
         <button type="button" className="btn" onClick={onCancel}>
           Cancel
         </button>
