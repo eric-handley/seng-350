@@ -4,58 +4,76 @@ import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CacheService {
+  // Store cache key patterns to track which keys need invalidation
+  private readonly scheduleCacheKeys = new Set<string>();
+  private readonly roomCacheKeys = new Set<string>();
+  private readonly buildingCacheKeys = new Set<string>();
+
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
 
   /**
-   * Clear all cache entries matching a glob pattern
-   * For Redis, this uses SCAN and DEL for pattern matching
+   * Register a schedule cache key for tracking
    */
-  async clearPattern(pattern: string): Promise<void> {
-    try {
-      // Get all keys from cache
-      const allKeys = await this.cacheManager.store.getKeys?.();
+  registerScheduleCacheKey(key: string): void {
+    this.scheduleCacheKeys.add(key);
+  }
 
-      if (Array.isArray(allKeys)) {
-        const regex = this.patternToRegex(pattern);
-        const keysToDelete = allKeys.filter((key) => regex.test(key));
+  /**
+   * Register a room cache key for tracking
+   */
+  registerRoomCacheKey(key: string): void {
+    this.roomCacheKeys.add(key);
+  }
 
-        for (const key of keysToDelete) {
-          await this.cacheManager.del(key);
-        }
-      }
-    } catch (error) {
-      console.warn('[CacheService] Failed to clear cache pattern:', error);
-      // Don't throw - cache invalidation failures shouldn't break the application
-    }
+  /**
+   * Register a building cache key for tracking
+   */
+  registerBuildingCacheKey(key: string): void {
+    this.buildingCacheKeys.add(key);
   }
 
   /**
    * Clear all schedule-related caches
    */
   async clearScheduleCache(): Promise<void> {
-    await this.clearPattern('schedule:.*');
+    try {
+      for (const key of this.scheduleCacheKeys) {
+        await this.cacheManager.del(key);
+      }
+      this.scheduleCacheKeys.clear();
+    } catch (error) {
+      console.warn('[CacheService] Failed to clear schedule cache:', error);
+    }
   }
 
   /**
    * Clear all room-related caches
    */
   async clearRoomCache(): Promise<void> {
-    await Promise.all([
-      this.clearPattern('room:.*'),
-      this.clearPattern('rooms:.*'),
-      this.clearScheduleCache(), // Clearing schedule since it depends on room data
-    ]);
+    try {
+      for (const key of this.roomCacheKeys) {
+        await this.cacheManager.del(key);
+      }
+      this.roomCacheKeys.clear();
+      await this.clearScheduleCache();
+    } catch (error) {
+      console.warn('[CacheService] Failed to clear room cache:', error);
+    }
   }
 
   /**
    * Clear all building-related caches
    */
   async clearBuildingCache(): Promise<void> {
-    await Promise.all([
-      this.clearPattern('building:.*'),
-      this.clearPattern('buildings:.*'),
-      this.clearRoomCache(), // Clearing rooms since they depend on buildings
-    ]);
+    try {
+      for (const key of this.buildingCacheKeys) {
+        await this.cacheManager.del(key);
+      }
+      this.buildingCacheKeys.clear();
+      await this.clearRoomCache();
+    } catch (error) {
+      console.warn('[CacheService] Failed to clear building cache:', error);
+    }
   }
 
   /**
@@ -64,18 +82,11 @@ export class CacheService {
   async clearKey(key: string): Promise<void> {
     try {
       await this.cacheManager.del(key);
+      this.scheduleCacheKeys.delete(key);
+      this.roomCacheKeys.delete(key);
+      this.buildingCacheKeys.delete(key);
     } catch (error) {
       console.warn('[CacheService] Failed to clear cache key:', error);
     }
-  }
-
-  /**
-   * Convert glob pattern to regex for cache key matching
-   * e.g., 'schedule:*' -> /^schedule:.*/
-   */
-  private patternToRegex(pattern: string): RegExp {
-    const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
-    const regex = escaped.replace(/\\\*/g, '.*');
-    return new RegExp(`^${regex}$`);
   }
 }

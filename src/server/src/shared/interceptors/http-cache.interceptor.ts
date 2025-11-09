@@ -15,12 +15,14 @@ import {
   CACHE_KEY_METADATA,
   CACHE_TTL_METADATA,
 } from '../decorators/cache.decorator';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class HttpCacheInterceptor implements NestInterceptor {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly reflector: Reflector,
+    private readonly cacheService: CacheService,
   ) {}
 
   async intercept(
@@ -62,6 +64,8 @@ export class HttpCacheInterceptor implements NestInterceptor {
       tap(async (data) => {
         try {
           await this.cacheManager.set(cacheKey, data, ttl);
+          // Register the cache key with the cache service for invalidation tracking
+          this.registerCacheKey(cacheKey);
         } catch (error) {
           // If cache set fails, just continue - don't break the response
           console.warn('[HttpCacheInterceptor] Failed to cache response:', error);
@@ -105,5 +109,16 @@ export class HttpCacheInterceptor implements NestInterceptor {
     // e.g., /api/schedule -> schedule, /api/buildings/:id -> buildings
     const cleanPath = path.replace(/^\/api/, '').split('/').filter(Boolean)[0];
     return cleanPath || 'default';
+  }
+
+  private registerCacheKey(key: string): void {
+    // Register the cache key with the appropriate cache service tracker
+    if (key.startsWith('schedule')) {
+      this.cacheService.registerScheduleCacheKey(key);
+    } else if (key.startsWith('room')) {
+      this.cacheService.registerRoomCacheKey(key);
+    } else if (key.startsWith('building')) {
+      this.cacheService.registerBuildingCacheKey(key);
+    }
   }
 }
