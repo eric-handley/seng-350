@@ -79,7 +79,11 @@ const HomeComponent: React.FC = () => {
 
   // Fetch audit logs for admin users
   // NOTE: convertAuditLogToRow adapts server shape to table rows.
-  const { auditLogs, loading: auditLoading, error: auditError } = useAuditLogs();
+  const {
+    auditLogs,
+    loading: auditLoading,
+    error: auditError,
+  } = useAuditLogs();
   const auditRows = auditLogs.map(convertAuditLogToRow);
 
   // Room filtering state (shared between Booking and Schedule pages)
@@ -174,12 +178,18 @@ const HomeComponent: React.FC = () => {
       )}
 
       {/* Admin-only sections */}
-      {tab === "audit" && currentUser.role === UserRole.ADMIN && (
-        <AuditTable rows={auditRows} loading={auditLoading} error={auditError} />
-      )}
-      {tab === "health" && (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
-        <SystemHealth />
-      )}
+      {tab === "audit" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && (
+          <AuditTable
+            rows={auditRows}
+            loading={auditLoading}
+            error={auditError}
+          />
+        )}
+      {tab === "health" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && <SystemHealth />}
       {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
         <BuildingsRooms />
       )}
