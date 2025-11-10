@@ -81,7 +81,8 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           Manage Equipment
         </button>
       )}
-      {currentUser.role === UserRole.ADMIN && (
+      {(currentUser.role === UserRole.ADMIN ||
+        currentUser.role === UserRole.REGISTRAR) && (
         <button
           className="tab"
           role="tab"
