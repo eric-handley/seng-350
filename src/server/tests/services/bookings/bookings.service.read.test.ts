@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 
 import { BookingsService } from '../../../src/services/bookings.service';
 import { Booking } from '../../../src/database/entities/booking.entity';
-import { TestDataFactory, mockUUID, generateMockDate } from '../../test-helpers';
+import { mockUUID, generateMockDate } from '../../test-helpers';
 import {
   setupBookingsServiceTestModule,
   mockUser,

@@ -5,13 +5,22 @@
 import { screen } from '@testing-library/react';
 import { mockHooks, renderBookingPage } from './BookingPage.test-setup';
 
+type MockRoom = {
+  room_id: string;
+  building_short_name: string;
+  room_number: string;
+  room_type: string;
+  capacity: number;
+  slots: Array<{ start_time: string; end_time: string }>;
+};
+
 describe('<BookingPage /> - Filters and Reservations', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     test('marks rooms as reserved when they appear in booked slots', async () => {
-        const allRooms = [
+        const allRooms: MockRoom[] = [
             {
                 room_id: 'avail1',
                 building_short_name: 'ECS',
@@ -28,9 +37,9 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                 capacity: 35,
                 slots: [],
             },
-        ] as any;
+        ];
 
-        const bookedRooms = [
+        const bookedRooms: MockRoom[] = [
             {
                 room_id: 'booked1',
                 building_short_name: 'ECS',
@@ -41,7 +50,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                     { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
                 ],
             },
-        ] as any;
+        ];
 
         mockHooks.useRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
         mockHooks.useSchedule.mockReturnValue({ rooms: bookedRooms, loading: false, error: null });
@@ -57,7 +66,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
     });
 
     test('filters rooms by room query text', async () => {
-        const allRooms = [
+        const allRooms: MockRoom[] = [
             {
                 room_id: 'r101',
                 building_short_name: 'ECS',
@@ -74,7 +83,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                 capacity: 35,
                 slots: [],
             },
-        ] as any;
+        ];
 
         mockHooks.useRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
         mockHooks.useSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
@@ -87,7 +96,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
     });
 
     test('shows available and booked rooms', async () => {
-        const allRooms = [
+        const allRooms: MockRoom[] = [
             {
                 room_id: 'avail',
                 building_short_name: 'ECS',
@@ -104,9 +113,9 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                 capacity: 35,
                 slots: [],
             },
-        ] as any;
+        ];
 
-        const bookedRooms = [
+        const bookedRooms: MockRoom[] = [
             {
                 room_id: 'booked',
                 building_short_name: 'ECS',
@@ -117,7 +126,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                     { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
                 ],
             },
-        ] as any;
+        ];
 
         mockHooks.useRooms.mockReturnValue({ rooms: allRooms, loading: false, error: null });
         mockHooks.useSchedule.mockReturnValue({ rooms: bookedRooms, loading: false, error: null });

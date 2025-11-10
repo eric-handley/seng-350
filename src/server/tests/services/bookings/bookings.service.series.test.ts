@@ -3,7 +3,6 @@ import { Repository } from 'typeorm';
 
 import { BookingsService } from '../../../src/services/bookings.service';
 import { Booking, BookingStatus } from '../../../src/database/entities/booking.entity';
-import { BookingSeries } from '../../../src/database/entities/booking-series.entity';
 import { TestDataFactory, mockUUID, generateMockDate } from '../../test-helpers';
 import {
   setupBookingsServiceTestModule,
@@ -17,14 +16,11 @@ import {
 describe('BookingsService - booking series', () => {
   let service: BookingsService;
   let bookingRepository: Repository<Booking>;
-  let bookingSeriesRepository: Repository<BookingSeries>;
 
   beforeEach(async () => {
-    const { service: s, bookingRepository: br, bookingSeriesRepository: bsr } =
-      await setupBookingsServiceTestModule();
+    const { service: s, bookingRepository: br } = await setupBookingsServiceTestModule();
     service = s;
     bookingRepository = br;
-    bookingSeriesRepository = bsr;
   });
 
   afterEach(() => {

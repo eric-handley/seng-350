@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Repository } from 'typeorm';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
 import { setupAuthBasicTests } from './auth-basic.integration.test-setup';

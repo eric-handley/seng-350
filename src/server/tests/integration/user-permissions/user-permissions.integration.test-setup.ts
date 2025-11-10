@@ -3,6 +3,8 @@ import { Repository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
+import { Room } from '../../../src/database/entities/room.entity';
+import { Booking } from '../../../src/database/entities/booking.entity';
 import { setupTestAppWithAuth } from '../auth-test-helpers';
 
 export interface UserPermissionsTestContext {
@@ -20,7 +22,6 @@ export async function setupUserPermissionsTests(): Promise<UserPermissionsTestCo
 
 export async function seedUsersWithRoles(
   userRepository: Repository<User>,
-  count: number = 4
 ): Promise<{ staffUser1: User; staffUser2: User; registrarUser: User; adminUser: User }> {
   const hashedPassword = await bcrypt.hash('password123', 10);
   const timestamp = Date.now();
@@ -66,11 +67,11 @@ export async function seedUsersWithRoles(
 
 export async function createBookingForUser(
   user: User,
-  room: any,
-  bookingRepository: any,
+  room: Room,
+  bookingRepository: Repository<Booking>,
   daysInFuture: number = 23,
   startHour: number = 10
-): Promise<any> {
+): Promise<Booking> {
   const { addDays, set } = await import('date-fns');
 
   const bookingStart = set(addDays(new Date(), daysInFuture), {

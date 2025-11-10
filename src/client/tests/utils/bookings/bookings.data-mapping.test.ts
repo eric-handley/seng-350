@@ -1,5 +1,4 @@
 import * as bookingsUtils from '../../../src/utils/bookings';
-import * as bookingsApi from '../../../src/api/bookings';
 import type { UiBooking } from '../../../src/types';
 import { createMockBooking } from './bookings-test-data';
 

@@ -1,9 +1,9 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { FilterPanel } from '../../src/components/FilterPanel'
+import { FilterPanel, FilterPanelProps } from '../../src/components/FilterPanel'
 
-const buildProps = (overrides: Partial<Record<string, unknown>> = {}) => {
-  const defaults = {
+const buildProps = (overrides: Partial<FilterPanelProps> = {}): FilterPanelProps => {
+  const defaults: FilterPanelProps = {
     building: '',
     setBuilding: jest.fn(),
     roomQuery: '',
@@ -17,6 +17,7 @@ const buildProps = (overrides: Partial<Record<string, unknown>> = {}) => {
     showTimeFilters: true,
     showRoomFilter: true,
     showReserved: true,
+    setShowReserved: jest.fn(),
     showReservedFilter: false,
   }
 
@@ -30,7 +31,7 @@ describe('<FilterPanel />', () => {
 
   it('forwards building and room filter changes', () => {
     const props = buildProps()
-    render(<FilterPanel {...(props as any)} />)
+    render(<FilterPanel {...props} />)
 
     const buildingInput = screen.getByPlaceholderText(/e\.g\., CLE, Engineering, Clearihue/i) as HTMLInputElement
     fireEvent.change(buildingInput, { target: { value: 'CLE' } })
@@ -44,7 +45,7 @@ describe('<FilterPanel />', () => {
   it('commits normalized times on blur', () => {
     const setStart = jest.fn()
     const props = buildProps({ setStart })
-    render(<FilterPanel {...(props as any)} />)
+    render(<FilterPanel {...props} />)
 
     const startInput = screen.getByPlaceholderText(/e\.g\., 7:30 AM/i) as HTMLInputElement
     fireEvent.change(startInput, { target: { value: '8:15 pm' } })
@@ -56,7 +57,7 @@ describe('<FilterPanel />', () => {
   it('reverts to fallback display when time parse fails', () => {
     const setStart = jest.fn()
     const props = buildProps({ setStart })
-    render(<FilterPanel {...(props as any)} />)
+    render(<FilterPanel {...props} />)
 
     const startInput = screen.getByPlaceholderText(/e\.g\., 7:30 AM/i) as HTMLInputElement
     fireEvent.change(startInput, { target: { value: '25:00' } })
@@ -68,7 +69,7 @@ describe('<FilterPanel />', () => {
   it('renders show-reserved toggle when requested', () => {
     const setShowReserved = jest.fn()
     const props = buildProps({ showReservedFilter: true, setShowReserved, showReserved: false })
-    render(<FilterPanel {...(props as any)} />)
+    render(<FilterPanel {...props} />)
 
     const checkbox = screen.getByRole('checkbox')
     fireEvent.click(checkbox)
@@ -77,7 +78,7 @@ describe('<FilterPanel />', () => {
 
   it('hides time inputs when showTimeFilters is false', () => {
     const props = buildProps({ showTimeFilters: false })
-    render(<FilterPanel {...(props as any)} />)
+    render(<FilterPanel {...props} />)
 
     expect(screen.queryByPlaceholderText(/e\.g\., 7:30 AM/i)).not.toBeInTheDocument()
     expect(screen.queryByPlaceholderText(/e\.g\., 9:45 AM/i)).not.toBeInTheDocument()

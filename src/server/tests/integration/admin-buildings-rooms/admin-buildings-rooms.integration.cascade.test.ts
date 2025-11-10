@@ -1,10 +1,11 @@
 import request from 'supertest';
+import { INestApplication } from '@nestjs/common';
 
 import { setupAdminBuildingsRoomsTests } from './admin-buildings-rooms.integration.test-setup';
 
 describe('Admin Buildings & Rooms Management - Cascade Delete Behavior (e2e)', () => {
   let adminAgent: request.SuperAgentTest;
-  let app: any;
+  let app: INestApplication;
 
   beforeAll(async () => {
     const setup = await setupAdminBuildingsRoomsTests();

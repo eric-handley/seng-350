@@ -3,7 +3,7 @@ import { lastValueFrom, of, throwError } from 'rxjs';
 import { AuditLoggingInterceptor } from '../../src/shared/interceptors/audit-logging.interceptor';
 import { AuditLogsService } from '../../src/services/audit-logs.service';
 
-const createExecutionContext = (request: Record<string, any>, response: Record<string, any>) =>
+const createExecutionContext = (request: Record<string, unknown>, response: Record<string, unknown>) =>
   ({
     switchToHttp: () => ({
       getRequest: () => request,

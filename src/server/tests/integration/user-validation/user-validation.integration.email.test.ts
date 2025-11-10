@@ -1,19 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Repository } from 'typeorm';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
 import { setupUserValidationTests } from './user-validation.integration.test-setup';
 
 describe('Email validation (e2e)', () => {
   let app: INestApplication;
-  let userRepository: Repository<User>;
   let adminUser: User;
 
   beforeAll(async () => {
     const setup = await setupUserValidationTests();
     app = setup.app;
-    userRepository = setup.userRepository;
     adminUser = setup.adminUser;
   });
 

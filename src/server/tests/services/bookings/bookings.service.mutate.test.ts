@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { BookingsService } from '../../../src/services/bookings.service';
 import { Booking, BookingStatus } from '../../../src/database/entities/booking.entity';
 import { UpdateBookingDto } from '../../../src/dto/booking.dto';
-import { TestDataFactory, mockUUID, generateMockDate } from '../../test-helpers';
+import { mockUUID, generateMockDate } from '../../test-helpers';
 import {
   setupBookingsServiceTestModule,
   mockUser,

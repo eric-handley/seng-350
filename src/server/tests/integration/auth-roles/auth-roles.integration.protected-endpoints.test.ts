@@ -1,8 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Repository } from 'typeorm';
 
-import { User, UserRole } from '../../../src/database/entities/user.entity';
+import { User } from '../../../src/database/entities/user.entity';
 import { setupAuthRolesTests } from './auth-roles.integration.test-setup';
 
 describe('Authorization (e2e) - Protected endpoints (authenticated users)', () => {

@@ -1,19 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Repository } from 'typeorm';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
 import { setupAuthBasicTests } from './auth-basic.integration.test-setup';
 
 describe('Authentication (e2e) - POST /api/auth/login', () => {
   let app: INestApplication;
-  let userRepository: Repository<User>;
   let testUser: User;
 
   beforeAll(async () => {
     const setup = await setupAuthBasicTests();
     app = setup.app;
-    userRepository = setup.userRepository;
     testUser = setup.testUser;
   });
 

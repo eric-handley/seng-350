@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
+import { BookingPage } from '../../src/pages/BookingPage';
 import { useSchedule } from '../../src/hooks/useSchedule';
 import { useBookingHistory } from '../../src/hooks/useBookingHistory';
 import { useRooms } from '../../src/hooks/useRooms';
@@ -61,7 +62,6 @@ export function renderBookingPage(
     overrides?: Partial<BookingPageProps>,
     renderOptions?: RenderOptions
 ) {
-    const { BookingPage } = require('../../src/pages/BookingPage');
     const props = { ...baseProps, ...overrides };
     return render(<BookingPage {...props} />, renderOptions);
 }

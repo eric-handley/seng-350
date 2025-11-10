@@ -5,6 +5,15 @@
 import { screen } from '@testing-library/react';
 import { mockHooks, renderBookingPage } from './BookingPage.test-setup';
 
+type MockRoom = {
+  room_id: string;
+  building_short_name: string;
+  room_number: string;
+  room_type: string;
+  capacity: number;
+  slots: Array<{ start_time: string; end_time: string }>;
+};
+
 describe('<BookingPage /> - UI States', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -47,7 +56,7 @@ describe('<BookingPage /> - UI States', () => {
     });
 
     test('shows all rooms as reserved when time filter is incomplete', async () => {
-        const mockRooms = [
+        const mockRooms: MockRoom[] = [
             {
                 room_id: 'r1',
                 building_short_name: 'ECS',
@@ -56,7 +65,7 @@ describe('<BookingPage /> - UI States', () => {
                 capacity: 30,
                 slots: [],
             },
-        ] as any;
+        ];
 
         mockHooks.useRooms.mockReturnValue({ rooms: mockRooms, loading: false, error: null });
         mockHooks.useSchedule.mockReturnValue({ rooms: [], loading: false, error: null });

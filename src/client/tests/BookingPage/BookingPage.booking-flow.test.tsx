@@ -5,6 +5,15 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { mockHooks, renderBookingPage, baseProps } from './BookingPage.test-setup';
 
+type MockRoom = {
+    room_id: string;
+    building_short_name: string;
+    room_number: string;
+    room_type: string;
+    capacity: number;
+    slots: Array<{ start_time: string; end_time: string }>;
+};
+
 describe('<BookingPage /> - Booking Flow', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -14,7 +23,7 @@ describe('<BookingPage /> - Booking Flow', () => {
         const mockCreateBooking = jest.fn().mockResolvedValue(undefined);
         mockHooks.useBookingHistory.mockReturnValue({ createBooking: mockCreateBooking, error: null });
 
-        const mockRooms = [
+        const mockRooms: MockRoom[] = [
             {
                 room_id: 'room1',
                 building_short_name: 'ECS',
@@ -25,7 +34,7 @@ describe('<BookingPage /> - Booking Flow', () => {
                     { start_time: '2025-10-05T08:00:00Z', end_time: '2025-10-05T11:00:00Z' },
                 ],
             },
-        ] as any;
+        ];
         mockHooks.useRooms.mockReturnValue({ rooms: mockRooms, loading: false, error: null });
         mockHooks.useSchedule.mockReturnValue({ rooms: [], loading: false, error: null });
 

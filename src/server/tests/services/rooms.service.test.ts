@@ -33,13 +33,27 @@ const createEquipmentEntity = (): Equipment => ({
   room_equipment: [],
 } as Equipment);
 
-const createMockQueryBuilder = (rooms: Room[]) => {
-  const builder: Record<string, any> = {};
-  builder.leftJoinAndSelect = jest.fn().mockReturnValue(builder);
-  builder.orderBy = jest.fn().mockReturnValue(builder);
-  builder.addOrderBy = jest.fn().mockReturnValue(builder);
-  builder.andWhere = jest.fn().mockReturnValue(builder);
-  builder.getMany = jest.fn().mockResolvedValue(rooms);
+type QueryBuilderMock = {
+  leftJoinAndSelect: jest.Mock<QueryBuilderMock, [unknown?]>;
+  orderBy: jest.Mock<QueryBuilderMock, [unknown?, ('ASC' | 'DESC')?]>;
+  addOrderBy: jest.Mock<QueryBuilderMock, [unknown?, ('ASC' | 'DESC')?]>;
+  andWhere: jest.Mock<QueryBuilderMock, [unknown?, Record<string, unknown>?]>;
+  getMany: jest.Mock<Promise<Room[]>, []>;
+};
+
+const createMockQueryBuilder = (rooms: Room[]): QueryBuilderMock => {
+  const builder: QueryBuilderMock = {
+    leftJoinAndSelect: jest.fn(),
+    orderBy: jest.fn(),
+    addOrderBy: jest.fn(),
+    andWhere: jest.fn(),
+    getMany: jest.fn(),
+  };
+  builder.leftJoinAndSelect.mockReturnValue(builder);
+  builder.orderBy.mockReturnValue(builder);
+  builder.addOrderBy.mockReturnValue(builder);
+  builder.andWhere.mockReturnValue(builder);
+  builder.getMany.mockResolvedValue(rooms);
   return builder;
 };
 
@@ -105,7 +119,7 @@ describe('RoomsService', () => {
     const queryBuilder = createMockQueryBuilder([roomWithAvailability, roomWithoutAvailability]);
     roomCreateQueryBuilderMock.mockReturnValue(queryBuilder);
 
-    bookingFindMock.mockImplementation(async (options: Record<string, any>) => {
+    bookingFindMock.mockImplementation(async (options: { where: { room_id: string } }) => {
       return options.where.room_id === roomWithAvailability.room_id ? bookings : [fullDayBooking];
     });
 

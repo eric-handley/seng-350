@@ -1,20 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Repository } from 'typeorm';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
 import { setupAuthRolesTests } from './auth-roles.integration.test-setup';
 
 describe('Authorization (e2e) - /users endpoint (Admin only)', () => {
   let app: INestApplication;
-  let userRepository: Repository<User>;
   let staffUser: User;
   let adminUser: User;
 
   beforeAll(async () => {
     const setup = await setupAuthRolesTests();
     app = setup.app;
-    userRepository = setup.userRepository;
     staffUser = setup.staffUser;
     adminUser = setup.adminUser;
   });

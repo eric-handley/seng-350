@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { INestApplication } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { Building } from '../../../src/database/entities/building.entity';
@@ -8,7 +9,7 @@ describe('Admin Buildings & Rooms Management - Buildings CRUD (e2e)', () => {
   let buildingRepository: Repository<Building>;
   let adminAgent: request.SuperAgentTest;
   let staffAgent: request.SuperAgentTest;
-  let app: any;
+  let app: INestApplication;
 
   beforeAll(async () => {
     const setup = await setupAdminBuildingsRoomsTests();
