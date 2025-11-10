@@ -6,6 +6,7 @@ import { Equipment } from '../../src/database/entities/equipment.entity';
 import { Room, RoomType } from '../../src/database/entities/room.entity';
 import { RoomEquipment } from '../../src/database/entities/room-equipment.entity';
 import { RoomsService } from '../../src/services/rooms.service';
+import { CacheService } from '../../src/shared/cache/cache.service';
 import { Repository } from 'typeorm';
 import { addDays, set } from 'date-fns';
 
@@ -72,6 +73,7 @@ describe('RoomsService', () => {
   let bookingFindMock: jest.Mock;
   let equipmentRepository: Partial<Repository<Equipment>>;
   let buildingRepository: Partial<Repository<Building>>;
+  let cacheService: Partial<CacheService>;
   let service: RoomsService;
 
   beforeEach(() => {
@@ -90,11 +92,22 @@ describe('RoomsService', () => {
     equipmentRepository = {};
     buildingRepository = {};
 
+    cacheService = {
+      clearRoomCache: jest.fn(),
+      clearScheduleCache: jest.fn(),
+      clearBuildingCache: jest.fn(),
+      registerRoomCacheKey: jest.fn(),
+      registerScheduleCacheKey: jest.fn(),
+      registerBuildingCacheKey: jest.fn(),
+      clearKey: jest.fn(),
+    };
+
     service = new RoomsService(
       roomRepository as unknown as Repository<Room>,
       equipmentRepository as unknown as Repository<Equipment>,
       bookingRepository as unknown as Repository<Booking>,
       buildingRepository as unknown as Repository<Building>,
+      cacheService as CacheService,
     );
   });
 

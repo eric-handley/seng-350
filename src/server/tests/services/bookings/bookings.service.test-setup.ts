@@ -9,6 +9,7 @@ import { Room } from '../../../src/database/entities/room.entity';
 import { TestDataFactory, mockUUID, generateMockDate } from '../../test-helpers';
 import { AuthenticatedUser } from '../../../src/auth/auth.service';
 import { UserRole } from '../../../src/database/entities/user.entity';
+import { CacheService } from '../../../src/shared/cache/cache.service';
 
 export const mockUser: AuthenticatedUser = {
   id: mockUUID,
@@ -68,6 +69,16 @@ export const mockRoomRepository = {
   findOne: jest.fn(),
 };
 
+export const mockCacheService = {
+  registerScheduleCacheKey: jest.fn(),
+  registerRoomCacheKey: jest.fn(),
+  registerBuildingCacheKey: jest.fn(),
+  clearScheduleCache: jest.fn(),
+  clearRoomCache: jest.fn(),
+  clearBuildingCache: jest.fn(),
+  clearKey: jest.fn(),
+};
+
 export async function setupBookingsServiceTestModule() {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
@@ -83,6 +94,10 @@ export async function setupBookingsServiceTestModule() {
       {
         provide: getRepositoryToken(Room),
         useValue: mockRoomRepository,
+      },
+      {
+        provide: CacheService,
+        useValue: mockCacheService,
       },
     ],
   }).compile();
