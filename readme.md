@@ -4,6 +4,8 @@
 
 **Cycle 2**
 - Implementation 2 ([Branch](https://gitlab.csc.uvic.ca/courses/2025091/SENG350_COSI/teams/group_1_proj/-/tree/cycle-2/implement))
+    - Marking
+        - [Rubric](docs/2-implement/rubric.md)
     - Updated Features
         - Staff Functionality (issue [#1](courses/2025091/SENG350_COSI/teams/group_1_proj#1))
             - Reoccuring bookings (issues [#14](courses/2025091/SENG350_COSI/teams/group_1_proj#14) and [#47](courses/2025091/SENG350_COSI/teams/group_1_proj#47))
