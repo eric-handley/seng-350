@@ -5,6 +5,7 @@ import { useSchedule } from '../../src/hooks/useSchedule';
 import { useBookingHistory } from '../../src/hooks/useBookingHistory';
 import { useRooms } from '../../src/hooks/useRooms';
 import { Room } from '../../src/types';
+import { format, addDays } from 'date-fns';
 
 // Mock the hooks
 jest.mock('../../src/hooks/useSchedule');
@@ -47,7 +48,7 @@ export const baseProps = {
     setBuilding: jest.fn(),
     roomQuery: '',
     setRoomQuery: jest.fn(),
-    date: '2025-10-05',
+    date: format(addDays(new Date(), 5), 'yyyy-MM-dd'),
     setDate: jest.fn(),
     start: '09:00',
     setStart: jest.fn(),

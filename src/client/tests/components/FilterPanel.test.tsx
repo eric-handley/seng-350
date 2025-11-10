@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { format, addDays } from 'date-fns'
 import { FilterPanel, FilterPanelProps } from '../../src/components/FilterPanel'
 
 const buildProps = (overrides: Partial<FilterPanelProps> = {}): FilterPanelProps => {
@@ -8,7 +9,7 @@ const buildProps = (overrides: Partial<FilterPanelProps> = {}): FilterPanelProps
     setBuilding: jest.fn(),
     roomQuery: '',
     setRoomQuery: jest.fn(),
-    date: '2025-10-05',
+    date: format(addDays(new Date(), 5), 'yyyy-MM-dd'),
     setDate: jest.fn(),
     start: '07:00',
     setStart: jest.fn(),

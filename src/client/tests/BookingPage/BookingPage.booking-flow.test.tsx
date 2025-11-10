@@ -4,6 +4,7 @@
 
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { mockHooks, renderBookingPage, baseProps } from './BookingPage.test-setup';
+import { format, addDays } from 'date-fns';
 
 type MockRoom = {
     room_id: string;
@@ -13,6 +14,8 @@ type MockRoom = {
     capacity: number;
     slots: Array<{ start_time: string; end_time: string }>;
 };
+
+const testDate = format(addDays(new Date(), 5), 'yyyy-MM-dd');
 
 describe('<BookingPage /> - Booking Flow', () => {
     beforeEach(() => {
@@ -31,7 +34,7 @@ describe('<BookingPage /> - Booking Flow', () => {
                 room_type: 'classroom',
                 capacity: 40,
                 slots: [
-                    { start_time: '2025-10-05T08:00:00Z', end_time: '2025-10-05T11:00:00Z' },
+                    { start_time: `${testDate}T08:00:00Z`, end_time: `${testDate}T11:00:00Z` },
                 ],
             },
         ];
@@ -44,7 +47,7 @@ describe('<BookingPage /> - Booking Flow', () => {
         fireEvent.click(screen.getByText('Book'));
 
         await waitFor(() => expect(mockCreateBooking).toHaveBeenCalledTimes(1));
-        expect(mockCreateBooking).toHaveBeenCalledWith('room1', '2025-10-05', '09:00', '10:00');
+        expect(mockCreateBooking).toHaveBeenCalledWith('room1', testDate, '09:00', '10:00');
         expect(baseProps.onBookingCreated).toHaveBeenCalled();
     });
 });

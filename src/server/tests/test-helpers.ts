@@ -121,8 +121,8 @@ export class TestDatabaseHelper {
 
 export const mockUUID = '12345678-1234-1234-1234-123456789012';
 
-export const generateMockDate = (hour = 0, minute = 0): Date => {
-  const baseDate = parseISO('2025-12-01T00:00:00Z');
+export const generateMockDate = (hour = 0, minute = 0, daysInFuture = 1): Date => {
+  const baseDate = set(addDays(new Date(), daysInFuture), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
   return set(baseDate, { hours: hour, minutes: minute, seconds: 0, milliseconds: 0 });
 };
 

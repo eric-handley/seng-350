@@ -1,21 +1,24 @@
 import * as bookingsUtils from '../../../src/utils/bookings';
+import { format, addDays } from 'date-fns';
 
 describe('bookings utils - Time Formatting', () => {
+  const testDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
+
   describe('toIsoDateTimeUTC', () => {
     it('converts date and time with dashes to ISO format with Z', () => {
-      const result = bookingsUtils.toIsoDateTimeUTC('2025-01-15', '14-30-00');
-      expect(result).toBe('2025-01-15T14:30:00Z');
+      const result = bookingsUtils.toIsoDateTimeUTC(testDate, '14-30-00');
+      expect(result).toBe(`${testDate}T14:30:00Z`);
     });
 
     it('handles single digit times', () => {
-      const result = bookingsUtils.toIsoDateTimeUTC('2025-01-15', '9-5-3');
-      expect(result).toBe('2025-01-15T9:5:3Z');
+      const result = bookingsUtils.toIsoDateTimeUTC(testDate, '9-5-3');
+      expect(result).toBe(`${testDate}T9:5:3Z`);
     });
   });
 
   describe('isoOrHmsToHms', () => {
     it('converts ISO timestamp to HMS', () => {
-      const result = bookingsUtils.isoOrHmsToHms('2025-01-15T14:30:00Z');
+      const result = bookingsUtils.isoOrHmsToHms(`${testDate}T14:30:00Z`);
       expect(result).toBe('14:30:00');
     });
 
@@ -30,7 +33,7 @@ describe('bookings utils - Time Formatting', () => {
     });
 
     it('handles ISO with Z', () => {
-      const result = bookingsUtils.isoOrHmsToHms('2025-01-15T09:15:30Z');
+      const result = bookingsUtils.isoOrHmsToHms(`${testDate}T09:15:30Z`);
       expect(result).toBe('09:15:30');
     });
   });

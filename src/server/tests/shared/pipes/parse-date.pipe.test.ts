@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common'
+import { addDays } from 'date-fns'
 import { ParseDatePipe } from '../../../src/shared/pipes/parse-date.pipe'
 
 describe('ParseDatePipe', () => {
@@ -19,10 +20,11 @@ describe('ParseDatePipe', () => {
   })
 
   it('parses ISO strings into Date objects', () => {
-    const isoString = '2025-10-05T12:34:56Z'
+    const testDate = addDays(new Date(), 20)
+    const isoString = testDate.toISOString()
     const parsed = pipe.transform(isoString)
     expect(parsed).toBeInstanceOf(Date)
-    expect(parsed?.toISOString()).toBe(new Date(isoString).toISOString())
+    expect(parsed?.toISOString()).toBe(testDate.toISOString())
   })
 
   it('throws BadRequestException for invalid ISO strings', () => {

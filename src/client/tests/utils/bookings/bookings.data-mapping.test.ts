@@ -1,11 +1,13 @@
 import * as bookingsUtils from '../../../src/utils/bookings';
 import type { UiBooking } from '../../../src/types';
 import { createMockBooking } from './bookings-test-data';
+import { format, addDays } from 'date-fns';
 
 describe('bookings utils - Data Mapping', () => {
   describe('mapApiBookingToUi', () => {
     it('maps complete booking to UI format', () => {
       const booking = createMockBooking();
+      const expectedDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
 
       const result = bookingsUtils.mapApiBookingToUi(booking);
 
@@ -13,7 +15,7 @@ describe('bookings utils - Data Mapping', () => {
       expect(result.building).toBe('ECS');
       expect(result.roomNumber).toBe('124');
       expect(result.name).toBe('ECS 124');
-      expect(result.date).toBe('2025-01-15');
+      expect(result.date).toBe(expectedDate);
     });
 
     it('marks cancelled bookings', () => {

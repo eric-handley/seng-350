@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 import { User, UserRole } from '../../../src/database/entities/user.entity';
 import { Room } from '../../../src/database/entities/room.entity';
-import { Booking } from '../../../src/database/entities/booking.entity';
+import { Booking, BookingStatus } from '../../../src/database/entities/booking.entity';
 import { setupTestAppWithAuth } from '../auth-test-helpers';
 
 export interface UserPermissionsTestContext {
@@ -88,11 +88,11 @@ export async function createBookingForUser(
   });
 
   const booking = bookingRepository.create({
-    user,
-    room,
+    user_id: user.id,
+    room_id: room.room_id,
     start_time: bookingStart,
     end_time: bookingEnd,
-    status: 'ACTIVE',
+    status: BookingStatus.ACTIVE,
   });
 
   return await bookingRepository.save(booking);

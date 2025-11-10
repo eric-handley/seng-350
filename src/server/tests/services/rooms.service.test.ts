@@ -7,31 +7,38 @@ import { Room, RoomType } from '../../src/database/entities/room.entity';
 import { RoomEquipment } from '../../src/database/entities/room-equipment.entity';
 import { RoomsService } from '../../src/services/rooms.service';
 import { Repository } from 'typeorm';
+import { addDays, set } from 'date-fns';
 
-const buildRoom = (room_id: string, room_number: string, overrides?: Partial<Room>): Room => ({
-  room_id,
-  building_short_name: 'ELW',
-  room_number,
-  capacity: 30,
-  room_type: RoomType.CLASSROOM,
-  url: 'https://uvic.ca',
-  created_at: new Date('2025-01-01T00:00:00Z'),
-  updated_at: new Date('2025-01-01T00:00:00Z'),
-  building: {
-    short_name: 'ELW',
-    name: 'Elliott Building',
-  } as Building,
-  room_equipment: [],
-  ...overrides,
-} as Room);
+const buildRoom = (room_id: string, room_number: string, overrides?: Partial<Room>): Room => {
+  const baseDate = set(addDays(new Date(), 0), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
+  return {
+    room_id,
+    building_short_name: 'ELW',
+    room_number,
+    capacity: 30,
+    room_type: RoomType.CLASSROOM,
+    url: 'https://uvic.ca',
+    created_at: baseDate,
+    updated_at: baseDate,
+    building: {
+      short_name: 'ELW',
+      name: 'Elliott Building',
+    } as Building,
+    room_equipment: [],
+    ...overrides,
+  } as Room;
+};
 
-const createEquipmentEntity = (): Equipment => ({
-  id: 'equip-1',
-  name: 'Projector',
-  created_at: new Date('2025-01-01T00:00:00Z'),
-  updated_at: new Date('2025-01-01T00:00:00Z'),
-  room_equipment: [],
-} as Equipment);
+const createEquipmentEntity = (): Equipment => {
+  const baseDate = set(new Date(), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
+  return {
+    id: 'equip-1',
+    name: 'Projector',
+    created_at: baseDate,
+    updated_at: baseDate,
+    room_equipment: [],
+  } as Equipment;
+};
 
 type QueryBuilderMock = {
   leftJoinAndSelect: jest.Mock<QueryBuilderMock, [unknown?]>;
@@ -95,25 +102,29 @@ describe('RoomsService', () => {
     const roomWithAvailability = buildRoom('ELW-101', '101');
     const roomWithoutAvailability = buildRoom('ELW-102', '102');
 
+    // Use UTC dates to match service behavior
+    const tomorrow = addDays(new Date(), 1);
+    const dateStr = tomorrow.toISOString().split('T')[0];
+
     const bookings = [
       {
         room_id: roomWithAvailability.room_id,
         status: BookingStatus.ACTIVE,
-        start_time: new Date('2025-01-02T09:00:00Z'),
-        end_time: new Date('2025-01-02T10:00:00Z'),
+        start_time: new Date(`${dateStr}T09:00:00.000Z`),
+        end_time: new Date(`${dateStr}T10:00:00.000Z`),
       },
       {
         room_id: roomWithAvailability.room_id,
         status: BookingStatus.ACTIVE,
-        start_time: new Date('2025-01-02T11:00:00Z'),
-        end_time: new Date('2025-01-02T12:00:00Z'),
+        start_time: new Date(`${dateStr}T11:00:00.000Z`),
+        end_time: new Date(`${dateStr}T12:00:00.000Z`),
       },
     ];
     const fullDayBooking = {
       room_id: roomWithoutAvailability.room_id,
       status: BookingStatus.ACTIVE,
-      start_time: new Date('2025-01-02T08:00:00Z'),
-      end_time: new Date('2025-01-02T12:00:00Z'),
+      start_time: new Date(`${dateStr}T08:00:00.000Z`),
+      end_time: new Date(`${dateStr}T12:00:00.000Z`),
     };
 
     const queryBuilder = createMockQueryBuilder([roomWithAvailability, roomWithoutAvailability]);
@@ -124,7 +135,7 @@ describe('RoomsService', () => {
     });
 
     const result = await service.getSchedule({
-      date: '2025-01-02',
+      date: dateStr,
       start_time: '08-00-00',
       end_time: '12-00-00',
     });
@@ -135,23 +146,25 @@ describe('RoomsService', () => {
     expect(building.rooms[0].room_id).toBe(roomWithAvailability.room_id);
     expect(building.rooms[0].slots).toEqual([
       {
-        start_time: new Date('2025-01-02T08:00:00Z'),
-        end_time: new Date('2025-01-02T09:00:00Z'),
+        start_time: new Date(`${dateStr}T08:00:00.000Z`),
+        end_time: new Date(`${dateStr}T09:00:00.000Z`),
       },
       {
-        start_time: new Date('2025-01-02T10:00:00Z'),
-        end_time: new Date('2025-01-02T11:00:00Z'),
+        start_time: new Date(`${dateStr}T10:00:00.000Z`),
+        end_time: new Date(`${dateStr}T11:00:00.000Z`),
       },
     ]);
   });
 
   it('returns booked slots when slot_type is "booked"', async () => {
     const room = buildRoom('ELW-201', '201');
+    const tomorrow = addDays(new Date(), 1);
+    const dateStr = tomorrow.toISOString().split('T')[0];
     const booking = {
       room_id: room.room_id,
       status: BookingStatus.ACTIVE,
-      start_time: new Date('2025-01-02T08:30:00Z'),
-      end_time: new Date('2025-01-02T09:30:00Z'),
+      start_time: new Date(`${dateStr}T08:30:00.000Z`),
+      end_time: new Date(`${dateStr}T09:30:00.000Z`),
     };
 
     const queryBuilder = createMockQueryBuilder([room]);
@@ -159,7 +172,7 @@ describe('RoomsService', () => {
     bookingFindMock.mockResolvedValue([booking]);
 
     const result = await service.getSchedule({
-      date: '2025-01-02',
+      date: dateStr,
       start_time: '08-00-00',
       end_time: '12-00-00',
       slot_type: 'booked',
@@ -188,12 +201,13 @@ describe('RoomsService', () => {
   it('applies filters when finding rooms', async () => {
     const equipmentEntity = createEquipmentEntity();
     const room = buildRoom('ELW-301', '301');
+    const baseDate = set(new Date(), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
     const roomEquipment = {
       room_id: room.room_id,
       equipment_id: equipmentEntity.id,
       quantity: 2,
-      created_at: new Date('2025-01-01T00:00:00Z'),
-      updated_at: new Date('2025-01-01T00:00:00Z'),
+      created_at: baseDate,
+      updated_at: baseDate,
       room,
       equipment: equipmentEntity,
     } as RoomEquipment;

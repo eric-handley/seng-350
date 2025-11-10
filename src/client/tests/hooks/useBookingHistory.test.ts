@@ -3,6 +3,7 @@ import { useBookingHistory } from '../../src/hooks/useBookingHistory';
 import * as bookingsApi from '../../src/api/bookings';
 import * as timeUtils from '../../src/utils/time';
 import type { UiBooking } from '../../src/types';
+import { format, addDays } from 'date-fns';
 
 jest.mock('../../src/api/bookings');
 jest.mock('../../src/utils/time');
@@ -32,28 +33,33 @@ const mockCreateBooking = jest.mocked(bookingsApi.createBooking);
 const mockCancelBooking = jest.mocked(bookingsApi.cancelBooking);
 const mockToApiTime = jest.mocked(timeUtils.toApiTime);
 
+const booking1Date = format(addDays(new Date(), 30), 'yyyy-MM-dd');
+const booking1CreatedDate = format(addDays(new Date(), 20), 'yyyy-MM-dd');
+const booking2Date = format(addDays(new Date(), 31), 'yyyy-MM-dd');
+const booking2CreatedDate = format(addDays(new Date(), 21), 'yyyy-MM-dd');
+
 const mockBooking1: bookingsApi.Booking = {
   id: 'booking-1',
   user_id: 'user-1',
   room_id: 'ECS-124',
-  start_time: '2025-01-15T10:00:00Z',
-  end_time: '2025-01-15T11:00:00Z',
+  start_time: `${booking1Date}T10:00:00Z`,
+  end_time: `${booking1Date}T11:00:00Z`,
   status: 'Active',
   booking_series_id: 'booking-1',
-  created_at: '2025-01-10T00:00:00Z',
-  updated_at: '2025-01-10T00:00:00Z',
+  created_at: `${booking1CreatedDate}T00:00:00Z`,
+  updated_at: `${booking1CreatedDate}T00:00:00Z`,
 };
 
 const mockBooking2: bookingsApi.Booking = {
   id: 'booking-2',
   user_id: 'user-1',
   room_id: 'CLE-A308',
-  start_time: '2025-01-16T14:00:00Z',
-  end_time: '2025-01-16T15:00:00Z',
+  start_time: `${booking2Date}T14:00:00Z`,
+  end_time: `${booking2Date}T15:00:00Z`,
   status: 'Active',
   booking_series_id: 'booking-2',
-  created_at: '2025-01-11T00:00:00Z',
-  updated_at: '2025-01-11T00:00:00Z',
+  created_at: `${booking2CreatedDate}T00:00:00Z`,
+  updated_at: `${booking2CreatedDate}T00:00:00Z`,
 };
 
 describe('useBookingHistory', () => {
@@ -105,13 +111,13 @@ describe('useBookingHistory', () => {
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
     await act(async () => {
-      await result.current.createBooking('ECS-124', '2025-01-15', '14:30:00', '15:30:00');
+      await result.current.createBooking('ECS-124', booking1Date, '14:30:00', '15:30:00');
     });
 
     expect(mockCreateBooking).toHaveBeenCalledWith({
       room_id: 'ECS-124',
-      start_time: expect.stringContaining('2025-01-15'),
-      end_time: expect.stringContaining('2025-01-15'),
+      start_time: expect.stringContaining(booking1Date),
+      end_time: expect.stringContaining(booking1Date),
     });
     expect(result.current.error).toBe(null);
   });
@@ -121,7 +127,7 @@ describe('useBookingHistory', () => {
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
     await expect(
-      result.current.createBooking('ECS-124', '2025-01-15', 'invalid', '15:30:00')
+      result.current.createBooking('ECS-124', booking1Date, 'invalid', '15:30:00')
     ).rejects.toThrow('Invalid time format');
   });
 
@@ -133,7 +139,7 @@ describe('useBookingHistory', () => {
     const { result } = renderHook(() => useBookingHistory('user-1'));
 
     await act(async () => {
-      await result.current.createBooking('ECS-124', '2025-01-15', '14:30:00', '15:30:00');
+      await result.current.createBooking('ECS-124', booking1Date, '14:30:00', '15:30:00');
     });
 
     expect(result.current.error).toBe(null);

@@ -1,3 +1,4 @@
+import { format, addDays } from 'date-fns';
 import * as scheduleApi from '../../src/api/schedule';
 import type { ScheduleResponse } from '../../src/types/schedule';
 
@@ -10,6 +11,7 @@ describe('schedule API', () => {
 
   describe('fetchSchedule', () => {
     it('fetches schedule with query parameters', async () => {
+      const testDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
       const response: ScheduleResponse = {
         buildings: [
           {
@@ -27,7 +29,7 @@ describe('schedule API', () => {
 
       const result = await scheduleApi.fetchSchedule({
         building_short_name: 'ECS',
-        date: '2025-01-15',
+        date: testDate,
       });
 
       expect(result).toEqual(response);

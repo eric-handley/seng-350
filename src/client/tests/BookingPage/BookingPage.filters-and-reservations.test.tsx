@@ -4,6 +4,7 @@
 
 import { screen } from '@testing-library/react';
 import { mockHooks, renderBookingPage } from './BookingPage.test-setup';
+import { format, addDays } from 'date-fns';
 
 type MockRoom = {
   room_id: string;
@@ -13,6 +14,8 @@ type MockRoom = {
   capacity: number;
   slots: Array<{ start_time: string; end_time: string }>;
 };
+
+const testDate = format(addDays(new Date(), 5), 'yyyy-MM-dd');
 
 describe('<BookingPage /> - Filters and Reservations', () => {
     beforeEach(() => {
@@ -47,7 +50,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                 room_type: 'classroom',
                 capacity: 35,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` },
                 ],
             },
         ];
@@ -123,7 +126,7 @@ describe('<BookingPage /> - Filters and Reservations', () => {
                 room_type: 'classroom',
                 capacity: 35,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' },
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` },
                 ],
             },
         ];

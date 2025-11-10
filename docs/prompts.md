@@ -1,33 +1,38 @@
 **Implementation-II**
 
+Branch `feature/testing-improvements`
+  - find all occurances of regex '202[0-5]-[0-9]{2}-[0-9]{2}T' within files that have 'test' in the name
+  - these are HARDCODED date values. examine the rest of the test of the files to find an example of how date-fns is used properly to have RELATIVE DATE OFFSETS to avoid future test breakage. then go through each match to that regex one at a time and replace (do NOT do a whole big planning stage, just go one at a time. this is not a complicated task)
+  - fix linter errors
+
 Branch `feature/recurring-bookings`
-1. i want to add the options for everyday, every week, or every month
-2. it seems like the payload is correct, but the post request is failing {room_id: "BWC-A104", start_time: "2025-11-08T10:00:00Z", end_time: "2025-11-08T11:00:00Z",…}
-end_time
-:
-"2025-11-08T11:00:00Z"
-recurrence_type
-:
-"weekly"
-room_id
-:
-"BWC-A104"
-series_end_date
-:
-"2025-11-25T00:00:00Z"
-start_time
-:
-"2025-11-08T10:00:00Z" "statusCode": 400,
-"message": "Validation failed",
-"error": [
-"start_time: start_time must be a valid ISO 8601 date string",
-"end_time: end_time must be a valid ISO 8601 date string",
-"series_end_date: series_end_date must be a valid ISO 8601 date string"
-],
-"timestamp": "2025-11-07T18:54:24.971Z",
-"path": "/bookings/recurring",
-"method": "POST"
-3. can you make the equipment into a collapsable section so it looks less cluttered?
+  1. i want to add the options for everyday, every week, or every month
+  2. it seems like the payload is correct, but the post request is failing {room_id: "BWC-A104", start_time: "2025-11-08T10:00:00Z", end_time: "2025-11-08T11:00:00Z",…}
+  end_time
+  :
+  "2025-11-08T11:00:00Z"
+  recurrence_type
+  :
+  "weekly"
+  room_id
+  :
+  "BWC-A104"
+  series_end_date
+  :
+  "2025-11-25T00:00:00Z"
+  start_time
+  :
+  "2025-11-08T10:00:00Z" "statusCode": 400,
+  "message": "Validation failed",
+  "error": [
+  "start_time: start_time must be a valid ISO 8601 date string",
+  "end_time: end_time must be a valid ISO 8601 date string",
+  "series_end_date: series_end_date must be a valid ISO 8601 date string"
+  ],
+  "timestamp": "2025-11-07T18:54:24.971Z",
+  "path": "/bookings/recurring",
+  "method": "POST"
+  3. can you make the equipment into a collapsable section so it looks less cluttered?
 
 Branch: `issue-64/registrar-stat-logs`
 - `claude-code` prompts:

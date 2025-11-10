@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { format, addDays } from 'date-fns'
 import { RecurringBookingGroup } from '../../src/components/RecurringBookingGroup'
 
 const buildBooking = (overrides: Partial<Record<string, unknown>> = {}) => ({
@@ -8,7 +9,7 @@ const buildBooking = (overrides: Partial<Record<string, unknown>> = {}) => ({
   start: '07:30:00',
   end: '08:30:00',
   user: 'Jane Doe',
-  date: '2025-01-05',
+  date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
   booking_series_id: 'series-1',
   ...overrides,
 })
@@ -23,14 +24,16 @@ describe('<RecurringBookingGroup />', () => {
 
   it('displays sorted range, time, and allows cancelling the series', () => {
     const onCancelSeries = jest.fn()
+    const earlierDate = format(addDays(new Date(), 20), 'yyyy-MM-dd')
+    const laterDate = format(addDays(new Date(), 30), 'yyyy-MM-dd')
     const bookings = [
-      buildBooking({ id: 'future', date: '2025-01-15', start: '09:00:00', end: '10:00:00' }),
-      buildBooking({ id: 'past', date: '2025-01-05', start: '07:30:00', end: '08:30:00' }),
+      buildBooking({ id: 'future', date: laterDate, start: '09:00:00', end: '10:00:00' }),
+      buildBooking({ id: 'past', date: earlierDate, start: '07:30:00', end: '08:30:00' }),
     ]
     render(<RecurringBookingGroup bookings={bookings} onCancelSeries={onCancelSeries} />)
 
     expect(screen.getByText(/Recurring \(2 bookings\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/2025-01-05 to 2025-01-15/i)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(`${earlierDate} to ${laterDate}`))).toBeInTheDocument()
     expect(screen.getByText(/7:30 AM → 8:30 AM/i)).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: /cancel series/i }))
