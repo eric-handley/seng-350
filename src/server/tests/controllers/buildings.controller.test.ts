@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Reflector } from '@nestjs/core';
 import { BuildingsController } from '../../src/api/buildings.controller';
 import { BuildingsService } from '../../src/services/buildings.service';
 import { RoomsService } from '../../src/services/rooms.service';
 import { AuditLogsService } from '../../src/services/audit-logs.service';
+import { CacheService } from '../../src/shared/cache/cache.service';
 import { BuildingResponseDto } from '../../src/dto/building.dto';
 import { RoomResponseDto } from '../../src/dto/room.dto';
 import { RoomType } from '../../src/database/entities/room.entity';
@@ -46,6 +49,23 @@ describe('BuildingsController', () => {
     logApiError: jest.fn(),
   };
 
+  const mockCacheManager = {
+    get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn(),
+    reset: jest.fn(),
+  };
+
+  const mockCacheService = {
+    registerScheduleCacheKey: jest.fn(),
+    registerRoomCacheKey: jest.fn(),
+    registerBuildingCacheKey: jest.fn(),
+    clearScheduleCache: jest.fn().mockResolvedValue(undefined),
+    clearRoomCache: jest.fn().mockResolvedValue(undefined),
+    clearBuildingCache: jest.fn().mockResolvedValue(undefined),
+    clearKey: jest.fn().mockResolvedValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BuildingsController],
@@ -62,6 +82,15 @@ describe('BuildingsController', () => {
           provide: AuditLogsService,
           useValue: mockAuditLogsService,
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
+        },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
+        Reflector,
       ],
     }).compile();
 

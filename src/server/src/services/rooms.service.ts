@@ -13,6 +13,7 @@ import {
   TimeSlotDto,
 } from '../dto/schedule.dto';
 import { Booking, BookingStatus } from '../database/entities/booking.entity';
+import { CacheService } from '../shared/cache/cache.service';
 
 @Injectable()
 export class RoomsService {
@@ -25,6 +26,7 @@ export class RoomsService {
     private readonly bookingRepository: Repository<Booking>,
     @InjectRepository(Building)
     private readonly buildingRepository: Repository<Building>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async getSchedule(
@@ -278,6 +280,9 @@ export class RoomsService {
       throw new NotFoundException('Room not found after creation');
     }
 
+    // Invalidate room-related caches since a room has been created
+    await this.cacheService.clearRoomCache();
+
     return this.toResponseDto(roomWithRelations);
   }
 
@@ -319,6 +324,9 @@ export class RoomsService {
       throw new NotFoundException('Room not found after update');
     }
 
+    // Invalidate room-related caches since a room has been updated
+    await this.cacheService.clearRoomCache();
+
     return this.toResponseDto(roomWithRelations);
   }
 
@@ -338,6 +346,9 @@ export class RoomsService {
     }
 
     await this.roomRepository.remove(room);
+
+    // Invalidate room-related caches since a room has been removed
+    await this.cacheService.clearRoomCache();
   }
 
   private normalizeIdentifier(value?: string): string | undefined {

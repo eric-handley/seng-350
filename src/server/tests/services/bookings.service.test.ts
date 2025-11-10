@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 
 import { BookingsService } from '../../src/services/bookings.service';
+import { CacheService } from '../../src/shared/cache/cache.service';
 import { Booking, BookingStatus } from '../../src/database/entities/booking.entity';
 import { BookingSeries } from '../../src/database/entities/booking-series.entity';
 import { Room } from '../../src/database/entities/room.entity';
@@ -67,6 +68,16 @@ describe('BookingsService', () => {
     findOne: jest.fn(),
   };
 
+  const mockCacheService = {
+    registerScheduleCacheKey: jest.fn(),
+    registerRoomCacheKey: jest.fn(),
+    registerBuildingCacheKey: jest.fn(),
+    clearScheduleCache: jest.fn().mockResolvedValue(undefined),
+    clearRoomCache: jest.fn().mockResolvedValue(undefined),
+    clearBuildingCache: jest.fn().mockResolvedValue(undefined),
+    clearKey: jest.fn().mockResolvedValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -82,6 +93,10 @@ describe('BookingsService', () => {
         {
           provide: getRepositoryToken(Room),
           useValue: mockRoomRepository,
+        },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
         },
       ],
     }).compile();

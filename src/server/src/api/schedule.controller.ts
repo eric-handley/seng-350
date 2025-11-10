@@ -5,6 +5,7 @@ import {
   ValidationPipe,
   UseGuards,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +17,8 @@ import {
 import { RoomsService } from '../services/rooms.service';
 import { AuthGuard } from '../shared/guards/auth.guard';
 import { ScheduleQueryDto, ScheduleResponseDto } from '../dto/schedule.dto';
+import { HttpCacheInterceptor } from '../shared/interceptors/http-cache.interceptor';
+import { CacheKey, CacheTTL } from '../shared/decorators/cache.decorator';
 
 @ApiTags('Schedule')
 @ApiBearerAuth()
@@ -25,6 +28,9 @@ export class ScheduleController {
   constructor(private readonly roomsService: RoomsService) {}
 
   @Get()
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('schedule')
+  @CacheTTL(300000) // 5 minutes
   @ApiOperation({
     summary: 'Get available or booked time slots for rooms, organized by building',
   })
