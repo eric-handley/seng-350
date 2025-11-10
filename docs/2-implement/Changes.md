@@ -8,4 +8,4 @@ Additionally, we completed the following out-of-scope parts from Implementation 
 
 - Implemented Redis Caching
 
-- System health made visible to Registrar
+- System health statistics made visible to Registrar
