@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { format, addDays } from 'date-fns';
 import { HistoryPage } from '../src/pages/HistoryPage';
 import { useBookingHistory } from '../src/hooks/useBookingHistory';
 import { BookingCard } from '../src/components/BookingCard';
@@ -135,6 +136,7 @@ describe('<HistoryPage />', () => {
 
     it('renders BookingCard items and triggers initial fetch on mount', async () => {
         // Arrange: one booking in user history
+        const testDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
         const mockHistory = [
             {
                 id: 'b1',
@@ -143,7 +145,7 @@ describe('<HistoryPage />', () => {
                 roomNumber: '125',
                 start: '09:00',
                 end: '10:00',
-                date: '2025-10-05',
+                date: testDate,
                 cancelled: false,
             },
         ]
@@ -201,6 +203,7 @@ describe('<HistoryPage />', () => {
 
     it('calls cancelBooking with correct booking ID', async () => {
         // Arrange: setup a booking that can be cancelled
+        const testDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
         const mockHistory = [
             {
                 id: 'booking-123',
@@ -209,7 +212,7 @@ describe('<HistoryPage />', () => {
                 roomNumber: '125',
                 start: '09:00',
                 end: '10:00',
-                date: '2025-10-05',
+                date: testDate,
                 cancelled: false,
             },
         ]
@@ -244,6 +247,7 @@ describe('<HistoryPage />', () => {
             throw new Error('Render failure')
         })
 
+        const testDate = format(addDays(new Date(), 30), 'yyyy-MM-dd');
         const mockHistory = [
             {
                 id: 'b1',
@@ -252,7 +256,7 @@ describe('<HistoryPage />', () => {
                 roomNumber: '125',
                 start: '09:00',
                 end: '10:00',
-                date: '2025-10-05',
+                date: testDate,
                 cancelled: false,
             },
         ]

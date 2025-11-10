@@ -1,4 +1,5 @@
 import * as timeUtils from '../../src/utils/time';
+import { format, addDays } from 'date-fns';
 
 describe('time utils', () => {
   describe('toApiTime', () => {
@@ -47,8 +48,9 @@ describe('time utils', () => {
 
   describe('toIsoDateTime', () => {
     it('combines date and API time format to ISO', () => {
-      const result = timeUtils.toIsoDateTime('2025-01-15', '14-30-00');
-      expect(result).toBe('2025-01-15T14:30:00');
+      const testDate = format(addDays(new Date(), 10), 'yyyy-MM-dd');
+      const result = timeUtils.toIsoDateTime(testDate, '14-30-00');
+      expect(result).toBe(`${testDate}T14:30:00`);
     });
   });
 

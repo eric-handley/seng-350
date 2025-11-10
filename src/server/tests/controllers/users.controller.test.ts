@@ -27,14 +27,15 @@ describe('UsersController', () => {
     role: UserRole.ADMIN,
   };
 
+  const now = new Date();
   const mockUserResponse: UserResponseDto = {
     id: 'user-uuid',
     email: 'test@uvic.ca',
     first_name: 'John',
     last_name: 'Doe',
     role: UserRole.STAFF,
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockUsersService = {

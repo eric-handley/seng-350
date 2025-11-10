@@ -17,6 +17,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SchedulePage } from '../src/pages/SchedulePage'
 import { useSchedule } from '../src/hooks/useSchedule'
+import { format, addDays } from 'date-fns'
 
 // Mock the data hook only; FilterPanel remains unmocked so we can test filtering
 jest.mock('../src/hooks/useSchedule')
@@ -28,6 +29,7 @@ describe('<SchedulePage />', () => {
     // Stubs for controlled props passed into SchedulePage
     const setDate = jest.fn()
     const setBuilding = jest.fn()
+    const testDate = format(addDays(new Date(), 5), 'yyyy-MM-dd')
 
     beforeEach(() => {
         // Ensure clean mocks between tests (hook + FilterPanel + prop spies)
@@ -39,7 +41,7 @@ describe('<SchedulePage />', () => {
         mockUseSchedule.mockReturnValue({ rooms: [], loading: true, error: null })
 
         // Act: render the page with required props
-        render(<SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />)
+        render(<SchedulePage date={testDate} setDate={setDate} building="ECS" setBuilding={setBuilding} />)
 
         // Assert: loading indicator appears
         expect(screen.getByText(/Loading schedule/i)).toBeInTheDocument()
@@ -50,7 +52,7 @@ describe('<SchedulePage />', () => {
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: 'Failed to fetch' })
 
         // Act
-        render(<SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />)
+        render(<SchedulePage date={testDate} setDate={setDate} building="ECS" setBuilding={setBuilding} />)
 
         // Assert: error message is surfaced to the user
         expect(screen.getByText(/Error: Failed to fetch/i)).toBeInTheDocument()
@@ -61,7 +63,7 @@ describe('<SchedulePage />', () => {
         mockUseSchedule.mockReturnValue({ rooms: [], loading: false, error: null })
 
         // Act
-        render(<SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />)
+        render(<SchedulePage date={testDate} setDate={setDate} building="ECS" setBuilding={setBuilding} />)
 
         // Assert: empty-state copy is shown
         expect(screen.getByText(/No bookings for this date/i)).toBeInTheDocument()
@@ -77,7 +79,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 30,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` }
                 ]
             },
             {
@@ -87,7 +89,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 25,
                 slots: [
-                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                    { start_time: `${testDate}T10:00:00Z`, end_time: `${testDate}T11:00:00Z` }
                 ]
             }
         ]
@@ -96,7 +98,7 @@ describe('<SchedulePage />', () => {
         mockUseSchedule.mockReturnValue({ rooms, loading: false, error: null })
 
         // Act
-        render(<SchedulePage date="2025-10-05" setDate={setDate} building="ECS" setBuilding={setBuilding} />)
+        render(<SchedulePage date={testDate} setDate={setDate} building="ECS" setBuilding={setBuilding} />)
 
         // Assert: room labels render and an accessible schedule table is present
         expect(screen.getByText(/ECS 101/i)).toBeInTheDocument()
@@ -114,7 +116,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 30,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` }
                 ]
             },
             {
@@ -124,7 +126,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Science',
                 capacity: 25,
                 slots: [
-                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                    { start_time: `${testDate}T10:00:00Z`, end_time: `${testDate}T11:00:00Z` }
                 ]
             }
         ]
@@ -133,7 +135,7 @@ describe('<SchedulePage />', () => {
 
         // Act: render the page
         render(
-            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
+            <SchedulePage date={testDate} setDate={setDate} building="" setBuilding={setBuilding} />
         )
 
         // Assert: both rooms visible initially
@@ -159,7 +161,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 30,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` }
                 ]
             },
             {
@@ -169,7 +171,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Science',
                 capacity: 25,
                 slots: [
-                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                    { start_time: `${testDate}T10:00:00Z`, end_time: `${testDate}T11:00:00Z` }
                 ]
             }
         ]
@@ -178,7 +180,7 @@ describe('<SchedulePage />', () => {
 
         // Act: render the page
         render(
-            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
+            <SchedulePage date={testDate} setDate={setDate} building="" setBuilding={setBuilding} />
         )
 
         // Assert: both rooms visible initially
@@ -204,7 +206,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 30,
                 slots: [
-                    { start_time: '2025-10-05T09:00:00Z', end_time: '2025-10-05T10:00:00Z' }
+                    { start_time: `${testDate}T09:00:00Z`, end_time: `${testDate}T10:00:00Z` }
                 ]
             },
             {
@@ -214,7 +216,7 @@ describe('<SchedulePage />', () => {
                 building_name: 'Engineering',
                 capacity: 25,
                 slots: [
-                    { start_time: '2025-10-05T10:00:00Z', end_time: '2025-10-05T11:00:00Z' }
+                    { start_time: `${testDate}T10:00:00Z`, end_time: `${testDate}T11:00:00Z` }
                 ]
             }
         ]
@@ -223,7 +225,7 @@ describe('<SchedulePage />', () => {
 
         // Act: render the page
         render(
-            <SchedulePage date="2025-10-05" setDate={setDate} building="" setBuilding={setBuilding} />
+            <SchedulePage date={testDate} setDate={setDate} building="" setBuilding={setBuilding} />
         )
 
         // Act: filter by concatenated identifier 'ECS101'

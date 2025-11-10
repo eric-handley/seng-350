@@ -16,11 +16,12 @@ describe('BuildingsController', () => {
   let buildingsService: BuildingsService;
   let roomsService: RoomsService;
 
+  const now = new Date();
   const mockBuildingResponse: BuildingResponseDto = {
     short_name: 'ELW',
     name: 'Elliott Building',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockRoomResponse: RoomResponseDto = {
@@ -30,8 +31,8 @@ describe('BuildingsController', () => {
     capacity: 30,
     room_type: RoomType.CLASSROOM,
     url: 'https://example.com/room/101',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockBuildingsService = {

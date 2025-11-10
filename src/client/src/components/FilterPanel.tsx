@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { formatTimeForDisplay, parseUserTimeInput } from '../utils/time'
 
-interface FilterPanelProps {
+export interface FilterPanelProps {
   building: string
   setBuilding: (building: string) => void
   roomQuery: string
