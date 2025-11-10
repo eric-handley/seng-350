@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Reflector } from '@nestjs/core';
 import { BuildingsController } from '../../src/api/buildings.controller';
 import { BuildingsService } from '../../src/services/buildings.service';
 import { RoomsService } from '../../src/services/rooms.service';
 import { AuditLogsService } from '../../src/services/audit-logs.service';
+import { CacheService } from '../../src/shared/cache/cache.service';
 import { BuildingResponseDto } from '../../src/dto/building.dto';
 import { RoomResponseDto } from '../../src/dto/room.dto';
 import { RoomType } from '../../src/database/entities/room.entity';
@@ -13,11 +16,12 @@ describe('BuildingsController', () => {
   let buildingsService: BuildingsService;
   let roomsService: RoomsService;
 
+  const now = new Date();
   const mockBuildingResponse: BuildingResponseDto = {
     short_name: 'ELW',
     name: 'Elliott Building',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockRoomResponse: RoomResponseDto = {
@@ -27,8 +31,8 @@ describe('BuildingsController', () => {
     capacity: 30,
     room_type: RoomType.CLASSROOM,
     url: 'https://example.com/room/101',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockBuildingsService = {
@@ -44,6 +48,23 @@ describe('BuildingsController', () => {
     createAuditLog: jest.fn(),
     findAll: jest.fn(),
     logApiError: jest.fn(),
+  };
+
+  const mockCacheManager = {
+    get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn(),
+    reset: jest.fn(),
+  };
+
+  const mockCacheService = {
+    registerScheduleCacheKey: jest.fn(),
+    registerRoomCacheKey: jest.fn(),
+    registerBuildingCacheKey: jest.fn(),
+    clearScheduleCache: jest.fn().mockResolvedValue(undefined),
+    clearRoomCache: jest.fn().mockResolvedValue(undefined),
+    clearBuildingCache: jest.fn().mockResolvedValue(undefined),
+    clearKey: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -62,6 +83,15 @@ describe('BuildingsController', () => {
           provide: AuditLogsService,
           useValue: mockAuditLogsService,
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
+        },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
+        Reflector,
       ],
     }).compile();
 

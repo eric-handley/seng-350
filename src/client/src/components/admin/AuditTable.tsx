@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { parseISO, format } from 'date-fns';
 import { AuditRow } from "../../types/admin";
 import { Badge } from "./AdminComponents";
 import { filterAudits } from "../../utils/adminUtils";
@@ -109,7 +110,7 @@ export const AuditTable = ({
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-          <button className="btn btn--ghost" onClick={exportCSV}>
+          <button className="btn btn--secondary" onClick={exportCSV}>
             Export CSV
           </button>
         </div>
@@ -134,7 +135,7 @@ export const AuditTable = ({
                 <td className="mono" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.id}>
                   {r.id}
                 </td>
-                <td className="mono">{new Date(r.time).toLocaleString()}</td>
+                <td className="mono">{format(parseISO(r.time), 'Ppp')}</td>
                 <td>{r.actor}</td>
                 <td className="mono">{r.action}</td>
                 <td className="mono">{r.target}</td>
@@ -169,7 +170,7 @@ export const AuditTable = ({
 
       <div className="pager">
         <button
-          className="btn btn--ghost"
+          className="btn btn--secondary"
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
         >
@@ -179,7 +180,7 @@ export const AuditTable = ({
           Page {page} / {totalPages}
         </div>
         <button
-          className="btn btn--ghost"
+          className="btn btn--secondary"
           disabled={page === totalPages}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
         >

@@ -49,11 +49,6 @@ export class CreateBookingDto {
   @Type(() => Date)
   @IsDate()
   end_time!: Date;
-
-  // @ApiProperty({ example: 'uuid-string', description: 'Optional booking series ID for recurring bookings', required: false })
-  // @IsOptional()
-  // @IsUUID()
-  // booking_series_id?: string;
 }
 
 export class UpdateBookingDto extends PartialType(CreateBookingDto) {

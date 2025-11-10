@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions, LessThan, MoreThan } from 'typeorm';
+import { format, parseISO, isValid, max } from 'date-fns';
 import { Room } from '../database/entities/room.entity';
 import { Equipment } from '../database/entities/equipment.entity';
 import { Building } from '../database/entities/building.entity';
@@ -12,6 +13,7 @@ import {
   TimeSlotDto,
 } from '../dto/schedule.dto';
 import { Booking, BookingStatus } from '../database/entities/booking.entity';
+import { CacheService } from '../shared/cache/cache.service';
 
 @Injectable()
 export class RoomsService {
@@ -24,6 +26,7 @@ export class RoomsService {
     private readonly bookingRepository: Repository<Booking>,
     @InjectRepository(Building)
     private readonly buildingRepository: Repository<Building>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async getSchedule(
@@ -64,14 +67,14 @@ export class RoomsService {
     const buildingsMap: Map<string, BuildingScheduleDto> = new Map();
 
     // Construct query start and end times
-    const dateStr = date ?? new Date().toISOString().split('T')[0];
+    const dateStr = date ?? format(new Date(), 'yyyy-MM-dd');
     const startTimeStr = start_time ? start_time.replace(/-/g, ':') : '00:00:00';
     const endTimeStr = end_time ? end_time.replace(/-/g, ':') : '23:59:59';
 
-    const queryStartTime = new Date(`${dateStr}T${startTimeStr}Z`);
-    const queryEndTime = new Date(`${dateStr}T${endTimeStr}Z`);
+    const queryStartTime = parseISO(`${dateStr}T${startTimeStr}Z`);
+    const queryEndTime = parseISO(`${dateStr}T${endTimeStr}Z`);
 
-    if (isNaN(queryStartTime.getTime()) || isNaN(queryEndTime.getTime())) {
+    if (!isValid(queryStartTime) || !isValid(queryEndTime)) {
       throw new BadRequestException('Invalid date or time format');
     }
 
@@ -106,9 +109,7 @@ export class RoomsService {
               end_time: booking.start_time,
             });
           }
-          lastEndTime = new Date(
-            Math.max(lastEndTime.getTime(), booking.end_time.getTime()),
-          );
+          lastEndTime = max([lastEndTime, booking.end_time]);
         }
 
         if (lastEndTime < queryEndTime) {
@@ -279,6 +280,9 @@ export class RoomsService {
       throw new NotFoundException('Room not found after creation');
     }
 
+    // Invalidate room-related caches since a room has been created
+    await this.cacheService.clearRoomCache();
+
     return this.toResponseDto(roomWithRelations);
   }
 
@@ -320,6 +324,9 @@ export class RoomsService {
       throw new NotFoundException('Room not found after update');
     }
 
+    // Invalidate room-related caches since a room has been updated
+    await this.cacheService.clearRoomCache();
+
     return this.toResponseDto(roomWithRelations);
   }
 
@@ -339,6 +346,9 @@ export class RoomsService {
     }
 
     await this.roomRepository.remove(room);
+
+    // Invalidate room-related caches since a room has been removed
+    await this.cacheService.clearRoomCache();
   }
 
   private normalizeIdentifier(value?: string): string | undefined {

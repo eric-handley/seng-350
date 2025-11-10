@@ -13,6 +13,7 @@ import {
   HttpCode,
   DefaultValuePipe,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -31,6 +32,8 @@ import { AuthGuard } from '../shared/guards/auth.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
+import { HttpCacheInterceptor } from '../shared/interceptors/http-cache.interceptor';
+import { CacheKey, CacheTTL } from '../shared/decorators/cache.decorator';
 
 @ApiTags('Buildings')
 @ApiBearerAuth()
@@ -43,13 +46,16 @@ export class BuildingsController {
   ) {}
 
   @Get()
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('buildings:all')
+  @CacheTTL(1800000) // 30 minutes
   @ApiOperation({ summary: 'Get all buildings' })
-  @ApiQuery({ 
-    name: 'includeRooms', 
-    required: false, 
-    type: Boolean, 
+  @ApiQuery({
+    name: 'includeRooms',
+    required: false,
+    type: Boolean,
     description: 'Include rooms data in the response',
-    example: false 
+    example: false
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -63,6 +69,9 @@ export class BuildingsController {
   }
 
   @Get(':short_name')
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('building')
+  @CacheTTL(1800000) // 30 minutes
   @ApiOperation({ summary: 'Get building by short name' })
   @ApiParam({ name: 'short_name', description: 'Building short name (e.g., ECS)' })
   @ApiQuery({
@@ -90,6 +99,9 @@ export class BuildingsController {
 
 
   @Get(':short_name/rooms')
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('building:rooms')
+  @CacheTTL(1800000) // 30 minutes
   @ApiOperation({ summary: 'Get all rooms in a specific building' })
   @ApiParam({ name: 'short_name', description: 'Building short name (e.g., ECS)' })
   @ApiResponse({

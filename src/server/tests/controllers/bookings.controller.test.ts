@@ -7,6 +7,7 @@ import { BookingStatus } from '../../src/database/entities/booking.entity';
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { AuthenticatedUser } from '../../src/auth/auth.service';
 import { UserRole } from '../../src/database/entities/user.entity';
+import { addDays, set } from 'date-fns';
 
 describe('BookingsController', () => {
   let controller: BookingsController;
@@ -20,16 +21,17 @@ describe('BookingsController', () => {
     role: UserRole.STAFF,
   };
 
+  const futureDate = set(addDays(new Date(), 50), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
   const mockBookingResponse: BookingResponseDto = {
     id: 'booking-uuid',
     user_id: 'user-uuid',
     room_id: 'room-uuid',
-    start_time: new Date('2024-01-01T09:00:00Z'),
-    end_time: new Date('2024-01-01T10:00:00Z'),
+    start_time: futureDate,
+    end_time: set(addDays(new Date(), 50), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
     status: BookingStatus.ACTIVE,
     booking_series_id: undefined,
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const mockBookingsService = {
@@ -72,8 +74,8 @@ describe('BookingsController', () => {
   describe('create', () => {
     const createBookingDto: CreateBookingDto = {
       room_id: 'room-uuid',
-      start_time: new Date('2024-01-01T09:00:00Z'),
-      end_time: new Date('2024-01-01T10:00:00Z'),
+      start_time: set(addDays(new Date(), 50), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 }),
+      end_time: set(addDays(new Date(), 50), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
     };
 
     it('should create a booking successfully', async () => {
@@ -110,8 +112,8 @@ describe('BookingsController', () => {
     it('should return bookings with all filters', async () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
-      const startDate = '2024-01-01T00:00:00Z';
-      const endDate = '2024-01-02T00:00:00Z';
+      const startDate = set(addDays(new Date(), 50), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
+      const endDate = set(addDays(new Date(), 51), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
 
       const result = await controller.findAll(mockUser, 'user-uuid', 'room-uuid', startDate, endDate);
 
@@ -119,8 +121,8 @@ describe('BookingsController', () => {
         mockUser,
         'user-uuid',
         'room-uuid',
-        new Date(startDate),
-        new Date(endDate)
+        startDate,
+        endDate
       );
       expect(result).toEqual(mockBookings);
     });
@@ -128,14 +130,15 @@ describe('BookingsController', () => {
     it('should handle date parsing correctly', async () => {
       const mockBookings = [mockBookingResponse];
       mockBookingsService.findAll.mockResolvedValue(mockBookings);
+      const startDate = set(addDays(new Date(), 50), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
 
-      await controller.findAll(mockUser, undefined, undefined, '2024-01-01T00:00:00Z');
+      await controller.findAll(mockUser, undefined, undefined, startDate);
 
       expect(service.findAll).toHaveBeenCalledWith(
         mockUser,
         undefined,
         undefined,
-        new Date('2024-01-01T00:00:00Z'),
+        startDate,
         undefined
       );
     });
@@ -161,8 +164,8 @@ describe('BookingsController', () => {
 
   describe('update', () => {
     const updateBookingDto: UpdateBookingDto = {
-      start_time: new Date('2024-01-01T10:00:00Z'),
-      end_time: new Date('2024-01-01T11:00:00Z'),
+      start_time: set(addDays(new Date(), 50), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 }),
+      end_time: set(addDays(new Date(), 50), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }),
     };
 
     it('should update a booking successfully', async () => {

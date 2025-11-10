@@ -11,6 +11,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,6 +29,8 @@ import { AuthGuard } from '../shared/guards/auth.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { UserRole } from '../database/entities/user.entity';
+import { HttpCacheInterceptor } from '../shared/interceptors/http-cache.interceptor';
+import { CacheKey, CacheTTL } from '../shared/decorators/cache.decorator';
 
 @ApiTags('Rooms')
 @ApiBearerAuth()
@@ -37,6 +40,9 @@ export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
   @Get()
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('rooms:all')
+  @CacheTTL(900000) // 15 minutes
   @ApiOperation({ summary: 'Get all rooms with optional filters' })
   @ApiQuery({ name: 'building_short_name', required: false, description: 'Filter by building short name' })
   @ApiQuery({ name: 'min_capacity',  required: false, description: 'Minimum room capacity' })
@@ -54,6 +60,9 @@ export class RoomsController {
   }
 
   @Get(':room_id')
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey('room')
+  @CacheTTL(900000) // 15 minutes
   @ApiOperation({ summary: 'Get room by ID' })
   @ApiParam({ name: 'room_id', description: 'Room ID (e.g., ECS-124)' })
   @ApiResponse({

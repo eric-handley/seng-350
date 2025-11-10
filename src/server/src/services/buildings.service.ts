@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Building } from '../database/entities/building.entity';
 import { BuildingResponseDto, CreateBuildingDto, UpdateBuildingDto } from '../dto/building.dto';
+import { CacheService } from '../shared/cache/cache.service';
 
 @Injectable()
 export class BuildingsService {
   constructor(
     @InjectRepository(Building)
     private readonly buildingRepository: Repository<Building>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async findAll(includeRooms = false): Promise<BuildingResponseDto[]> {
@@ -57,6 +59,10 @@ export class BuildingsService {
     });
 
     const savedBuilding = await this.buildingRepository.save(building);
+
+    // Invalidate building-related caches since a building has been created
+    await this.cacheService.clearBuildingCache();
+
     return this.toResponseDto(savedBuilding);
   }
 
@@ -74,6 +80,10 @@ export class BuildingsService {
     building.name = updateBuildingDto.name.trim();
 
     const savedBuilding = await this.buildingRepository.save(building);
+
+    // Invalidate building-related caches since a building has been updated
+    await this.cacheService.clearBuildingCache();
+
     return this.toResponseDto(savedBuilding);
   }
 
@@ -89,6 +99,9 @@ export class BuildingsService {
     }
 
     await this.buildingRepository.remove(building);
+
+    // Invalidate building-related caches since a building has been removed
+    await this.cacheService.clearBuildingCache();
   }
 
 

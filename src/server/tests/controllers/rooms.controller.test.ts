@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Reflector } from '@nestjs/core';
 import { RoomsController } from '../../src/api/rooms.controller';
 import { RoomsService } from '../../src/services/rooms.service';
 import { AuditLogsService } from '../../src/services/audit-logs.service';
+import { CacheService } from '../../src/shared/cache/cache.service';
 import { RoomQueryDto, RoomResponseDto } from '../../src/dto/room.dto';
 import { RoomType } from '../../src/database/entities/room.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -10,6 +13,7 @@ describe('RoomsController', () => {
   let controller: RoomsController;
   let service: RoomsService;
 
+  const now = new Date();
   const mockRoomResponse: RoomResponseDto = {
     room_id: 'ELW-101',
     building_short_name: 'ELW',
@@ -17,8 +21,8 @@ describe('RoomsController', () => {
     capacity: 30,
     room_type: RoomType.CLASSROOM,
     url: 'https://example.com/room/101',
-    created_at: new Date('2024-01-01T00:00:00Z'),
-    updated_at: new Date('2024-01-01T00:00:00Z'),
+    created_at: now,
+    updated_at: now,
   };
 
   const mockRoomsService = {
@@ -30,6 +34,23 @@ describe('RoomsController', () => {
     createAuditLog: jest.fn(),
     findAll: jest.fn(),
     logApiError: jest.fn(),
+  };
+
+  const mockCacheManager = {
+    get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn(),
+    reset: jest.fn(),
+  };
+
+  const mockCacheService = {
+    registerScheduleCacheKey: jest.fn(),
+    registerRoomCacheKey: jest.fn(),
+    registerBuildingCacheKey: jest.fn(),
+    clearScheduleCache: jest.fn().mockResolvedValue(undefined),
+    clearRoomCache: jest.fn().mockResolvedValue(undefined),
+    clearBuildingCache: jest.fn().mockResolvedValue(undefined),
+    clearKey: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -44,6 +65,15 @@ describe('RoomsController', () => {
           provide: AuditLogsService,
           useValue: mockAuditLogsService,
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
+        },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
+        Reflector,
       ],
     }).compile();
 

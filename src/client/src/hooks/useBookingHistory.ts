@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { formatISO } from 'date-fns'
 import { createBooking, fetchUserBookings, cancelBooking as cancelBookingApi } from '../api/bookings'
 import type { Booking as ApiBooking } from '../api/bookings'
 import type { UiBooking } from '../types'
@@ -42,7 +43,7 @@ export function useBookingHistory(userId: string) {
     const tempId = `temp-${Date.now()}`
     const startIso = toIsoDateTimeUTC(date, startApi)
     const endIso = toIsoDateTimeUTC(date, endApi)
-    const nowIso = new Date().toISOString()
+    const nowIso = formatISO(new Date())
 
     const temp: ApiBooking = {
       id: tempId,
@@ -103,6 +104,32 @@ export function useBookingHistory(userId: string) {
     }
   }
 
+  const cancelBookingSeries = async (seriesId: string): Promise<void> => {
+    try {
+      // Find all bookings in this series
+      const allBookingsList = [...optimisticHistory, ...(serverHistory ?? []), ...allBookings]
+      const seriesBookings = allBookingsList.filter(b => b.booking_series_id === seriesId)
+
+      // Cancel all bookings in parallel
+      await Promise.all(
+        seriesBookings.map(booking => cancelBookingApi(booking.id))
+      )
+
+      // Optimistically remove all from series
+      setOptimisticHistory(prev => prev.filter(b => b.booking_series_id !== seriesId))
+      setServerHistory(prev => (prev ? prev.filter(b => b.booking_series_id !== seriesId) : prev))
+      setAllBookings(prev => prev.filter(b => b.booking_series_id !== seriesId))
+
+      // Refresh from server
+      const fresh = await fetchUserBookings(userId)
+      setServerHistory(fresh)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to cancel booking series'
+      setError(msg)
+      throw err
+    }
+  }
+
   // Merge optimistic and server bookings
   const mergedApiHistory: ApiBooking[] = useMemo(
     () => mergeBookings(optimisticHistory, serverHistory ?? []),
@@ -141,6 +168,7 @@ export function useBookingHistory(userId: string) {
     fetchAllBookings,
     createBooking: createNewBooking,
     cancelBooking,
+    cancelBookingSeries,
     allBookings: allBookingsUi,
   }
 }

@@ -1,5 +1,35 @@
 const API_BASE = 'http://localhost:3000';
 
+// Request type for creating a series of recurring bookings
+export type CreateBookingSeriesReq = {
+  room_id: string;
+  start_time: string; // ISO, e.g. "2025-10-05T10:00:00"
+  end_time: string;   // ISO
+  recurrence_type: 'daily' | 'weekly' | 'monthly';
+  series_end_date: string; // ISO date string
+  user_id?: string;
+};
+
+/**
+ * Create a series of recurring bookings.
+ * @param body - booking series request
+ * @returns array of created Booking objects
+ */
+export async function createBookingSeries(body: CreateBookingSeriesReq): Promise<Booking[]> {
+  const res = await fetch(`${API_BASE}/bookings/recurring`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const message = errorData?.message ?? `Recurring booking failed: ${res.status} ${res.statusText}`;
+    throw new Error(message);
+  }
+  return res.json() as Promise<Booking[]>;
+}
+
 export type CreateBookingReq = {
   room_id: string;
   start_time: string; // ISO, e.g. "2025-10-05T10:00:00"
@@ -62,7 +92,6 @@ export async function cancelBooking(id: string): Promise<void> {
     credentials: 'include',
     headers: { 'Accept': 'application/json' },
   })
-  // Swagger shows 204 No Content on success
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(`DELETE /bookings/${id} failed: ${res.status} ${res.statusText} ${text}`)

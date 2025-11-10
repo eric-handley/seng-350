@@ -30,10 +30,11 @@ services:
         if [ "$$TABLE_COUNT" -eq "0" ]; then
           cd src/server && npm run db:setup
         fi
+        sleep 10
     healthcheck:
       # Again, really stupid, works great!
       test: ["CMD-SHELL", "test -f /tmp/deps-ready"]
-      interval: 1s
+      interval: 5s
       timeout: 1s
       retries: 300
 

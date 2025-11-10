@@ -28,6 +28,12 @@ import { SystemHealth } from "./components/admin/SystemHealth";
 import BuildingsRooms from "./components/admin/BuildingsRooms";
 import EquipmentManagement from "./components/admin/EquipmentManagement";
 
+/**
+ * HomeComponent
+ * - Authenticated application shell with header, tabs, and tabbed content areas.
+ * - Derives the active tab from the current URL path.
+ * - Gates admin/registrar-only content at render-time in addition to route guard.
+ */
 const HomeComponent: React.FC = () => {
   const { currentUser, isLoading, logout } = useAuth();
   const navigate = useNavigate();
@@ -50,9 +56,13 @@ const HomeComponent: React.FC = () => {
     ? "equipment"
     : "book";
 
+  // Staff cannot manage users; admins and registrars can.
   const canManageUsers =
     currentUser?.role === UserRole.ADMIN ||
     currentUser?.role === UserRole.REGISTRAR;
+
+  // User management state + handlers
+  // NOTE: autoLoad depends on permission to avoid unnecessary requests.
   const {
     users,
     editingUser,
@@ -68,45 +78,58 @@ const HomeComponent: React.FC = () => {
   } = useUsers({ autoLoad: !!canManageUsers });
 
   // Fetch audit logs for admin users
-  const { auditLogs, loading: auditLoading, error: auditError } = useAuditLogs();
+  // NOTE: convertAuditLogToRow adapts server shape to table rows.
+  const {
+    auditLogs,
+    loading: auditLoading,
+    error: auditError,
+  } = useAuditLogs();
   const auditRows = auditLogs.map(convertAuditLogToRow);
 
-  // Room filtering state
+  // Room filtering state (shared between Booking and Schedule pages)
   const [building, setBuilding] = useState<string>("");
   const [roomQuery, setRoomQuery] = useState<string>("");
   const [date, setDate] = useState<string>(getCurrentDate());
   const [start, setStart] = useState<string>("10:00");
   const [end, setEnd] = useState<string>("11:00");
 
+  // Logout then hard-navigate to login to clear protected UI
   const handleLogout = async () => {
     await logout();
     navigate("/login", { replace: true });
   };
 
+  // Global auth loading placeholder
   if (isLoading) {
     return <div style={{ padding: "2rem", textAlign: "center" }}>Loading…</div>;
   }
 
+  // When unauthenticated inside ProtectedRoute boundary, render nothing here.
   if (!currentUser) {
     return null;
   }
 
   return (
     <div className="app-shell">
+      {/* App header with current role badge and logout */}
       <div className="header">
         <div className="header-info">
-          <span className="badge">{String(currentUser.role).toUpperCase()}</span>
+          <span className="badge">
+            {String(currentUser.role).toUpperCase()}
+          </span>
           <h1 className="title">Rooms & Scheduling</h1>
         </div>
         <div className="header-actions">
-          <button className="btn ghost" onClick={handleLogout}>
+          <button className="btn secondary" onClick={handleLogout}>
             Log out
           </button>
         </div>
       </div>
 
+      {/* Top-level tab navigation; uses currentTab to highlight active tab */}
       <TabNavigation currentTab={tab} currentUser={currentUser} />
 
+      {/* Tab content routing by derived "tab" (keeps URL as source of truth) */}
       {tab === "book" && (
         <BookingPage
           currentUserId={currentUser.id}
@@ -120,6 +143,7 @@ const HomeComponent: React.FC = () => {
           setStart={setStart}
           end={end}
           setEnd={setEnd}
+          // After a booking is created, navigate to the user's booking history
           onBookingCreated={() => navigate("/history")}
         />
       )}
@@ -135,6 +159,7 @@ const HomeComponent: React.FC = () => {
 
       {tab === "history" && <HistoryPage currentUser={currentUser} />}
 
+      {/* Users page is visible to admins/registrars; logic also enforced in route guard */}
       {tab === "users" && (
         <UsersPage
           users={users}
@@ -151,12 +176,20 @@ const HomeComponent: React.FC = () => {
           onCancelAdd={() => setAddingUser(null)}
         />
       )}
-      {tab === "audit" && currentUser.role === UserRole.ADMIN && (
-        <AuditTable rows={auditRows} loading={auditLoading} error={auditError} />
-      )}
-      {tab === "health" && (currentUser.role === UserRole.ADMIN || currentUser.role === UserRole.REGISTRAR) && (
-        <SystemHealth />
-      )}
+
+      {/* Admin-only sections */}
+      {tab === "audit" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && (
+          <AuditTable
+            rows={auditRows}
+            loading={auditLoading}
+            error={auditError}
+          />
+        )}
+      {tab === "health" &&
+        (currentUser.role === UserRole.ADMIN ||
+          currentUser.role === UserRole.REGISTRAR) && <SystemHealth />}
       {tab === "buildings" && currentUser.role === UserRole.ADMIN && (
         <BuildingsRooms />
       )}
@@ -167,6 +200,13 @@ const HomeComponent: React.FC = () => {
   );
 };
 
+/**
+ * AppRouter
+ * - Declares top-level routes, including /login and a protected "/" area.
+ * - Nested child routes under "/" exist to change the URL while content
+ *   selection is handled inside HomeComponent via the derived "tab".
+ *   (Routes render null to avoid double-mounting.)
+ */
 const AppRouter: React.FC = () => {
   const { login } = useAuth();
   return (
@@ -182,7 +222,9 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       >
+        {/* Default route redirects to the booking tab */}
         <Route index element={<Navigate to="/book" replace />} />
+        {/* Child routes exist only to affect the URL; HomeComponent reads location */}
         <Route path="schedule" element={null} />
         <Route path="book" element={null} />
         <Route path="history" element={null} />
@@ -192,12 +234,17 @@ const AppRouter: React.FC = () => {
         <Route path="buildings" element={null} />
         <Route path="equipment" element={null} />
       </Route>
+      {/* Fallback to login for unknown paths */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
 
-
+/**
+ * App
+ * - Provides Auth context and BrowserRouter for the entire application.
+ * - Wraps AppRouter so both login and protected routes share the same providers.
+ */
 export default function App() {
   return (
     <AuthProvider>

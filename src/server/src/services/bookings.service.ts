@@ -1,12 +1,15 @@
+import { CreateBookingSeriesDto, BookingSeriesResponseDto } from '../dto/booking-series.dto';
 import { Injectable, NotFoundException, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { isBefore, isAfter, differenceInMilliseconds, addMonths } from 'date-fns';
 import { Booking, BookingStatus } from '../database/entities/booking.entity';
 import { BookingSeries } from '../database/entities/booking-series.entity';
 import { Room } from '../database/entities/room.entity';
 import { CreateBookingDto, UpdateBookingDto, BookingResponseDto } from '../dto/booking.dto';
 import { AuthenticatedUser } from '../auth/auth.service';
 import { UserRole } from '../database/entities/user.entity';
+import { CacheService } from '../shared/cache/cache.service';
 
 @Injectable()
 export class BookingsService {
@@ -17,7 +20,98 @@ export class BookingsService {
     private readonly bookingSeriesRepository: Repository<BookingSeries>,
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
+    private readonly cacheService: CacheService,
   ) {}
+
+  async createBookingSeries(
+    createBookingSeriesDto: CreateBookingSeriesDto,
+    currentUser: AuthenticatedUser,
+  ): Promise<BookingSeriesResponseDto> {
+    const { room_id, start_time, end_time, series_end_date, recurrence_type } = createBookingSeriesDto;
+    const normalizedRoomId = this.normalizeRoomId(room_id);
+
+    if (!normalizedRoomId) {
+      throw new BadRequestException('Room ID must not be empty');
+    }
+
+    if (new Date(start_time) >= new Date(end_time)) {
+      throw new BadRequestException('Start time must be before end time');
+    }
+
+    // Validate booking constraints for the first occurrence
+    this.validateDuration(start_time, end_time);
+    this.validateNotInPast(start_time, currentUser.role);
+    this.validateAdvanceBooking(start_time, currentUser.role);
+
+    const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    // Create the booking series record
+    const bookingSeries = this.bookingSeriesRepository.create({
+      user_id: currentUser.id,
+      room_id: normalizedRoomId,
+      start_time,
+      end_time,
+      series_end_date,
+    });
+    const savedSeries = await this.bookingSeriesRepository.save(bookingSeries);
+
+    // Generate all occurrences
+    const bookings: Booking[] = [];
+    const occurrenceStart = new Date(start_time);
+    const occurrenceEnd = new Date(end_time);
+    const lastDate = new Date(series_end_date);
+
+    while (occurrenceStart <= lastDate) {
+      // Check for conflicts for this occurrence
+      await this.checkForConflicts(normalizedRoomId, occurrenceStart, occurrenceEnd);
+
+      const booking = this.bookingRepository.create({
+        user_id: currentUser.id,
+        room_id: normalizedRoomId,
+        start_time: new Date(occurrenceStart),
+        end_time: new Date(occurrenceEnd),
+        status: BookingStatus.ACTIVE,
+        booking_series_id: savedSeries.id,
+      });
+      const savedBooking = await this.bookingRepository.save(booking);
+      bookings.push(savedBooking);
+
+      // Advance to next occurrence
+      if (recurrence_type === 'daily') {
+        occurrenceStart.setDate(occurrenceStart.getDate() + 1);
+        occurrenceEnd.setDate(occurrenceEnd.getDate() + 1);
+      } else if (recurrence_type === 'weekly') {
+        occurrenceStart.setDate(occurrenceStart.getDate() + 7);
+        occurrenceEnd.setDate(occurrenceEnd.getDate() + 7);
+      } else if (recurrence_type === 'monthly') {
+        occurrenceStart.setMonth(occurrenceStart.getMonth() + 1);
+        occurrenceEnd.setMonth(occurrenceEnd.getMonth() + 1);
+      } else {
+        throw new BadRequestException('Invalid recurrence_type');
+      }
+    }
+
+    // Build response DTO
+    const response: BookingSeriesResponseDto = {
+      id: savedSeries.id,
+      user_id: savedSeries.user_id,
+      room_id: savedSeries.room_id,
+      start_time: savedSeries.start_time,
+      end_time: savedSeries.end_time,
+      series_end_date: savedSeries.series_end_date,
+      bookings: bookings.map(b => this.toResponseDto(b)),
+      created_at: savedSeries.created_at,
+      updated_at: savedSeries.updated_at,
+    };
+
+    // Invalidate schedule cache since bookings have been created
+    await this.cacheService.clearScheduleCache();
+
+    return response;
+  }
 
   async create(createBookingDto: CreateBookingDto, currentUser: AuthenticatedUser): Promise<BookingResponseDto> {
     const { start_time, end_time } = createBookingDto;
@@ -27,7 +121,8 @@ export class BookingsService {
       throw new BadRequestException('Room ID must not be empty');
     }
 
-    if (new Date(start_time) >= new Date(end_time)) {
+    // Validate start_time is before end_time
+    if (!isBefore(start_time, end_time)) {
       throw new BadRequestException('Start time must be before end time');
     }
 
@@ -51,6 +146,10 @@ export class BookingsService {
     });
 
     const savedBooking = await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been created
+    await this.cacheService.clearScheduleCache();
+
     return this.toResponseDto(savedBooking);
   }
 
@@ -141,7 +240,7 @@ export class BookingsService {
     }
 
     if (updateBookingDto.start_time && updateBookingDto.end_time) {
-      if (new Date(updateBookingDto.start_time) >= new Date(updateBookingDto.end_time)) {
+      if (!isBefore(updateBookingDto.start_time, updateBookingDto.end_time)) {
         throw new BadRequestException('Start time must be before end time');
       }
     }
@@ -186,6 +285,10 @@ export class BookingsService {
       ...(normalizedUpdateRoomId ? { room_id: normalizedUpdateRoomId } : {}),
     });
     const savedBooking = await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been updated
+    await this.cacheService.clearScheduleCache();
+
     return this.toResponseDto(savedBooking);
   }
 
@@ -207,6 +310,9 @@ export class BookingsService {
 
     booking.status = BookingStatus.CANCELLED;
     await this.bookingRepository.save(booking);
+
+    // Invalidate schedule cache since a booking has been removed
+    await this.cacheService.clearScheduleCache();
   }
 
   private async checkForConflicts(
@@ -240,70 +346,6 @@ export class BookingsService {
     }
   }
 
-  // async createSeries(createSeriesDto: CreateBookingSeriesDto, userId: string): Promise<BookingResponseDto[]> {
-  //   const { start_time, end_time, recurrence, recurrence_count } = createSeriesDto;
-  //   const normalizedRoomId = this.normalizeRoomId(createSeriesDto.room_id);
-
-  //   if (!normalizedRoomId) {
-  //     throw new BadRequestException('Room ID must not be empty');
-  //   }
-
-  //   if (new Date(start_time) >= new Date(end_time)) {
-  //     throw new BadRequestException('Start time must be before end time');
-  //   }
-
-  //   const room = await this.roomRepository.findOne({ where: { room_id: normalizedRoomId } });
-  //   if (!room) {
-  //     throw new NotFoundException('Room not found');
-  //   }
-
-  //   // Calculate series end date
-  //   const seriesEndDate = new Date(start_time);
-  //   if (recurrence === 'weekly') {
-  //     seriesEndDate.setDate(seriesEndDate.getDate() + (recurrence_count - 1) * 7);
-  //   }
-
-  //   // Create the booking series record
-  //   const bookingSeries = this.bookingSeriesRepository.create({
-  //     user_id: userId,
-  //     room_id: normalizedRoomId,
-  //     start_time,
-  //     end_time,
-  //     series_end_date: seriesEndDate,
-  //   });
-
-  //   const savedSeries = await this.bookingSeriesRepository.save(bookingSeries);
-
-  //   // Generate individual bookings
-  //   const bookings: Booking[] = [];
-  //   for (let i = 0; i < recurrence_count; i++) {
-  //     const bookingStartTime = new Date(start_time);
-  //     const bookingEndTime = new Date(end_time);
-
-  //     if (recurrence === 'weekly') {
-  //       bookingStartTime.setDate(bookingStartTime.getDate() + i * 7);
-  //       bookingEndTime.setDate(bookingEndTime.getDate() + i * 7);
-  //     }
-
-  //     // Check for conflicts for this occurrence
-  //     await this.checkForConflicts(normalizedRoomId, bookingStartTime, bookingEndTime);
-
-  //     const booking = this.bookingRepository.create({
-  //       user_id: userId,
-  //       room_id: normalizedRoomId,
-  //       start_time: bookingStartTime,
-  //       end_time: bookingEndTime,
-  //       status: BookingStatus.ACTIVE,
-  //       booking_series_id: savedSeries.id,
-  //     });
-
-  //     const savedBooking = await this.bookingRepository.save(booking);
-  //     bookings.push(savedBooking);
-  //   }
-
-  //   return bookings.map(booking => this.toResponseDto(booking));
-  // }
-
   async updateSeries(seriesId: string, updateDto: UpdateBookingDto, currentUser: AuthenticatedUser): Promise<void> {
     // Find all bookings in the series
     const bookings = await this.bookingRepository.find({
@@ -331,7 +373,7 @@ export class BookingsService {
       }
 
       if (updateDto.start_time && updateDto.end_time) {
-        if (new Date(updateDto.start_time) >= new Date(updateDto.end_time)) {
+        if (!isBefore(updateDto.start_time, updateDto.end_time)) {
           throw new BadRequestException('Start time must be before end time');
         }
       }
@@ -362,6 +404,9 @@ export class BookingsService {
       });
       await this.bookingRepository.save(booking);
     }
+
+    // Invalidate schedule cache since bookings in the series have been updated
+    await this.cacheService.clearScheduleCache();
   }
 
   async removeSeries(seriesId: string, currentUser: AuthenticatedUser): Promise<void> {
@@ -381,6 +426,9 @@ export class BookingsService {
 
     // Delete the series (cascade will delete associated bookings)
     await this.bookingSeriesRepository.remove(series);
+
+    // Invalidate schedule cache since bookings in the series have been removed
+    await this.cacheService.clearScheduleCache();
   }
 
   private normalizeRoomId(value?: string): string | undefined {
@@ -393,13 +441,13 @@ export class BookingsService {
   }
 
   private validateNotInPast(startTime: Date, userRole: UserRole): void {
-    if (userRole === UserRole.STAFF && new Date(startTime) < new Date()) {
+    if (userRole === UserRole.STAFF && isBefore(startTime, new Date())) {
       throw new BadRequestException('Cannot create bookings in the past');
     }
   }
 
   private validateDuration(startTime: Date, endTime: Date): void {
-    const durationMs = new Date(endTime).getTime() - new Date(startTime).getTime();
+    const durationMs = differenceInMilliseconds(endTime, startTime);
     const durationMinutes = durationMs / (1000 * 60);
 
     if (durationMinutes < 15) {
@@ -415,17 +463,16 @@ export class BookingsService {
   private validateAdvanceBooking(startTime: Date, userRole: UserRole): void {
     if (userRole === UserRole.STAFF) {
       const now = new Date();
-      const threeMonthsFromNow = new Date(now);
-      threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
+      const threeMonthsFromNow = addMonths(now, 3);
 
-      if (new Date(startTime) > threeMonthsFromNow) {
+      if (isAfter(startTime, threeMonthsFromNow)) {
         throw new BadRequestException('Staff cannot book more than 3 months in advance');
       }
     }
   }
 
   private validateNotStarted(booking: Booking, userRole: UserRole): void {
-    if (userRole === UserRole.STAFF && new Date(booking.start_time) < new Date()) {
+    if (userRole === UserRole.STAFF && isBefore(booking.start_time, new Date())) {
       throw new BadRequestException('Cannot modify bookings that have already started');
     }
   }

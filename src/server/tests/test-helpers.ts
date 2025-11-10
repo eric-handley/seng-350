@@ -1,4 +1,5 @@
 import { Repository } from 'typeorm';
+import { parseISO, set, isValid, addDays } from 'date-fns';
 import { User, UserRole } from '../src/database/entities/user.entity';
 import { Building } from '../src/database/entities/building.entity';
 import { Room, RoomType } from '../src/database/entities/room.entity';
@@ -48,11 +49,13 @@ export class TestDataFactory {
   }
 
   static createBooking(user?: User, room?: Room, overrides?: Partial<Booking>): Partial<Booking> {
+    const futureStart = set(addDays(new Date(), 100), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 });
+    const futureEnd = set(addDays(new Date(), 100), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
     return {
       user,
       room,
-      start_time: new Date('2024-12-01T09:00:00Z'),
-      end_time: new Date('2024-12-01T10:00:00Z'),
+      start_time: futureStart,
+      end_time: futureEnd,
       status: BookingStatus.ACTIVE,
       ...overrides,
     };
@@ -118,10 +121,9 @@ export class TestDatabaseHelper {
 
 export const mockUUID = '12345678-1234-1234-1234-123456789012';
 
-export const generateMockDate = (hour = 0, minute = 0): Date => {
-  const baseDate = new Date('2025-12-01T00:00:00Z');
-  baseDate.setHours(hour, minute, 0, 0);
-  return baseDate;
+export const generateMockDate = (hour = 0, minute = 0, daysInFuture = 1): Date => {
+  const baseDate = set(addDays(new Date(), daysInFuture), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
+  return set(baseDate, { hours: hour, minutes: minute, seconds: 0, milliseconds: 0 });
 };
 
 export const createMockResponse = <T>(data: T) => ({
@@ -135,7 +137,7 @@ export const expectValidUUID = (id: string) => {
 };
 
 export const expectValidDate = (date: string | Date) => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? parseISO(date) : date;
   expect(dateObj).toBeInstanceOf(Date);
-  expect(dateObj.getTime()).not.toBeNaN();
+  expect(isValid(dateObj)).toBe(true);
 };

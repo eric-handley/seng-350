@@ -1,15 +1,10 @@
-// Mock ESM-only module to avoid Jest transform errors
-jest.mock('@auth/express', () => ({
-  ExpressAuth: () => (_req: unknown, _res: unknown, next: () => void) => next(),
-}));
-
 // Ensure AppModule connects to the dedicated test services
 (() => {
-  process.env.PGHOST = process.env.PGHOST_TEST ?? 'localhost';
-  process.env.PGPORT = process.env.PGPORT_TEST ?? '5433';
-  process.env.PGUSER = process.env.PGUSER_TEST ?? 'test';
-  process.env.PGPASSWORD = process.env.PGPASSWORD_TEST ?? 'test';
-  process.env.PGDATABASE = process.env.PGDATABASE_TEST ?? 'test_db';
+  process.env.PGHOST = process.env.PGHOST_TEST ?? process.env.PGHOST ?? 'localhost';
+  process.env.PGPORT = process.env.PGPORT_TEST ?? process.env.PGPORT ?? '5433';
+  process.env.PGUSER = process.env.PGUSER_TEST ?? process.env.PGUSER ?? 'test';
+  process.env.PGPASSWORD = process.env.PGPASSWORD_TEST ?? process.env.PGPASSWORD ?? 'test';
+  process.env.PGDATABASE = process.env.PGDATABASE_TEST ?? process.env.PGDATABASE ?? 'test_db';
   process.env.REDIS_HOST = process.env.REDIS_HOST ?? 'localhost';
   process.env.REDIS_PORT = process.env.REDIS_PORT ?? '6379';
 })();
@@ -20,6 +15,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import session from 'express-session';
+import passport from 'passport';
 import { Repository } from 'typeorm';
 
 import { User } from '../../src/database/entities/user.entity';
@@ -35,6 +31,8 @@ export async function setupTestAppWithAuth() {
   const app = moduleFixture.createNestApplication();
 
   // Configure session middleware (same as main.ts)
+  // AppModule is responsible for all auth configuration (Passport, guards, etc.)
+  // Tests should not configure auth - they should use the real implementation from AppModule
   app.use(
     session({
       secret: 'test-secret',
@@ -48,6 +46,10 @@ export async function setupTestAppWithAuth() {
       },
     }),
   );
+
+  // Mirror main.ts Passport configuration so session-authenticated requests work in tests
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.useGlobalPipes(
     new ValidationPipe({

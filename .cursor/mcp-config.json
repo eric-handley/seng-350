@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "uvic-booking": {
+      "command": "node",
+      "args": ["src/mcp-server/dist/index.js"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}
+

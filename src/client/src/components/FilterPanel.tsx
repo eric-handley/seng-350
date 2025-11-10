@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { formatTimeForDisplay, parseUserTimeInput } from '../utils/time'
 
-interface FilterPanelProps {
+export interface FilterPanelProps {
   building: string
   setBuilding: (building: string) => void
   roomQuery: string
@@ -116,7 +116,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     display: 'flex',
     flexDirection: 'column',
     gap: 6,
-    minWidth: 0,             // So inputs can shrink
+    minWidth: 0, // So inputs can shrink
   }
 
   const labelStyle: React.CSSProperties = {

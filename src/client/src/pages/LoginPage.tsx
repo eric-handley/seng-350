@@ -3,10 +3,25 @@ import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { User, UserRole } from "../types";
 
+/**
+ * LoginPage
+ *
+ * Responsibilities:
+ * - Collect user credentials and submit to the auth API
+ * - Handle success (call onLogin and navigate to /book)
+ * - Handle errors robustly and show a friendly message
+ * - Provide developer quick-login buttons that prefill credentials
+ */
 interface LoginPageProps {
   onLogin: (user: User) => void;
 }
 
+/**
+ * Normalizes unknown error values into a user-friendly string.
+ * - Error instance -> err.message
+ * - string -> the string itself
+ * - other -> JSON.stringify fallback, or provided fallback if that fails
+ */
 function getErrorMessage(err: unknown, fallback = "Something went wrong") {
   if (err instanceof Error) {
     return err.message;
@@ -22,13 +37,25 @@ function getErrorMessage(err: unknown, fallback = "Something went wrong") {
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
+  // Controlled form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // Error banner text; null when no error
   const [error, setError] = useState<string | null>(null);
+  // Router navigation hook
   const navigate = useNavigate();
 
+  /**
+   * Submit handler:
+   * - Prevent default form navigation
+   * - Clear any previous error
+   * - POST credentials to backend
+   * - Interpret response codes and surfaces helpful messages
+   * - On success: parse user, call onLogin, and navigate to /book
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Clear stale error right when a new submission starts
     setError(null);
 
     try {
@@ -39,10 +66,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         credentials: "include",
       });
 
+      // Common case for bad credentials
       if (response.status === 401) {
         throw new Error("Invalid email or password");
       }
 
+      // Other non-OK responses: try to surface server-provided message
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(
@@ -50,16 +79,23 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         );
       }
 
+      // Success: parse the user payload and notify parent
       const user: User = await response.json(); // backend returns AuthenticatedUser shape
       onLogin(user);
 
+      // Navigate to main booking flow
       navigate("/book");
     } catch (err: unknown) {
+      // Gracefully convert any thrown value into a message
       setError(getErrorMessage(err, "Login failed"));
     }
-    //console.warn("Logging in with:", { email, password });
   };
 
+  /**
+   * Developer quick-login:
+   * - Prefills email/password for the selected role
+   * - Clears any existing error
+   */
   const handleDevLogin = (role: UserRole) => {
     const credentials: Record<UserRole, { email: string; password: string }> = {
       [UserRole.STAFF]: { email: "staff@uvic.ca", password: "staff" },
@@ -80,7 +116,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   return (
     <div className="login-container">
       <div className="login-card">
+        {/* Page title */}
         <h1>Uvic Room Booking Login</h1>
+
+        {/* Credential form: email + password + submit */}
         <form className="login-form" onSubmit={handleLogin}>
           <div>
             <label htmlFor="email">Email</label>
@@ -93,6 +132,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               required
             />
           </div>
+
           <div>
             <label htmlFor="password">Password</label>
             <input
@@ -104,10 +144,15 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               required
             />
           </div>
+
+          {/* Primary action */}
           <button type="submit">Login</button>
+
+          {/* Error banner (shown only when error is set) */}
           {error && <p className="error">{error}</p>}
         </form>
 
+        {/* Dev-only quick login shortcuts for faster testing */}
         <div
           style={{
             marginTop: "20px",

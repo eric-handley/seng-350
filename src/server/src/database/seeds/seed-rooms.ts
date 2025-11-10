@@ -67,15 +67,18 @@ async function main() {
 
 
     const buildingRepository = AppDataSource.getRepository(Building);
-    
-    // Check if data already exists to avoid unnecessary processing
-    const existingBuildingsCount = await buildingRepository.count();
-    if (existingBuildingsCount > 0) {
-      return;
-    }
     const roomRepository = AppDataSource.getRepository(Room);
     const equipmentRepository = AppDataSource.getRepository(Equipment);
     const roomEquipmentRepository = AppDataSource.getRepository(RoomEquipment);
+
+    // Check if data already exists to avoid unnecessary processing
+    const existingBuildingsCount = await buildingRepository.count();
+    const existingRoomsCount = await roomRepository.count();
+    const existingEquipmentCount = await equipmentRepository.count();
+    if (existingBuildingsCount > 0 && existingRoomsCount > 0 && existingEquipmentCount > 0) {
+      console.warn('Seed data already exists, skipping...');
+      return;
+    }
 
     const buildingMap = new Map<string, Building>();
     const equipmentMap = new Map<string, Equipment>();
