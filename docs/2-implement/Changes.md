@@ -7,3 +7,5 @@ Additionally, we completed the following out-of-scope parts from Implementation 
 - Implemented Recurring Bookings
 
 - Implemented Redis Caching
+
+- System health statistics made visible to Registrar
