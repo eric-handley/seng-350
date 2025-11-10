@@ -6,12 +6,14 @@ import { addDays, set } from 'date-fns';
 
 import { User } from '../../../src/database/entities/user.entity';
 import { Room } from '../../../src/database/entities/room.entity';
+import { Booking } from '../../../src/database/entities/booking.entity';
 import { setupUserPermissionsTests, seedUsersWithRoles } from './user-permissions.integration.test-setup';
 
 describe('Cross-user authorization (e2e)', () => {
   let app: INestApplication;
   let userRepository: Repository<User>;
   let roomRepository: Repository<Room>;
+  let bookingRepository: Repository<Booking>;
   let staffUser1: User;
   let staffUser2: User;
 
@@ -21,6 +23,7 @@ describe('Cross-user authorization (e2e)', () => {
     userRepository = setup.userRepository;
 
     roomRepository = app.get<Repository<Room>>(getRepositoryToken(Room));
+    bookingRepository = app.get<Repository<Booking>>(getRepositoryToken(Booking));
 
     const users = await seedUsersWithRoles(userRepository);
     staffUser1 = users.staffUser1;
@@ -29,6 +32,10 @@ describe('Cross-user authorization (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  beforeEach(async () => {
+    await bookingRepository.clear();
   });
 
   it('should allow user to view their own bookings', async () => {
@@ -77,11 +84,12 @@ describe('Cross-user authorization (e2e)', () => {
       .send({ email: staffUser1.email, password: 'password123' })
       .expect(200);
 
-    const bookingDate = set(addDays(new Date(), 23), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingStart = set(addDays(new Date(), 30), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 30), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = {
       room_id: room.room_id,
-      start_time: bookingDate.toISOString(),
-      end_time: set(addDays(new Date(), 23), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
+      start_time: bookingStart.toISOString(),
+      end_time: bookingEnd.toISOString(),
     };
 
     const createdBooking = await agent1
@@ -98,7 +106,7 @@ describe('Cross-user authorization (e2e)', () => {
     // Staff user 2 should NOT be able to update staff user 1's booking
     await agent2
       .patch(`/bookings/${createdBooking.body.id}`)
-      .send({ start_time: set(addDays(new Date(), 23), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString() })
+      .send({ start_time: set(addDays(new Date(), 100), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString() })
       .expect(403);
 
     // Staff user 2 should NOT be able to delete staff user 1's booking
@@ -120,10 +128,12 @@ describe('Cross-user authorization (e2e)', () => {
       .send({ email: staffUser1.email, password: 'password123' })
       .expect(200);
 
+    const bookingStart = set(addDays(new Date(), 40), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 });
+    const bookingEnd = set(addDays(new Date(), 40), { hours: 13, minutes: 0, seconds: 0, milliseconds: 0 });
     const booking = {
       room_id: room.room_id,
-      start_time: set(addDays(new Date(), 23), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
-      end_time: set(addDays(new Date(), 23), { hours: 13, minutes: 0, seconds: 0, milliseconds: 0 }).toISOString(),
+      start_time: bookingStart.toISOString(),
+      end_time: bookingEnd.toISOString(),
     };
 
     return agent

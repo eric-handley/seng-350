@@ -54,8 +54,9 @@ describe('/bookings (e2e)', () => {
     await app.close();
   });
 
-  // TODO: Add date library (e.g., date-fns) and replace hardcoded dates with dynamic dates relative to current time
-  // This should ideally be done across all tests!
+  beforeEach(async () => {
+    await bookingRepository.clear();
+  });
   it('/bookings (POST) should create a new booking', () => {
     const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
     const newBooking = {
