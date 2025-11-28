@@ -1,0 +1,7 @@
+# Deps:
+npm init -y
+npm install @tensorflow/tfjs-node typescript ts-node @types/node
+
+# Run:
+npx ts-node convolution.ts pride_and_prejudice.txt
+
