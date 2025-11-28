@@ -8,6 +8,8 @@ The documentation for the project was mostly well defined with clear ADRs in doc
 
 With overall good structure and documentation along with areas with room for improvement, we found Group 8's repository to be the most appealing to take on for our refactoring task.
 
+One code smell targeted was primitive obsession due to a high reliance of primitives through-out their repository we changed their date-time primitives via the implementation of dateTime.js and dateUtils.js to allow for the change of the primitives to bookingsearch.jsx through running npm run test:smells one can see the date-usage.jsx tests added to show the removal of primitives and the preserved behaviour.
+
 
 THIS IS THE PROVIDED GUIDE FOR WRITING THIS:
 NB: you should be very careful in running untrusted code on your machine. I have not conducted any malware or other scans on these zip files. Sandboxing them in a Docker container/VM would be wise. See appendix below.
