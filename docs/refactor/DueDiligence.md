@@ -10,6 +10,7 @@ With overall good structure and documentation along with areas with room for imp
 
 One code smell targeted was primitive obsession due to a high reliance of primitives through-out their repository we changed their date-time primitives via the implementation of dateTime.js and dateUtils.js to allow for the change of the primitives to bookingsearch.jsx through running npm run test:smells one can see the date-usage.jsx tests added to show the removal of primitives and the preserved behaviour.
 
+The other code smell we targeted was the long method smell in src/backend/routes/bookings.js called post that was almost 200 lines that handled multiple different functionalities such as CRUD, filtering logic and business logic. This makes the method hard to understand, hard to use and hard to test. After fixing the smell we created the test bookings.code-smell.test.js to test the changes that were made that solved the long method smell.
 
 THIS IS THE PROVIDED GUIDE FOR WRITING THIS:
 NB: you should be very careful in running untrusted code on your machine. I have not conducted any malware or other scans on these zip files. Sandboxing them in a Docker container/VM would be wise. See appendix below.
