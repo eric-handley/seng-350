@@ -126,6 +126,7 @@ export default [
   },
   {
     ignores: [
+      'docs/refactor/**/*',  
       'src/client/public/**/*', 
       'src/client/dist/**/*',
       'src/server/dist/**/*',
